@@ -1,0 +1,20 @@
+{
+  "name": "access-control",
+  "version": "1.0.0",
+  "description": "Access Control App",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "express",
+    "node"
+  ],
+  "author": "Adriana Suarez",
+  "license": "ISC"
+}
