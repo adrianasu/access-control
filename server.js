@@ -20,25 +20,25 @@ app.post("/login", (req, res) => {
 app.get("/:id", (req, res) => {
     return res.status(200).json({
         message: "Getting employee by id"
-    }).sendFile(__dirname + '/public/id.html');
+    }).sendFile(__dirname + '/public/employee.html');
 })
 
 app.post("/:id", (req, res) => {
     return res.status(200).json({
         message: "Creating employee account"
-    }).sendFile(__dirname + '/public/id.html');
+    }).sendFile(__dirname + '/public/employee.html');
 })
 
 app.put("/:id", (req, res) => {
     return res.status(200).json({
         message: "Editing employee by id"
-    }).sendFile(__dirname + '/public/id.html');
+    }).sendFile(__dirname + '/public/employee.html');
 })
 
 app.delete("/:id", (req, res) => {
     return res.status(200).json({
         message: "Deleting employee with id"
-    }).sendFile(__dirname + '/public/id.html');
+    }).sendFile(__dirname + '/public/employee.html');
 })
 
 app.get("/entrance/:id", (req, res) => {

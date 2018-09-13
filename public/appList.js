@@ -1,3 +1,11 @@
+let MOCK_EMPLOYERS = {
+    employers : ["Handy Manny", "Metal Works", "Big Guys", "The Other Guys"]
+}
+
+let MOCK_DEPARTMENTS = {
+    departments: ["Maintenance", "Administration", "Quarry", "Warehouse"]
+}
+
 let MOCK_EMPLOYEE_DATA = {
     "employeeData" : [
         {
@@ -23,7 +31,7 @@ let MOCK_EMPLOYEE_DATA = {
             "licensePlates": "7ZBC1234",
             "ready2work": {
                 "status": "false",
-                "required": ["Training One"]
+                "required": ["Take Care"]
             }
         },
         {
@@ -48,7 +56,7 @@ let MOCK_EMPLOYEE_DATA = {
             "licensePlates": "1ZBC1458",
             "ready2work": {
                 "status": "false",
-                "required": ["Training Two"]
+                "required": ["Safety First"]
             }
         }, {
             "id": 92345,
@@ -72,7 +80,7 @@ let MOCK_EMPLOYEE_DATA = {
             "licensePlates": "7ZBC1784",
             "ready2work": {
                 "status": "false",
-                "required": ["Training Two"]
+                "required": ["Always Safe"]
             }
         }
     ]
@@ -106,6 +114,7 @@ function getEmployeeData(callbackFn) {
 }
 
 function getAndDisplayEmployeeData() {
+    
     getEmployeeInfo(displayEmployeeData);
 }
 
