@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- <link rel="stylesheet" href="indexEmployee.css"> -->
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+        crossorigin="anonymous"></script>
+    
     <title>Document</title>
 </head>
 <body>
@@ -22,13 +28,13 @@
         </fieldset>
         <fieldset name="employment-information">
             <label for="employment-date">Employed since</label>
-            <input type="date" id="employment-date" required>
+            <input type="text" id="employment-date" size="30">
             <label for="employer">Employed by</label>
             <select id="employer"></select>
             <label for="department">Department</label>
             <select id="department"></select>
         </fieldset>
-        <fieldset name="trainings" class="trainings">
+        <fieldset name="training" class="training">
         </fieldset>       
         <input type="checkbox" id="vehicle" name="vehicle" value="yes">
         <label for="vehicle">Allow vehicle on-site</label>
@@ -39,9 +45,6 @@
 
     </form>
 
-
-    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-    crossorigin="anonymous"></script>
     <script type="text/javascript" src="appCreateEmployee.js"></script>
 </body>
 </html>

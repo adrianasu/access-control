@@ -1,7 +1,7 @@
 let MOCK_DATA = {
     employers: ["Handy Manny", "Metal Works", "Big Guys", "The Other Guys"],
     departments: ["Maintenance", "Administration", "Quarry", "Warehouse"],
-    trainings: ["Safety First", "Always Safe", "Take Care"],
+    trainingTitles: ["Safety First", "Always Safe", "Take Care"],
     employeeData : 
         // {
         //     "id": 12345,
@@ -10,19 +10,19 @@ let MOCK_DATA = {
         //     "lastName": "Smith",
         //     "employer": "Handy Manny",
         //     "department": "Maintenance",
-        //     "licensePlates": "2ABC1234",
+        //     "licensePlate": "2ABC1234",
                 // "training": [
                 //     {
                 //         "title": "Safety First",
-                //         "date": null
+                //        "date": new Date()
                 //     },
                 //     {
                 //         "title": "Always Safe",
-                //         "date": Date.now()
+                //         "date": new Date()
                 //     },
                 //     {
                 //         "title": "Take Care",
-                //         "date": Date.now()
+                //         "date": new Date()
                 //     }
                 // ]
         //     }
@@ -34,19 +34,19 @@ let MOCK_DATA = {
             "lastName": "Kennedy",
             "employer": "Handy Manny",
             "department": "Maintenance",
-            "licensePlates": "7ZBC1234",
+            "licensePlate": "7ZBC1234",
             "training": [
                   {
                       "title": "Safety First",
-                      "date": Date.now()
+                      "date": null
                   },
                   {
                       "title": "Always Safe",
-                      "date": Date.now()
+                      "date": new Date()
                   },
                   {
                       "title": "Take Care",
-                      "date": Date.now()
+                      "date": new Date()
                   }
               ]
             }
@@ -54,48 +54,37 @@ let MOCK_DATA = {
     
 
 
-function getEmployeeInfo(data) {
-    return `<tr><th>${data.employeeData.firstName} ${data.employeeData.lastName}</th></tr>
-            <tr><td>License Plates</td><td>${data.employeeData.licensePlates}</td></tr>
-            <tr><td>Employee ID</td><td>${data.employeeData.id}</td></tr>
-            <tr><td>Employer</td><td>${data.employeeData.employer}</td></tr>
-            <tr><td>Department</td><td>${data.employeeData.department}</td></tr>`;
-}
-
-function displayEmployeeData(data) {
-   
-}
-
-function displayOptions(data) {
+function generateOptions(data) {
     let options = [];
+    options.push(`<option value="">Select an option</option>`);
     data.forEach(option => {
         options.push(`<option value=${option}>${option}</option>`);
     });
     return options.join("");
 }
 
-function displayDate(index) {
-    return `<input type="date" id="training${index}">`;
+function generateDateInput(index) {
+    return `<input type="text" id="training-date${index}" size="30">`;
 }
 
-function displayTrainings(data) {
-    let trainings = [];
+function generateTrainingOptions(data) {
+    let training = [];
     let index = 0;
-    trainings.push(`<legend>Trainings</legend>`);
-    data.forEach(training => {
+    training.push(`<legend>Trainings</legend>`);
+    data.forEach(title => {
         index+=1;
-        trainings.push(`<select id="training${index}">`);
-        trainings.push(displayOptions(data));
-        trainings.push(displayDate(index));
-        trainings.push(`</select>`);
+        training.push(`<select id="training${index}">`);
+        training.push(generateOptions(data));
+        training.push(generateDateInput(index));
+        training.push(`</select>`);
     })
-    return trainings.join("");
+    return training.join("");
 }
 
 function displayAllOptions(data) {
-    $('#employer').html(displayOptions(data.employers));
-    $('#department').html(displayOptions(data.departments));
-    $('.trainings').html(displayTrainings(data.trainings));
+    $('#employer').html(generateOptions(data.employers));
+    $('#department').html(generateOptions(data.departments));
+    $('.training').html(generateTrainingOptions(data.trainingTitles));
 }
 
 function displayPhoto(fileList) {
@@ -111,29 +100,55 @@ function displayPhoto(fileList) {
     }
 }
 
+function getFormData() {
+    const employeeData = {
+        //photo : $('.js-photo-input').files[0],
+        id : $('#employee-id').val(),
+        firstName : $('#first-name').val(),
+        lastName : $('#last-name').val(),
+        employmentDate : $('#employment-date').val(),
+        employer : $('#employer').val(),
+        department : $('#department').val(),
+        allowVehicle : $('#vehicle').val(),
+        licensePlate : $('#license-plate').val(),
+    }
+    let allTrainings = [];
+    let index = 0;
+    MOCK_DATA.trainingTitles.forEach(title => {
+        index += 1;
+        let trainingTitle = $(`#training${index}`).text();
+        if (trainingTitle) {
+            let trainingDate = $(`#training-date${index}`).datepicker('getDate');
+            allTrainings.push({ title: trainingTitle, date: trainingDate });
+            console.log(trainingDate.getFullYear()+ " " + trainingDate.getMonth());
+        }
+    });
+    employeeData.training = allTrainings;
+    console.log(employeeData);
+    return employeeData;
+}
+
 function handleSubmit(event) {
     event.preventDefault();
-    let formData = new FormData();
-    let photoFile = $('.js-photo-input').files[0];
-    formData.append('photo', photoFile);
-    let id = $('#employee-id').val();
-    let firstName = $('#first-name').val();
-    let lastName = $('#last-name').val();
-    let employmentDate = $('#employment-date').val();
-    let employer = $('#employer').val();
-    let department = $('#department').val();
-    let allTrainings = [];
-    data.trainings.forEach(training => {
-        allTrainings
-    })
+    console.log("handleSubmit");
+    getFormData();
 }
 
-
-function watchButtons() {
-    $('.js-photo-input').on('change', displayPhoto);
-    $('.js-save-button').on('submit', handleSubmit);
-    $('.js-delete-button').on('submit', handleDelete);
+function watchSubmitButton() {
+    $('.js-form').on('submit', handleSubmit);
+    //$('.js-delete-button').on('submit', handleDelete);
+    console.log("watchButtons");
 }
+
+function watchCalendarsAndPhoto() {
+     $('.js-photo-input').on('change', displayPhoto);
+    $('#employment-date').datepicker();
+    $('.training').on('focus', 'input', function (e) {
+       e.preventDefault();
+       $('.training input').datepicker();
+   })
+   console.log("watchCalendars");
+   }
 
 // this function's name and argument can stay the
 // same after we have a live API, but its internal
@@ -144,16 +159,16 @@ function watchButtons() {
 function getOptionsData(callbackFn) {
       // we use a `setTimeout` to make this asynchronous
       // as it would be with a real AJAX call.
-    setTimeout(function() {
+    return setTimeout(function() {
         callbackFn(MOCK_DATA)      
-    }, 1);
-    return MOCK_DATA;
+    }, 1);  
 }
 
-// Do this when the page loads 
-$(function() {
-    return getOptionsData(displayAllOptions)
-        .then(() => {
-            watchButtons();
-        })
-})
+function main() {
+    getOptionsData(displayAllOptions);
+    watchCalendarsAndPhoto();
+    watchSubmitButton(); 
+    console.log("main");
+}
+// Do this when the page loads
+$(main);
