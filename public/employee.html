@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- <link rel="stylesheet" href="indexEmployee.css"> -->
-
+    <link rel="stylesheet" href="employee.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
@@ -17,7 +16,7 @@
 
     <form class="js-form"> 
         <img src="" alt="" class="js-photo">
-        <input type="file" accept="image/*" id="js-photo-input" capture>
+        <input type="file" accept="image/*" id="js-photo-input">
         <fieldset name="personal-information">
             <label for="employee-id">Employee ID</label>
             <input type="text" id="employee-id" required>
@@ -40,12 +39,12 @@
         <label for="vehicle">Allow vehicle on-site</label>
         <label for="license-plate">License Plate</label>
         <input type="text" id="license-plate" placeholder="License Plate">
-        <button role="button" type="submit" class="js-submit-button"></button>
-        <button role="button" type="" class="js-helper-button"></button>
+        <button role="button" type="reset" class="js-main-button"></button>
+        <button role="button" type="button" class="js-helper-button"></button>
     </form>
 
     <!-- <script type="text/javascript" src="appCreateEmployee.js"></script> -->
-<script type="text/javascript" src="appDeleteEmployee.js"></script>
+    <script type="text/javascript" src="appDeleteEmployee.js"></script>
 
 </body>
 </html>

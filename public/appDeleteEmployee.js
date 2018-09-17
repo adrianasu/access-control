@@ -1,16 +1,17 @@
 let MOCK_DATA = {
-    employers: ["Handy\ Manny", "Metal\ Works", "Big\ Guys", "The\ Other\ Guys"],
+    employers: ["Handy Manny", "Metal Works", "Big Guys", "The Other Guys"],
     departments: ["Maintenance", "Administration", "Quarry", "Warehouse"],
-    trainingTitles: ["Safety\ First", "Always\ Safe", "Take\ Care"],
+    trainingTitles: ["Safety First", "Always Safe", "Take Care"],
     employeeData : 
         // {
         //     "id": 12345,
         //     "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
         //     "firstName": "John",
         //     "lastName": "Smith",
-        //     "employer": "Handy\ Manny",
-        //     "employmentDate": "08/12/2016",
+        //     "employer": "Handy Manny",
+        //     "employmentDate": new Date(2015, 6, 5),
         //     "department": "Maintenance",
+        //     "allowVehicle": false,
         //     "licensePlate": "2ABC1234",
                 // "training": [
                 //     {
@@ -30,12 +31,13 @@ let MOCK_DATA = {
         // },
         {
             "id": 23456,
-            "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "photo": "https://images.pexels.com/photos/683381/pexels-photo-683381.jpeg?cs=srgb&dl=beard-blue-sky-casual-683381.jpg&fm=jpg",
             "firstName": "Caleb",
             "lastName": "Kennedy",
             "employer": "Handy Manny",
             "employmentDate": new Date(2017, 1, 5),
             "department": "Quarry",
+            "allowVehicle": true,
             "licensePlate": "7ZBC1234",
             "training": [
                   {
@@ -51,11 +53,9 @@ let MOCK_DATA = {
                       "trainDate": new Date(2018, 4, 21)
                   }
               ]
-            }
         }
+}
     
-
-
 function generateOptions(data) {
     let options = [];
     options.push(`<option value="">Select an option</option>`);
@@ -104,10 +104,10 @@ function selectActualOption(doneTraining, index) {
     $(`#training${index+1} > option`).each(function() {
         if(this.value === doneTraining[index].title) {
             $(this).val(doneTraining[index].title);
-            $(this).prop("selected", true);
+            $(this).attr("selected", true);
         }
         else {
-            $(this).prop("selected", false);
+            $(this).attr("selected", false);
         }
     });
 }
@@ -124,38 +124,65 @@ function fillTrainingInfo(training) {
     }
 }
 
-function fillFormWithEmployeeData({id, firstName, lastName, employmentDate, employer,
+function eraseTrainingInfo(training) {
+    for (let i=1; i <= training.length; i++) {
+        $(`#training${i}`).val("");
+        $(`#training-date${i}`).datepicker().datepicker("setDate", null);
+    }
+}
+
+function fillFormWithEmployeeData({photo, id, firstName, lastName, employmentDate, employer,
     department, allowVehicle, licensePlate = "", training = []}) {
+    $('.js-photo').attr({src: photo, alt: `${firstName} ${lastName}`});
     $('#employee-id').val(id);
     $('#first-name').val(firstName);
     $('#last-name').val(lastName);
-    $('#license-plate').val(licensePlate);
     $('#employment-date').datepicker("setDate", employmentDate);
     $('#employer').val(employer);
     $('#department').val(department);
-    $('#vehicle').val(allowVehicle);
-    fillTrainingInfo(training); 
+    fillTrainingInfo(training);
+    $('#vehicle').attr("checked", allowVehicle);
+    $('#license-plate').val(licensePlate);
 }
 
-
-
-function deleteFormData() {
-    console.log("deleteData");
+function resetForm() {
+    console.log('resetForm');
+    $('.js-photo').attr({
+        src: null,
+        alt: ""
+    });
+    $('#employee-id').val("");
+    $('#first-name').val("");
+    $('#last-name').val("");
+    $('#employment-date').datepicker("setDate", "");
+    $('#employer').val("");
+    $('#department').val("");
+    eraseTrainingInfo(MOCK_DATA.trainingTitles);
+    $('#vehicle').attr("checked", false);
+    $('#license-plate').val("");
 }
+
 
 function handleDelete(event) {
     event.preventDefault();
     console.log("handleDelete");
-    deleteFormData();
+    resetForm();
+    // deleteEmployee(); on db
 }
 
-function watchDeleteButton() {
-    $('.js-delete-button').on('submit', handleDelete);
+function handleCancel() {
+    console.log("cancel");
+}
+
+function watchButtons() {
+    $('.js-helper-button').on('click', handleCancel);
+    $('.js-main-button').on('click', handleDelete);
     console.log("watchButtons");
+    
 }
 
 function generateButtons() {
-    $('.js-submit-button').text("Delete");
+    $('.js-main-button').text("Delete");
     $('.js-helper-button').text("Cancel").attr("type", "button");
 }
 
@@ -188,7 +215,7 @@ function main() {
     getEmployeeData(displayAllOptions);
     generateButtons();
     watchCalendarsAndPhoto();
-    watchDeleteButton(); 
+    watchButtons(); 
     console.log("main");
 }
 // Do this when the page loads

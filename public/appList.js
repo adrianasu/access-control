@@ -1,75 +1,124 @@
-let MOCK_EMPLOYERS = {
-    employers : ["Handy Manny", "Metal Works", "Big Guys", "The Other Guys"]
-}
-
-let MOCK_DEPARTMENTS = {
-    departments: ["Maintenance", "Administration", "Quarry", "Warehouse"]
-}
-
-let MOCK_EMPLOYEE_DATA = {
-    "employeeData" : [
-        {
+let MOCK_DATA = {
+    employers: ["Handy Manny", "Metal Works", "Big Guys", "The Other Guys"],
+    departments: ["Maintenance", "Administration", "Quarry", "Warehouse"],
+    trainingTitles: ["Safety First", "Always Safe", "Take Care"],
+    employeeData: [{
             "id": 12345,
-            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "photo": "https://images.pexels.com/photos/683381/pexels-photo-683381.jpeg?cs=srgb&dl=beard-blue-sky-casual-683381.jpg&fm=jpg",
             "firstName": "John",
             "lastName": "Smith",
             "employer": "Handy Manny",
             "department": "Maintenance",
-            "licensePlates": "2ABC1234",
-            "ready2work": {
-                "status": "true",
-                "required": []
-            }
+            "licensePlate": "7ZBC1234",
+            "employmentDate": new Date(2017, 1, 5),
+            "allowVehicle": true,
+            "training": [{
+                    "title": "Safety First",
+                    "trainDate": null
+                },
+                {
+                    "title": "Always Safe",
+                    "trainDate": new Date(2017, 1, 5)
+                },
+                {
+                    "title": "Take Care",
+                    "trainDate": new Date(2018, 4, 21)
+                }
+            ]
         },
         {
             "id": 23456,
-            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "photo": "https://images.pexels.com/photos/683381/pexels-photo-683381.jpeg?cs=srgb&dl=beard-blue-sky-casual-683381.jpg&fm=jpg",
             "firstName": "Caleb",
             "lastName": "Kennedy",
             "employer": "Handy Manny",
             "department": "Maintenance",
             "licensePlates": "7ZBC1234",
-            "ready2work": {
-                "status": "false",
-                "required": ["Take Care"]
-            }
+            "employmentDate": new Date(2014, 6, 5),
+            "allowVehicle": true,
+            "training": [{
+                    "title": "Safety First",
+                    "trainDate": new Date(2017, 8, 5)
+                },
+                {
+                    "title": "Always Safe",
+                    "trainDate": null
+                },
+                {
+                    "title": "Take Care",
+                    "trainDate": new Date(2018, 4, 21)
+                }
+            ]
         },
         {
             "id": 62345,
-             "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
             "firstName": "David",
             "lastName": "Salomon",
             "employer": "Metal Works",
             "department": "Maintenance",
             "licensePlates": "2ABX578",
-            "ready2work": {
-                "status": "true",
-                "required": []
-            }
+            "employmentDate": new Date(2013, 1, 5),
+            "allowVehicle": true,
+            "training": [{
+                    "title": "Safety First",
+                    "trainDate": new Date(2018, 4, 21)
+                },
+                {
+                    "title": "Always Safe",
+                    "trainDate": new Date(2017, 1, 5)
+                },
+                {
+                    "title": "Take Care",
+                    "trainDate": null
+                }
+            ]
         }, {
             "id": 73456,
-             "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
             "firstName": "Sally",
             "lastName": "Miller",
             "employer": "Metal Works",
             "department": "Administration",
             "licensePlates": "1ZBC1458",
-            "ready2work": {
-                "status": "false",
-                "required": ["Safety First"]
-            }
+            "employmentDate": new Date(2017, 1, 5),
+            "allowVehicle": true,
+            "training": [{
+                    "title": "Safety First",
+                    "trainDate": null
+                },
+                {
+                    "title": "Always Safe",
+                    "trainDate": null
+                },
+                {
+                    "title": "Take Care",
+                    "trainDate": new Date(2018, 4, 21)
+                }
+            ]
         }, {
             "id": 92345,
-             "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
             "firstName": "Dilan",
             "lastName": "Lee",
             "employer": "Big Guys",
             "department": "Maintenance",
             "licensePlates": "3APC194",
-            "ready2work": {
-                "status": "true",
-                "required": []
-            }
+            "employmentDate": new Date(2010, 1, 5),
+            "allowVehicle": true,
+            "training": [{
+                    "title": "Safety First",
+                    "trainDate": null
+                },
+                {
+                    "title": "Always Safe",
+                    "trainDate": new Date(2017, 1, 5)
+                },
+                {
+                    "title": "Take Care",
+                    "trainDate": null
+                }
+            ]
         }, {
             "id": 23499,
             "img": "https://unsplash.com/photos/XRA6DT2_ReY",
@@ -78,26 +127,51 @@ let MOCK_EMPLOYEE_DATA = {
             "employer": "Big Guys",
             "department": "Administration",
             "licensePlates": "7ZBC1784",
-            "ready2work": {
-                "status": "false",
-                "required": ["Always Safe"]
-            }
+            "employmentDate": new Date(2017, 1, 5),
+            "allowVehicle": true,
+            "training": [{
+                    "title": "Safety First",
+                    "trainDate": new Date(2018, 1, 20)
+                },
+                {
+                    "title": "Always Safe",
+                    "trainDate": new Date(2017, 11, 5)
+                },
+                {
+                    "title": "Take Care",
+                    "trainDate": new Date(2018, 4, 21)
+                }
+            ]
         }
     ]
 }
 
+function generateHeader(data, table) {
+    table.push('<tr>');
+    Object.keys(data.employeeData[0]).forEach(key => {
+        table.push(`<th>${key}</th>`);
+    });
+    table.push('</tr>');
+    return table;
+}
 
-function displayEmployeeData(data) {
-    if(data.employeeData.upToDate.status === "false") {
-        $('.box').addClass('red').removeClass('blue');
-    }
-    else {
-        $('.box').addClass('green').removeClass('blue');
-    }
-    $('.box img').attr('src', data.employeeData.img)
-                 .attr('alt', `${data.employeeData.firstName} ${data.employeeData.lastName}`);
-    $('.container').html(getXXXX)
+function generateRows(data, table) {
+    data.employeeData.forEach(employee => {
+        table.push('<tr>');
+        Object.keys(employee).forEach(key => {
+            table.push(`<td>${employee.key}</td>`);
+        });
+        table.push('</tr>');
+    })
+    return table;
+}
 
+function displayData(data) {
+    console.log('displaydata');
+    let table = [];
+    table = generateHeader(data, table);
+    table = generateRows(data, table);
+    $('.js-results').html(table).show();
 }
 
 // this function's name and argument can stay the
@@ -106,19 +180,25 @@ function displayEmployeeData(data) {
 // timeout function that returns mock data, it will
 // use jQuery's AJAX functionality to make a call
 // to the server and then run the callbackFn
-function getEmployeeData(callbackFn) {
-      // we use a `setTimeout` to make this asynchronous
-      // as it would be with a real AJAX call.
-    setTimeout(function() {
-        callbackFn(MOCK_EMPLOYEE_DATA)}, 1);
+function handleSearch(getEmployeeData) {
+    let searchBy = $('#search-by').val();
+    console.log('handleSearch');
+    // we use a `setTimeout` to make this asynchronous
+    // as it would be with a real AJAX call.
+    setTimeout(function () {
+        getEmployeeData(searchBy)
+    }, 1);
+    displayData(MOCK_DATA);
+
 }
 
-function getAndDisplayEmployeeData() {
-    
-    getEmployeeInfo(displayEmployeeData);
+function watchButton() {
+    $('.js-form').on('submit', handleSearch);
 }
 
-// Do this when the page loads 
-$(function() {
-    getAndDisplayEmployeeData();
-})
+function main() {
+    watchButton();
+
+}
+
+$(main);

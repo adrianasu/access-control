@@ -2,59 +2,58 @@ let MOCK_DATA = {
     employers: ["Handy Manny", "Metal Works", "Big Guys", "The Other Guys"],
     departments: ["Maintenance", "Administration", "Quarry", "Warehouse"],
     trainingTitles: ["Safety First", "Always Safe", "Take Care"],
-    employeeData : 
-        // {
-        //     "id": 12345,
-        //     "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
-        //     "firstName": "John",
-        //     "lastName": "Smith",
-        //     "employer": "Handy Manny",
-        //     "employmentDate": "08/12/2016",
-        //     "department": "Maintenance",
-        //     "licensePlate": "2ABC1234",
-                // "training": [
-                //     {
-                //         "title": "Safety First",
-                //        "date": new Date()
-                //     },
-                //     {
-                //         "title": "Always Safe",
-                //         "date": new Date()
-                //     },
-                //     {
-                //         "title": "Take Care",
-                //         "date": new Date()
-                //     }
-                // ]
-        //     }
-        // },
-        {
-            "id": 23456,
-            "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
-            "firstName": "Caleb",
-            "lastName": "Kennedy",
-            "employer": "Handy Manny",
-            "employmentDate": "10/12/2015",
-            "department": "Maintenance",
-            "licensePlate": "7ZBC1234",
-            "training": [
-                  {
-                      "title": "Safety First",
-                      "trainDate": null
-                  },
-                  {
-                      "title": "Always Safe",
-                      "trainDate": new Date()
-                  },
-                  {
-                      "title": "Take Care",
-                      "trainDate": new Date()
-                  }
-              ]
+    employeeData:
+    // {
+    //     "id": 12345,
+    //     "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
+    //     "firstName": "John",
+    //     "lastName": "Smith",
+    //     "employer": "Handy Manny",
+    //     "employmentDate": "08/12/2016",
+    //     "department": "Maintenance",
+    //     "allowVehicle": false,
+    //     "licensePlate": "2ABC1234",
+    // "training": [
+    //     {
+    //         "title": "Safety First",
+    //        "date": new Date()
+    //     },
+    //     {
+    //         "title": "Always Safe",
+    //         "date": new Date()
+    //     },
+    //     {
+    //         "title": "Take Care",
+    //         "date": new Date()
+    //     }
+    // ]
+    //     }
+    // },
+    {
+        "id": 23456,
+        "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
+        "firstName": "Caleb",
+        "lastName": "Kennedy",
+        "employer": "Handy Manny",
+        "employmentDate": new Date(2017, 1, 5),
+        "department": "Quarry",
+        "allowVehicle": true,
+        "licensePlate": "7ZBC1234",
+        "training": [{
+                "title": "Safety First",
+                "trainDate": null
+            },
+            {
+                "title": "Always Safe",
+                "trainDate": new Date(2017, 1, 5)
+            },
+            {
+                "title": "Take Care",
+                "trainDate": new Date(2018, 4, 21)
             }
-        }
-    
-
+        ]
+    }
+}
 
 function generateOptions(data) {
     let options = [];
@@ -114,18 +113,18 @@ function getFormData() {
         allowVehicle : $('#vehicle').val(),
         licensePlate : $('#license-plate').val(),
     }
-    let allTrainings = [];
+    let allTraining = [];
     let index = 0;
     MOCK_DATA.trainingTitles.forEach(title => {
         index += 1;
         let trainingTitle = $(`#training${index}`).text();
         if (trainingTitle) {
             let trainingDate = $(`#training-date${index}`).datepicker('getDate');
-            allTrainings.push({ title: trainingTitle, trainDate: trainingDate });
+            allTraining.push({ title: trainingTitle, trainDate: trainingDate });
             console.log(trainingDate.getFullYear()+ " " + trainingDate.getMonth());
         }
     });
-    employeeData.training = allTrainings;
+    employeeData.training = allTraining;
     console.log(employeeData);
     return employeeData;
 }
