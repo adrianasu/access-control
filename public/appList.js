@@ -52,7 +52,7 @@ let MOCK_DATA = {
         },
         {
             "id": 62345,
-            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
             "firstName": "David",
             "lastName": "Salomon",
             "employer": "Metal Works",
@@ -75,7 +75,7 @@ let MOCK_DATA = {
             ]
         }, {
             "id": 73456,
-            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
             "firstName": "Sally",
             "lastName": "Miller",
             "employer": "Metal Works",
@@ -98,7 +98,7 @@ let MOCK_DATA = {
             ]
         }, {
             "id": 92345,
-            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
             "firstName": "Dilan",
             "lastName": "Lee",
             "employer": "Big Guys",
@@ -121,7 +121,7 @@ let MOCK_DATA = {
             ]
         }, {
             "id": 23499,
-            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
             "firstName": "Olaf",
             "lastName": "Elliot",
             "employer": "Big Guys",
@@ -146,31 +146,60 @@ let MOCK_DATA = {
     ]
 }
 
-function generateHeader(data, table) {
+function generateHeader(data) {
+    let table = [];
     table.push('<tr>');
-    Object.keys(data.employeeData[0]).forEach(key => {
-        table.push(`<th>${key}</th>`);
+    Object.keys(data.employeeData[0]).forEach(item => {
+        if (item === 'training') {
+            let columns = 2 * data.employeeData[0][item].length;
+            table.push(`<th colspan = "${columns}">${item}</th>`);
+        }
+        else {
+            table.push(`<th>${item}</th>`);
+        }
     });
     table.push('</tr>');
-    return table;
+    return table.join("");
 }
 
-function generateRows(data, table) {
+function generateTrainingStrings(training) {
+    let table = [];
+    for (let i = 0; i < training.length; i++) {
+        if (training[i].trainDate === null) {
+            training[i].trainDate = "N/A";
+        }
+        table.push(`<td>${training[i].title}</td><td>${training[i].trainDate}</td>`);
+    }
+    return table.join("");
+}
+
+function generateRows(data) {
+    let table = [];
     data.employeeData.forEach(employee => {
         table.push('<tr>');
         Object.keys(employee).forEach(key => {
-            table.push(`<td>${employee.key}</td>`);
+            if (key === 'photo') {
+                table.push(`<td><img src="${employee[key]}" alt=""></td>`)
+            }
+            else if (key === 'training') {
+                table.push(generateTrainingStrings(employee[key]));
+            }
+            else {
+                table.push(`<td>${employee[key]}</td>`);
+        }
         });
         table.push('</tr>');
     })
-    return table;
+    return table.join("");
 }
 
 function displayData(data) {
     console.log('displaydata');
     let table = [];
-    table = generateHeader(data, table);
-    table = generateRows(data, table);
+    table.push(generateHeader(data));
+    table.push(generateRows(data));
+    table.join("");
+    console.log(table);
     $('.js-results').html(table).show();
 }
 
@@ -186,14 +215,14 @@ function handleSearch(getEmployeeData) {
     // we use a `setTimeout` to make this asynchronous
     // as it would be with a real AJAX call.
     setTimeout(function () {
-        getEmployeeData(searchBy)
+        //getEmployeeData(searchBy)
     }, 1);
     displayData(MOCK_DATA);
 
 }
 
 function watchButton() {
-    $('.js-form').on('submit', handleSearch);
+    $('.js-search-button').on('click', handleSearch);
 }
 
 function main() {
