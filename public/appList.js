@@ -194,12 +194,10 @@ function generateRows(data) {
 }
 
 function displayData(data) {
-    console.log('displaydata');
     let table = [];
     table.push(generateHeader(data));
     table.push(generateRows(data));
     table.join("");
-    console.log(table);
     $('.js-results').html(table).show();
 }
 
@@ -211,14 +209,12 @@ function displayData(data) {
 // to the server and then run the callbackFn
 function handleSearch(getEmployeeData) {
     let searchBy = $('#search-by').val();
-    console.log('handleSearch');
     // we use a `setTimeout` to make this asynchronous
     // as it would be with a real AJAX call.
     setTimeout(function () {
         //getEmployeeData(searchBy)
     }, 1);
     displayData(MOCK_DATA);
-
 }
 
 function watchButton() {
@@ -227,7 +223,6 @@ function watchButton() {
 
 function main() {
     watchButton();
-
 }
 
 $(main);
