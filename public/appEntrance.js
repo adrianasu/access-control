@@ -2,7 +2,7 @@ let MOCK_EMPLOYEE_DATA = {
     "employeeData" : 
         // {
         //     "id": 12345,
-        //     "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+        //     "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
         //     "firstName": "John",
         //     "lastName": "Smith",
         //     "employer": "Handy Manny",
@@ -11,19 +11,19 @@ let MOCK_EMPLOYEE_DATA = {
         //      "training": [
         // {
         //     "title": "Safety First",
-        //     "date": null
+        //     "trainDate": null
         // }, {
         //     "title": "Always Safe",
-        //     "date": new Date()
+        //     "trainDate": new Date()
         // }, {
         //     "title": "Take Care",
-        //     "date": new Date()
+        //     "trainDate": new Date()
         // }
         // ]
         // },
         {
             "id": 23456,
-            "img": "https://unsplash.com/photos/XRA6DT2_ReY",
+            "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
             "firstName": "Caleb",
             "lastName": "Kennedy",
             "employer": "Handy Manny",
@@ -31,15 +31,15 @@ let MOCK_EMPLOYEE_DATA = {
             "licensePlates": "7ZBC1234",
             "training": [{
                       "title": "Safety First",
-                      "date": null
+                      "trainDate": null
                   },
                   {
                       "title": "Always Safe",
-                      "date": new Date()
+                      "trainDate": new Date()
                   },
                   {
                       "title": "Take Care",
-                      "date": new Date()
+                      "trainDate": new Date()
                   }
               ]
         }
@@ -67,10 +67,10 @@ function compareExpirationDate(date, missingTraining, title) {
 function checkForMissingTraining(data) {
     let missingTraining = [];
     data.employeeData.training.forEach(item => {
-        if (item.date === null) {
+        if (item.trainDate === null) {
             missingTraining.push(item.title);
         } else {
-            missingTraining = compareExpirationDate(item.date, missingTraining, item.title);
+            missingTraining = compareExpirationDate(item.trainDate, missingTraining, item.title);
         }
     });
     return missingTraining;
@@ -86,7 +86,7 @@ function displayEmployeeData(data) {
     else {
         $('.box').addClass('green').removeClass('red');
     }
-    $('.box img').attr('src', data.employeeData.img)
+    $('.box img').attr('src', data.employeeData.photo)
                 .attr('alt', `${data.employeeData.firstName} ${data.employeeData.lastName}`);
     $('table').html(getEmployeeInfo(data));     
 }

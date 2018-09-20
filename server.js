@@ -1,15 +1,110 @@
+//require('dotenv').config();
 const express = require('express');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const passport = require('passport');
 
 const app = express();
+
+mongoose.Promise = global.Promise;
 
 // use express' static middleware function to serve our 
 // static file inside 'public' folder
 app.use(express.static('public'));
+app.use(morgan('common'));
 
-app.get("/", (req, res) => {
-    return res.status(200).json({message: "Testing API"})
-    .sendFile(__dirname + '/public/index.html');
+const { Employees } = require('./models');
+
+// GET all employees 
+app.get('/list', (req, res) => {
+    return Employees
+        .find()
+        .then(employees => {
+            console.log('Sending response from GET request');
+            res.status(200).json(
+                employees.map(employee => {
+                    return {
+                        employeeId: employee.id,
+                        //photo: employee.photo,
+                        firstName: employee.firstName,
+                        lastName: employee.lastName,
+                        employer: employee.employer,
+                        department: employee.department,
+                        licensePlates: employee.licensePlates,
+                        employmentDate: employee.employmentDate,
+                        allowVehicle: employee.allowVehicle,
+                        trainings: employee.trainings
+                    }
+                })
+            )
+        })
+        .catch(err => {
+            console.error('GET employees error');
+            res.status(500).json({
+                message: "Internal server error"
+            });
+        });
 });
+
+
+// GET request by id returns employee's overview
+app.get("entrance/:id", (req, res) => {
+    return Employees
+            .findById(req.params.id)
+            .then(employee => {
+                console.log(`Sending response from GET request employee's overview by id`);
+                Other
+                    .find()
+                    .then(item =>{
+                        res.json({
+                            employeeData: {
+                                id: employee.id,
+                                photo: employee.photo,
+                                firstName: employee.firstName,
+                                lastName: employee.lastName,
+                                employer: employee.employer,
+                                department: employee.department,
+                                licensePlates: employee.licensePlates,
+                                training: employee.training
+                            }
+                        });
+                    });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({
+                    message: "Internal server error"
+                });
+            });
+});
+
+// GET request by id returns employee's complete data
+app.get("/:id", (req, res) => {
+    return Employees
+        .findById(req.params.id)
+        .then(employee => {
+            console.log(`Sending response from GET request employee's complete data by id`);
+            res.json({
+                id: employee.id,
+                photo: employee.photo,
+                firstName: employee.firstName,
+                lastName: employee.lastName,
+                employer: employee.employer,
+                department: employee.department,
+                employmentDate: employee.employmentDate,
+                allowVehicle: employee.allowVehicle,
+                licensePlates: employee.licensePlates,
+                training: employee.training
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({
+                message: "Internal server error"
+            });
+        });
+});
+
 
 app.post("/login", (req, res) => {
     return res.status(200).json({
@@ -17,11 +112,6 @@ app.post("/login", (req, res) => {
         }).sendFile(__dirname + '/public/login.html');
 })
 
-app.get("/:id", (req, res) => {
-    return res.status(200).json({
-        message: "Getting employee by id"
-    }).sendFile(__dirname + '/public/employee.html');
-})
 
 app.post("/:id", (req, res) => {
     return res.status(200).json({
@@ -46,9 +136,6 @@ app.get("/entrance/:id", (req, res) => {
         message: "Showing employee with id info"
     }).sendFile(__dirname + '/public/entrance.html');
 })
-
-
-
 
 
 
