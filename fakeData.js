@@ -53,7 +53,8 @@ function generateEmployeeData(employers, departments, trainingTypes) {
         //photo: 
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
-        employer: randomEmployer,
+        employer: {employerName: randomEmployer,
+            departments: departments},
         department: randomDepartment,
         employmentDate: faker.date.past(),
         allowVehicle: faker.random.boolean(),

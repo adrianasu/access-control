@@ -14,14 +14,15 @@ const trainingsSchema = mongoose.Schema({
         title: String,
         expirationTime: {
             type: Date,
-            default: null
+            //default: null
         }
 })
 
 const employersSchema = mongoose.Schema({
     departments: [String],
-    name: { type: String,
-            required: true}
+    employerName: { type: String,
+            //required: true
+        }
 })
 
 const employeesSchema = mongoose.Schema({
@@ -39,7 +40,7 @@ const employeesSchema = mongoose.Schema({
         trainingType: 
         {
             type: ObjectId,
-            ref: "Training"
+            ref: "TrainingType"
         },
         date: Date
     }]    
