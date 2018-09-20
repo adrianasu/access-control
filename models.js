@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-//const ObjectId = mongoose.Schema.Types.ObjectId;
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const departmentsSchema = mongoose.Schema({
-    name: {
+    departmentName: {
         type: String,
-        required: true,
-        unique: true
+        // required: true,
+        // unique: true
     } 
 })
 
@@ -29,7 +29,7 @@ const employeesSchema = mongoose.Schema({
     //photo: File,
     firstName: String,
     lastName: String,
-    employer: {type: Map, ref: "Employers"},
+    employer: {type: ObjectId, ref:'Employer'},
     department: String,
     licensePlates: [String],
     employmentDate: Date,
@@ -38,8 +38,8 @@ const employeesSchema = mongoose.Schema({
     [{
         trainingType: 
         {
-            type: Map,
-            ref: "Trainings"
+            type: ObjectId,
+            ref: "Training"
         },
         date: Date
     }]    
@@ -62,17 +62,15 @@ employeesSchema.methods.serialize = function() {
 };
 
 employeesSchema.pre('find', function(next) {
-    this.populate('Employers');
-    this.populate('Departments');
-    this.populate('Trainings');
-    next();
+    this.populate('employer departments trainings')
+    .then(() => next())
+    .catch(next);
 });
 
 employeesSchema.pre('findOne', function (next) {
-    this.populate('Employers');
-    this.populate('Departments');
-    this.populate('Trainings');
-    next();
+    this.populate('employer departments trainings')
+    .then(() => next())
+    .catch(next);
 });
 
 employeesSchema.methods.isValid = function(trainingName) {
