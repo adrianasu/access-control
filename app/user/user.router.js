@@ -1,4 +1,4 @@
-const exprees = require('express');
+const express = require('express');
 const Joi = require('joi');
 
 const { HTTP_STATUS_CODES } = require('../config');
@@ -21,6 +21,7 @@ userRouter.post('/', (req, res) => {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
     }
     // verify if username or email exists already in our DB.
+    // use findOne mongoose function to try to retrieve an existent 'user'
     User 
         .findOne({
             // $or operator performs a logical OR operation on an array of two 
@@ -54,7 +55,7 @@ userRouter.post('/', (req, res) => {
         });
 });
 
-// retrieve all users
+// retrieve all users using mongoose function find
 userRouter.get('/', (req, res) => {
     User
         .find()
@@ -66,7 +67,7 @@ userRouter.get('/', (req, res) => {
         });
 });
 
-// retrieve one user
+// retrieve one 'user' using mongoose function findById
 userRouter.get('/:userid', (req, res) => {
     User
         .findById(req.params.userid)

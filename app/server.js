@@ -32,7 +32,6 @@ app.use('*', function(req,res) {
     res.status(HTTP_STATUS_CODES.NOT_FOUND).json({ error: 'Not Found'});
 });
 
-// to start our server when doing tests 
 function runServer(databaseUrl, port = PORT) {
     return new Promise((resolve, reject) => {
         mongoose.connect(
@@ -53,7 +52,6 @@ function runServer(databaseUrl, port = PORT) {
     });
 }
 
-// to stop our server when doing tests
 function closeServer() {
     return mongoose.disconnect().then(() => {
         return new Promise((resolve, reject) => {

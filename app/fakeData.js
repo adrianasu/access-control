@@ -53,23 +53,23 @@ function generateEmployeeData(employers, departments, trainingList) {
         //photo: 
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
-        //employer: randomEmployer,
-        //department: randomDepartment,
+        employer: randomEmployer,
+        department: randomDepartment,
         employmentDate: faker.date.past(),
         allowVehicle: faker.random.boolean(),
         licensePlates: [faker.random.alphaNumeric(7), faker.random.alphaNumeric(7)],
-        // trainings: [{
-        //     trainingInfo: randomTraining1,
-        //     trainingDate: faker.date.recent(300)
-        //     },
-        // {
-        //     trainingInfo: randomTraining2,
-        //     trainingDate: faker.date.recent(366)
-        // },
-        // {
-        //     trainingInfo: randomTraining3,
-        //     trainingDate: faker.date.recent(300)
-        // }]
+        trainings: [{
+            trainingInfo: randomTraining1,
+            trainingDate: faker.date.recent(300)
+            },
+        {
+            trainingInfo: randomTraining2,
+            trainingDate: faker.date.recent(366)
+        },
+        {
+            trainingInfo: randomTraining3,
+            trainingDate: faker.date.recent(300)
+        }]
     }
 }
 
