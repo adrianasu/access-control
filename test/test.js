@@ -2,17 +2,13 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
 
-const { app, runServer, closeServer } = require('../server');
-const { Employees } = require('../models');
-const { TEST_DATABASE_URL } = require('../config');
+const { app, runServer, closeServer } = require('../app/server');
+const { Employees } = require('../app/employee/employee.model');
+const { TEST_DATABASE_URL } = require('../app/config');
+const { Users } = require('../app/user/user.model');
 
-const {
-    generateDepartments,
-    generateEmployers,
-    generateTrainingList,
-    generateEmployeeData,
-    seedEmployeesData
-} = require('../fakeData');
+const { seedEmployeesData } = require('./fakeData');
+const { generateTestUser, generateToken } = require('./fakeUser');
 
 const expect = chai.expect;
 chai.use(chaiHttp);
@@ -29,18 +25,27 @@ function checkResponse(res, statusCode, resType) {
 }
 
 describe('Employees API Resource', function() {
+    let testUser, jwToken;
+
     before(function() {
         return runServer(TEST_DATABASE_URL);
     });
    
     beforeEach(function() {
-        //this.timeout(10000);
-        return seedEmployeesData();
+         testUser = generateTestUser();
+        return generateToken(testUser)
+           
+            .then(_jwToken => {
+                jwToken = _jwToken;
+                return seedEmployeesData()
+            })
+            .catch(console.error)
+           
     });
 
-    afterEach(function() {
-        return tearDownDb();
-    })
+    // afterEach(function() {
+    //     return tearDownDb();
+    // })
 
     after(function() {
         return closeServer();
@@ -50,7 +55,8 @@ describe('Employees API Resource', function() {
 
         it('Should get all employees ', function() {
             return chai.request(app)
-                .get('/list')
+                .get('/employee')
+                .set("Authorization", `Bearer ${jwToken}`)
                 .then(function(res) {
                     console.log(res);
                     checkResponse(res, 200, 'object');

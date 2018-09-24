@@ -32,6 +32,10 @@ const employersSchema = mongoose.Schema({
 })
 
 const employeesSchema = mongoose.Schema({
+    updatedBy: [{ 
+                type: ObjectId,
+                ref: "user"
+            }],
     employeeId: String,
     //photo: File,
     firstName: String,
@@ -57,6 +61,7 @@ const employeesSchema = mongoose.Schema({
 
 employeesSchema.methods.serialize = function () {
     return {
+        updatedBy: this.user.serialize(),
         id: this._id,
         employeeId: this.employeeId,
         //photo: this.photo,
@@ -72,17 +77,27 @@ employeesSchema.methods.serialize = function () {
 };
 
 // validate data 
-const EmployeesJoiSchema = Joi. object().keys({
+const EmployeesJoiSchema = Joi.object().keys({
+    updatedBy: Joi.string().optional(),
     employeeId: Joi.string().required(),
     //photo: this.photo,
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
-    employer: Joi.string().required(),
-    department: Joi.string(),
-    licensePlates: Joi.string(),
+    employer: Joi.object().keys({ 
+        employerName: Joi.string().required(),
+        departments: Joi.array().items(Joi.string())}),
+    department: Joi.object().keys({departmentName: Joi.string()}),
+    licensePlates: Joi.array().items(Joi.string()),
     employmentDate: Joi.date(),
     allowVehicle: Joi.boolean(),
-    trainings: Joi.array().items(Joi.string(), Joi.date()), // array may contain strings and dates
+    trainings: Joi.array().items(
+                Joi.object().keys({
+                    trainingInfo: Joi.object().keys({
+                        title: Joi.string(), 
+                        expirationTime: Joi.date()}), 
+                    trainingDate: Joi.date()
+                    })
+                ), 
 })
 
 

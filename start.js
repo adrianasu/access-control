@@ -1,3 +1,4 @@
 const { runServer } = require('./app/server');
+const { DATABASE_URL } = require('./app/config');
 
-runServer();
+runServer(DATABASE_URL);
