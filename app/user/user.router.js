@@ -22,7 +22,7 @@ userRouter.post('/', (req, res) => {
     }
     // verify if username or email exists already in our DB.
     // use findOne mongoose function to try to retrieve an existent 'user'
-    User 
+    User
         .findOne({
             // $or operator performs a logical OR operation on an array of two 
             // or more <expressions> and selects the documents that satisfy at 

@@ -23,7 +23,7 @@ const trainingsSchema = mongoose.Schema({
 const employersSchema = mongoose.Schema({
     departments: [{
         type: ObjectId,
-        ref: "department"
+        ref: "Department"
     }],
     employerName: {
         type: String,
@@ -34,16 +34,16 @@ const employersSchema = mongoose.Schema({
 const employeesSchema = mongoose.Schema({
     updatedBy: [{ 
                 type: ObjectId,
-                ref: "user"
+                ref: "User"
             }],
     employeeId: String,
     //photo: File,
     firstName: String,
     lastName: String,
-    employer: {type: ObjectId, ref:"employer"},
+    employer: {type: ObjectId, ref:"Employer"},
     department: {
         type: ObjectId,
-        ref: "department"
+        ref: "Department"
     },
     licensePlates: [String],
     employmentDate: Date,
@@ -53,15 +53,15 @@ const employeesSchema = mongoose.Schema({
         trainingInfo: 
         {
             type: ObjectId,
-            ref: "training"
+            ref: "Training"
         },
         trainingDate: Date
     }]    
 });
 
-employeesSchema.methods.serialize = function () {
+employeesSchema.methods.serialize = function() {
     return {
-        updatedBy: this.user.serialize(),
+        //updatedBy: this.user.serialize(),
         id: this._id,
         employeeId: this.employeeId,
         //photo: this.photo,
@@ -76,17 +76,35 @@ employeesSchema.methods.serialize = function () {
     };
 };
 
+employeesSchema.methods.serializeOne = function() {
+    return {
+        employeeId: this.employeeId,
+        //photo: this.photo,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        employer: this.employer,
+        department: this.department,
+        licensePlates: this.licensePlates,
+        allowVehicle: this.allowVehicle,
+        trainings: this.trainings
+    };
+}
+
 // validate data 
-const EmployeesJoiSchema = Joi.object().keys({
+const EmployeeJoiSchema = Joi.object().keys({
     updatedBy: Joi.string().optional(),
     employeeId: Joi.string().required(),
     //photo: this.photo,
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     employer: Joi.object().keys({ 
-        employerName: Joi.string().required(),
-        departments: Joi.array().items(Joi.string())}),
-    department: Joi.object().keys({departmentName: Joi.string()}),
+        employerName: Joi.string(),
+        departments: Joi.array().items(Joi.object().keys({
+                    departmentName: Joi.string()
+        }))
+        }),
+    department: Joi.object().keys({
+        departmentName: Joi.string()}),
     licensePlates: Joi.array().items(Joi.string()),
     employmentDate: Joi.date(),
     allowVehicle: Joi.boolean(),
@@ -100,17 +118,55 @@ const EmployeesJoiSchema = Joi.object().keys({
                 ), 
 })
 
+const UpdateEmployeeJoiSchema = Joi.object().keys({
+    updatedBy: Joi.string().optional(),
+    employeeId: Joi.string(),
+    //photo: this.photo,
+    firstName: Joi.string(),
+    lastName: Joi.string(),
+    employer: Joi.object().keys({
+        employerName: Joi.string(),
+        departments: Joi.array().items(Joi.object().keys({
+            departmentName: Joi.string()
+        }))
+    }),
+    department: Joi.object().keys({
+        departmentName: Joi.string()
+    }),
+    licensePlates: Joi.array().items(Joi.string()),
+    employmentDate: Joi.date(),
+    allowVehicle: Joi.boolean(),
+    trainings: Joi.array().items(
+        Joi.object().keys({
+            trainingInfo: Joi.object().keys({
+                title: Joi.string(),
+                expirationTime: Joi.date()
+            }),
+            trainingDate: Joi.date()
+        })
+    ),
+})
 
-// employeesSchema.pre('find', function (next) {
-//     //console.log("Populate employees");
-//     this.populate('department employer trainings');
-//     next();
-// });
+employersSchema.pre('find', function (next) {
+    this.populate('departments');
+    next();
+});
 
-// employeesSchema.pre('findOne', function (next) {
-//     this.populate('department employer trainings');
-//     next();
-// });
+employersSchema.pre('findOne', function (next) {
+    this.populate('departments');
+    next();
+});
+
+employeesSchema.pre('find', function (next) {
+    console.log("Populate employees");
+    this.populate('department employer trainings.trainingInfo user')
+    next();
+});
+
+employeesSchema.pre('findOne', function (next) {
+    this.populate('department employer trainings.trainingInfo user')
+    next();
+});
 
 employeesSchema.methods.isValid = function(trainingName) {
     let valid = false;
@@ -128,15 +184,16 @@ employeesSchema.methods.isValid = function(trainingName) {
     return valid;
 }
 
-const Employees = mongoose.model("employee", employeesSchema);
-const Departments = mongoose.model("department", departmentsSchema);
-const Employers = mongoose.model("employer", employersSchema);
-const Trainings = mongoose.model("training", trainingsSchema);
+const Employee = mongoose.model("Employee", employeesSchema);
+const Department = mongoose.model("Department", departmentsSchema);
+const Employer = mongoose.model("Employer", employersSchema);
+const Training = mongoose.model("Training", trainingsSchema);
 
 module.exports = {
-    Employees,
-    Trainings,
-    Departments,
-    Employers,
-    EmployeesJoiSchema
+    Employee,
+    Training,
+    Department,
+    Employer,
+    EmployeeJoiSchema,
+    UpdateEmployeeJoiSchema
 };

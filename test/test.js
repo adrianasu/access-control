@@ -3,9 +3,9 @@ const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
 
 const { app, runServer, closeServer } = require('../app/server');
-const { Employees } = require('../app/employee/employee.model');
-const { TEST_DATABASE_URL } = require('../app/config');
-const { Users } = require('../app/user/user.model');
+const { Employee } = require('../app/employee/employee.model');
+const { TEST_DATABASE_URL, HTTP_STATUS_CODES } = require('../app/config');
+const { User } = require('../app/user/user.model');
 
 const { seedEmployeesData } = require('./fakeData');
 const { generateTestUser, generateToken } = require('./fakeUser');
@@ -24,6 +24,14 @@ function checkResponse(res, statusCode, resType) {
     expect(res.body).to.be.a(resType);
 }
 
+function checkContent(res) {
+    const employee = res.body[0];
+    expect(res.body).to.have.lengthOf.at.least(1);
+    expect(employee).to.include.keys('employeeId','firstName', 'lastName', 'employer', 'department');
+    expect(employee.employer).to.be.a('object');
+    
+}
+
 describe('Employees API Resource', function() {
     let testUser, jwToken;
 
@@ -32,9 +40,8 @@ describe('Employees API Resource', function() {
     });
    
     beforeEach(function() {
-         testUser = generateTestUser();
+        testUser = generateTestUser();
         return generateToken(testUser)
-           
             .then(_jwToken => {
                 jwToken = _jwToken;
                 return seedEmployeesData()
@@ -58,15 +65,10 @@ describe('Employees API Resource', function() {
                 .get('/employee')
                 .set("Authorization", `Bearer ${jwToken}`)
                 .then(function(res) {
-                    console.log(res);
-                    checkResponse(res, 200, 'object');
+                    checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
                     expect(res.body.length).to.be.at.least(1);
-                    //checkContent(res);
+                    checkContent(res);
                 })
-                .catch(err => {
-                    console.log('Internal Error');
-                    res.status(500).send(err);
-                });
         });
     });
 //////////////////////////////////

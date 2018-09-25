@@ -5,9 +5,7 @@ mongoose.Promise = global.Promise;
 
 const { JWT_SECRET, JWT_EXPIRY } = require('../app/config');
 
-const {
-    Users
-} = require('../app/user/user.model');
+const { User } = require('../app/user/user.model');
 
 function generateTestUser() {
     return {
@@ -19,7 +17,7 @@ function generateTestUser() {
 }
 
 function seedTestUser(testUser, hashedPassword) {
-    return Users
+    return User
         .create({
             name: testUser.name,
             email: testUser.email,
@@ -29,10 +27,10 @@ function seedTestUser(testUser, hashedPassword) {
 }
 
 function generateJwToken(user) {
-    jwToken = jsonwebtoken.sign(
+    return jsonwebtoken.sign(
         {
             user: {
-                id: user._id,
+                id: user.id,
                 name: user.name,
                 email: user.email,
                 username: user.username
@@ -48,16 +46,16 @@ function generateJwToken(user) {
 }
 
 function generateToken(testUser) {
-    return Users.hashPassword(testUser.password)
+    return User.hashPassword(testUser.password)
         .then(hashedPassword => {
             return seedTestUser(testUser, hashedPassword)
-        })
-        .catch(err => {
-            console.error(err);
         })
         .then(createdUser => {
             testUser.id = createdUser.id;
             return generateJwToken(testUser)
+        })
+        .catch(err => {
+            console.error(err);
         })
 }
 

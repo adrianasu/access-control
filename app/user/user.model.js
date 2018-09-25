@@ -50,6 +50,6 @@ const UserJoiSchema = Joi.object().keys({
     email: Joi.string().email().trim().required()
 });
 
-const Users = mongoose.model('user', userSchema);
+const User = mongoose.model('user', userSchema);
 
-module.exports = { Users, UserJoiSchema };
+module.exports = { User, UserJoiSchema };

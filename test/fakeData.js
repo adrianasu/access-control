@@ -2,9 +2,8 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-const { Users } = require('../app/user/user.model');
-const { Employees, Departments, Trainings, Employers } = require('../app/employee/employee.model');
-const { generateUserAndToken } = require('./fakeUser');
+const { User } = require('../app/user/user.model');
+const { Employee, Department, Training, Employer } = require('../app/employee/employee.model');
 
 function generateEmployerNames() {
     let employers = [];
@@ -14,11 +13,11 @@ function generateEmployerNames() {
     return employers;
 }
 
-function generateEmployers(Departments, employerName) {
+function generateEmployers(departmentIds, employerName) {
     let employer = [];
     for (let i= 0; i < 3; i++) {
         employer.push({
-            departments: [Departments.findOne()._id],
+            departments: [randomFromArray(departmentIds)],
             employerName: employerName[i]
         })
     }
@@ -47,86 +46,77 @@ function randomFromArray(arr){
         return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function generateEmployeeData(employers, Departments, Trainings, Users) {
-    const randomEmployer = randomFromArray(employers);
-    const randomDepartment = randomFromArray(Departments);
-    const randomTraining1 = randomFromArray(Trainings);
-    const randomTraining2 = randomFromArray(Trainings);
-    const randomTraining3 = randomFromArray(Trainings);
-
+function generateEmployeeData(employerIds, departmentIds, trainingIds, User) {
     return {
-        updatedBy: [Users.findOne()._id],
+        updatedBy: [User.findOne()._id],
         employeeId: faker.lorem.words(1),
         //photo: 
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
-        employer: randomEmployer,
-        department: randomDepartment,
+        employer: randomFromArray(employerIds),
+        department: randomFromArray(departmentIds),
         employmentDate: faker.date.past(),
         allowVehicle: faker.random.boolean(),
         licensePlates: [faker.random.alphaNumeric(7), faker.random.alphaNumeric(7)],
         trainings: [{
-            trainingInfo: randomTraining1,
+            trainingInfo: randomFromArray(trainingIds),
             trainingDate: faker.date.recent(300)
             },
         {
-            trainingInfo: randomTraining2,
+            trainingInfo: randomFromArray(Training),
             trainingDate: faker.date.recent(366)
         },
         {
-            trainingInfo: randomTraining3,
+            trainingInfo: randomFromArray(Training),
             trainingDate: faker.date.recent(300)
         }]
     }
 }
 
-function generateEmployees(employer, Departments, Trainings) {
+function generateEmployees(employerIds, departmentIds, trainingIds) {
     let seedEmployees = [];
     for (let x = 1; x <= 10; x++) {
-        const newEmployeeData = generateEmployeeData(employer, Departments, Trainings, Users);
+        const newEmployeeData = generateEmployeeData(employerIds, departmentIds, trainingIds, User);
         seedEmployees.push(newEmployeeData);
     }
     return seedEmployees;
 }
 
 function seedEmployeesData() {
-    const seedEmployees = [];
     let departments = generateDepartments();
     let employerName = generateEmployerNames();
     let trainings = generateTrainingList();
+    let employerIds, departmentIds;
  
-    return Departments.insertMany(departments)
-    .then(departmentIds => {
+    return Department.insertMany(departments)
+    .then(_departmentIds => {
+        departmentIds = _departmentIds;
         console.log('Generated new departments');
-        return Trainings.insertMany(trainings)
+        return generateEmployers(departmentIds, employerName)       
+    })
+    .then(employers => {
+        return Employer.insertMany(employers)
+    })
+    .then(_employerIds => { 
+        employerIds = _employerIds;
+        console.log('Generated new employers');
+        return Training.insertMany(trainings)
     })
     .then(trainingIds => {
         console.log('Generated new trainings');
-        return generateEmployers(Departments, employerName)       
-    })
-    .then(employers => { 
-        return Employers.insertMany(employers)
-    })
-    .then(employer => {
-        console.log('Generated new employers');
-        return generateEmployees(employer, Departments, Trainings)
+        return generateEmployees(employerIds, departmentIds, trainingIds)
     })
     .then(employees => {
-        console.log("Generated new employee data:");
-        return Employees.insertMany(employees)
-    })
-        
-    .then(employee => {
+        console.log("Generated new employee data");
+        return Employee.insertMany(employees)
+    })   
+    .then(employeeIds => {
         console.log("Sent all data to DB");
-        return employee;
+        return employeeIds;
     })
     .catch(console.error("Internal server error"));
 } 
 
 module.exports = { 
-    generateDepartments, 
-    generateEmployerNames, 
-    generateTrainingList, 
-    generateEmployeeData,
     seedEmployeesData
  }

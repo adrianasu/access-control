@@ -4,15 +4,14 @@ const employeeRouter = express.Router();
 
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
-const { Employees, EmployeesJoiSchema } = require('./employee.model');
+const { Employee, EmployeeJoiSchema, UpdateEmployeeJoiSchema } = require('./employee.model');
 
 // get all employees
 employeeRouter.get('/', jwtPassportMiddleware, (req, res) => {
-    Employees
+    Employee
         .find()
-        .populate('department employer training')
         .then(employees => {
-            console.log(`Getting all employees`);
+            console.log(`Getting all employees (employeeRouter)`);
             return res.status(HTTP_STATUS_CODES.OK).json(
                 employees.map(employee => employee.serialize()));
         })
@@ -23,9 +22,8 @@ employeeRouter.get('/', jwtPassportMiddleware, (req, res) => {
 
 // get one employee by id
 employeeRouter.get('/:employeeId', jwtPassportMiddleware, (req, res) => {
-    Employees
+    Employee
         .findById(req.params.employeeId)
-        .populate('department employer training')
         .then(employee => {
             console.log(`Getting new employee with id: ${req.params.employeeId}`);
             return res.status(HTTP_STATUS_CODES.OK).json(employee.serialize());
@@ -52,13 +50,13 @@ employeeRouter.post('/', jwtPassportMiddleware, (req, res) => {
     }
 
     // validate newEmployee data using Joi schema
-    const validation = Joi.validate(newEmployee, EmployeesJoiSchema);
+    const validation = Joi.validate(newEmployee, EmployeeJoiSchema);
     if (validation.error) {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
     }
 
     // attempt to create a new employee
-    Employees
+    Employee
         .create(newEmployee)
         .then(createdEmployee => {
             console.log(`Creating new employee`);
@@ -102,12 +100,12 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, (req, res) => {
         });
     }
 
-    const validation = Joi.validate(toUpdate, EmployeesJoiSchema);
+    const validation = Joi.validate(toUpdate, UpdateEmployeeJoiSchema);
     if (validation.error) {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error});
     }
 
-    Employees
+    Employee
     // $set operator replaces the value of a field with the specified value
         .findByIdAndUpdate(req.params.employeeId, { $set: toUpdate }, { new: true })
         .then(updatedEmployee => {
@@ -121,7 +119,7 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, (req, res) => {
 
 // delete employee by id
 employeeRouter.delete('/:employeeId', jwtPassportMiddleware, (req, res) => {
-    Employees
+    Employee
         .findByIdAndDelete(req.params.employeeId)
         .then(deletedEmployee => {
             console.log(`Deleting employee with id: \`${req.params.id}\``);
