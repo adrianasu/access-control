@@ -32,6 +32,11 @@ app.use('*', function(req,res) {
     res.status(HTTP_STATUS_CODES.NOT_FOUND).json({ error: 'Not Found'});
 });
 
+// to handle unexpected errors
+app.all('*', (err, req, res, next) => {
+    res.status(err.code || 400).json(err);
+});
+
 function runServer(databaseUrl, port = PORT) {
     return new Promise((resolve, reject) => {
         mongoose.connect(

@@ -7,12 +7,15 @@ const { JWT_SECRET, JWT_EXPIRY } = require('../app/config');
 
 const { User } = require('../app/user/user.model');
 
+const accessLevel = 10;
+
 function generateTestUser() {
     return {
         name: `${faker.name.firstName()} ${faker.name.lastName()}`,
         username: faker.internet.userName(),
         password: faker.internet.password(),
-        email: faker.internet.email()
+        email: faker.internet.email(),
+        accessLevel: accessLevel
     };
 }
 

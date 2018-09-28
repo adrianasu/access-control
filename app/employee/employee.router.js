@@ -4,29 +4,89 @@ const employeeRouter = express.Router();
 
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
-const { Employee, EmployeeJoiSchema, UpdateEmployeeJoiSchema } = require('./employee.model');
+const { Employee, EmployeeJoiSchema, UpdateEmployeeJoiSchema, Training } = require('./employee.model');
+const User = require('../user/user.model');
 
-// get all employees
+function validateEmployeeTrainings(employee, trainings) { 
+    let validatedTrainings = [];
+    if (trainings) {
+        trainings.forEach(training => {
+            validatedTrainings.push({
+                [training.title]: employee.isValid(training.title)
+            });
+        })
+    return validatedTrainings;
+    } 
+}
+
+// get all employees 
+//employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
 employeeRouter.get('/', jwtPassportMiddleware, (req, res) => {
-    Employee
+    // get trainings to validate employee's trainings status
+     Training
+         .find()
+         .then(trainings => {
+            Employee
+                .find()
+                .then(employees => {
+                    console.log(`Getting all employees`);
+                    let jsonEmployees = [];
+                    employees.forEach(employee => {
+                        jsonEmployees.push(employee.serialize(validateEmployeeTrainings(employee, trainings)));
+                    })
+                    return jsonEmployees;
+                })
+                .then(jsonEmployees => {
+                    return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployees)
+                })
+            })
+            .catch(err => {
+                return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+            });
+});
+
+
+// get one employee by id
+//employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
+employeeRouter.get('/:employeeId', jwtPassportMiddleware,  (req, res) => {
+    Training
         .find()
-        .then(employees => {
-            console.log(`Getting all employees (employeeRouter)`);
-            return res.status(HTTP_STATUS_CODES.OK).json(
-                employees.map(employee => employee.serialize()));
+        .then(trainings => {
+            Employee
+                .findById(req.params.employeeId)
+                .then(employee => {
+                    console.log(`Getting new employee with id: ${req.params.employeeId}`);
+                    return employee.serialize(validateEmployeeTrainings(employee, trainings));
+                })
+                .then(jsonEmployee => {
+                    return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
+                })
+                
         })
         .catch(err => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
 });
 
-// get one employee by id
-employeeRouter.get('/:employeeId', jwtPassportMiddleware, (req, res) => {
-    Employee
-        .findById(req.params.employeeId)
-        .then(employee => {
-            console.log(`Getting new employee with id: ${req.params.employeeId}`);
-            return res.status(HTTP_STATUS_CODES.OK).json(employee.serialize());
+// get overview employee by id
+employeeRouter.get('/overview/:employeeId', 
+    jwtPassportMiddleware, 
+    User.hasAccess(User.ACCESS_OVERVIEW_ONLY), 
+    (req, res) => {
+    Training
+        .find()
+        .then(trainings => {
+            Employee
+                .findById(req.params.employeeId)
+                .then(employee => {
+                    console.log(req);
+                    console.log(`Getting new employee with id: ${req.params.employeeId}`);
+                    return employee.serializeOverview(validateEmployeeTrainings(employee, trainings));
+                })
+                .then(jsonEmployee => {
+                    return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
+                })
+
         })
         .catch(err => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
@@ -34,9 +94,10 @@ employeeRouter.get('/:employeeId', jwtPassportMiddleware, (req, res) => {
 });
 
 // create new employee
-employeeRouter.post('/', jwtPassportMiddleware, (req, res) => {
+employeeRouter.post('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), (req, res) => {
     // we can access req.body payload bc we defined express.json() middleware in server.js
     const newEmployee = {
+        //updatedBy: req.user.id,
         employeeId: req.body.employeeId,
         //photo: req.body.photo,
         firstName: req.body.firstName,
@@ -68,7 +129,7 @@ employeeRouter.post('/', jwtPassportMiddleware, (req, res) => {
 });
 
 // update employee by id
-employeeRouter.put('/:employeeId', jwtPassportMiddleware, (req, res) => {
+employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), (req, res) => {
     // check that id in request body matches id in request path
     if (req.params.employeeId !== req.body.id) {
         const message = `Request path id ${req.params.employeeId} and request body id ${req.body.id} must match`;
@@ -118,16 +179,23 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, (req, res) => {
 });
 
 // delete employee by id
-employeeRouter.delete('/:employeeId', jwtPassportMiddleware, (req, res) => {
+employeeRouter.delete('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), (req, res) => {
     Employee
         .findByIdAndDelete(req.params.employeeId)
         .then(deletedEmployee => {
-            console.log(`Deleting employee with id: \`${req.params.id}\``);
-            res.status(HTTP_STATUS_CODES.OK).json({ deleted: `${req.params.employeeId}`, OK: "true"});
+            console.log(`Deleting employee with id: \`${req.params.employeeId}\``);
+            res.status(HTTP_STATUS_CODES.OK).json({
+                deleted: `${req.params.employeeId}`,
+                OK: "true"
+            });
         })
         .catch(err => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).res(err);
         });
+
 });
 
+
 module.exports = { employeeRouter };
+
+

@@ -22,7 +22,7 @@ const localStrategy = new LocalStrategy((username, password, passportVerify) => 
                     message: 'Incorrect username or password'
                 });
             }
-            // username found! Compare password against the stored password hash
+            // username found! Compare password against the stored hashed password 
             // by using the validatePassword method created at the user.model module
             return user.validatePassword(password);
         })
@@ -33,7 +33,7 @@ const localStrategy = new LocalStrategy((username, password, passportVerify) => 
                     message: 'Incorrect username or password'
                 });
             }
-            // succesfull authentication! Supply Passport with the user that authenticated
+            // succesfull authentication! Supply Passport with the authenticated user
             return passportVerify(null, user);
         })
         .catch(error => {

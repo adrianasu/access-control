@@ -110,11 +110,11 @@ function seedEmployeesData() {
         console.log("Generated new employee data");
         return Employee.insertMany(employees)
     })   
-    .then(employeeIds => {
-        console.log("Sent all data to DB");
-        return employeeIds;
-    })
-    .catch(console.error("Internal server error"));
+    // .then(employeeIds => {
+    //     console.log("Sent all data to DB");
+    //     return employeeIds;
+    // })
+    //.catch(console.error("Internal server error fakeData"));
 } 
 
 module.exports = { 

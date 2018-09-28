@@ -59,7 +59,7 @@ const employeesSchema = mongoose.Schema({
     }]    
 });
 
-employeesSchema.methods.serialize = function() {
+employeesSchema.methods.serialize = function(ready2work) {
     return {
         //updatedBy: this.user.serialize(),
         id: this._id,
@@ -72,11 +72,12 @@ employeesSchema.methods.serialize = function() {
         licensePlates: this.licensePlates,
         employmentDate: this.employmentDate,
         allowVehicle: this.allowVehicle,
-        trainings: this.trainings
+        trainings: this.trainings,
+        ready2work: ready2work
     };
 };
 
-employeesSchema.methods.serializeOne = function() {
+employeesSchema.methods.serializeOverview = function(ready2work) {
     return {
         employeeId: this.employeeId,
         //photo: this.photo,
@@ -86,9 +87,11 @@ employeesSchema.methods.serializeOne = function() {
         department: this.department,
         licensePlates: this.licensePlates,
         allowVehicle: this.allowVehicle,
-        trainings: this.trainings
+        trainings: this.trainings,
+        ready2work: ready2work
     };
 }
+
 
 // validate data 
 const EmployeeJoiSchema = Joi.object().keys({
@@ -158,7 +161,6 @@ employersSchema.pre('findOne', function (next) {
 });
 
 employeesSchema.pre('find', function (next) {
-    console.log("Populate employees");
     this.populate('department employer trainings.trainingInfo user')
     next();
 });
@@ -168,19 +170,20 @@ employeesSchema.pre('findOne', function (next) {
     next();
 });
 
+// instance method to determine if a training is valid or expired
 employeesSchema.methods.isValid = function(trainingName) {
-    let valid = false;
+let valid = false;
     this.trainings.forEach(training => {
-        if (trainings.trainingInfo
- && trainingName === trainings.trainingInfo.title) {
-            let expireDate = new Date(training.trainingInfo
-    .expirationTime.getTime() + training.date.getTime());
-            if (expireDate > Date.now()) {
-                // training still valid
-                valid = true;
-            }
-        }
-    });
+        if (training.trainingInfo
+            && trainingName === training.trainingInfo.title) {
+                let expireDate = new Date(training.trainingInfo
+                    .expirationTime.getTime() + training.trainingDate.getTime());
+                    if (expireDate > Date.now()) {
+                        // training still valid
+                        valid = true;
+                    }
+                }
+            });
     return valid;
 }
 
