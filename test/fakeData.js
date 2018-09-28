@@ -46,9 +46,15 @@ function randomFromArray(arr){
         return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function findUser(User) {
+    return new Promise(function(resolve, reject) {
+        resolve(User.findOne().id)
+    })
+}
+
 function generateEmployeeData(employerIds, departmentIds, trainingIds, User) {
     return {
-        updatedBy: [User.findOne()._id],
+        //updatedBy: [findUser(User)],
         employeeId: faker.lorem.words(1),
         //photo: 
         firstName: faker.name.firstName(),
@@ -88,33 +94,25 @@ function seedEmployeesData() {
     let trainings = generateTrainingList();
     let employerIds, departmentIds;
  
+    console.log('Generating new departments');
     return Department.insertMany(departments)
-    .then(_departmentIds => {
-        departmentIds = _departmentIds;
-        console.log('Generated new departments');
-        return generateEmployers(departmentIds, employerName)       
-    })
-    .then(employers => {
-        return Employer.insertMany(employers)
-    })
-    .then(_employerIds => { 
-        employerIds = _employerIds;
-        console.log('Generated new employers');
-        return Training.insertMany(trainings)
-    })
-    .then(trainingIds => {
-        console.log('Generated new trainings');
-        return generateEmployees(employerIds, departmentIds, trainingIds)
-    })
-    .then(employees => {
-        console.log("Generated new employee data");
-        return Employee.insertMany(employees)
-    })   
-    // .then(employeeIds => {
-    //     console.log("Sent all data to DB");
-    //     return employeeIds;
-    // })
-    //.catch(console.error("Internal server error fakeData"));
+        .then(_departmentIds => {
+            departmentIds = _departmentIds;
+            console.log('Generating new employers');
+            return Employer.insertMany(generateEmployers(departmentIds, employerName));
+        })
+        .then(_employerIds => { 
+            employerIds = _employerIds;
+            console.log('Generating new trainings');
+            return Training.insertMany(trainings);
+        })
+        .then(trainingIds => {
+            console.log("Generating new employee data");
+            return Employee
+                .insertMany(
+                generateEmployees(employerIds, departmentIds, trainingIds));
+            })   
+        .catch(err => console.log("error", err));
 } 
 
 module.exports = { 

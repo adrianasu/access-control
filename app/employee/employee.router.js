@@ -48,13 +48,14 @@ employeeRouter.get('/', jwtPassportMiddleware, (req, res) => {
 
 // get one employee by id
 //employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
-employeeRouter.get('/:employeeId', jwtPassportMiddleware,  (req, res) => {
+employeeRouter.get('/:employeeId', jwtPassportMiddleware, (req, res) => {
     Training
         .find()
         .then(trainings => {
-            Employee
+             Employee
                 .findById(req.params.employeeId)
                 .then(employee => {
+                    //console.log(employee);
                     console.log(`Getting new employee with id: ${req.params.employeeId}`);
                     return employee.serialize(validateEmployeeTrainings(employee, trainings));
                 })

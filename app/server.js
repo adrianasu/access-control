@@ -20,19 +20,19 @@ mongoose.Promise = global.Promise;
 // middleware
 app.use(morgan('common')); // allows morgan to intercept and log all HTTP requests
 app.use(express.json()); // required to parse and save JSON data payload into request body
-app.use(express.static('./public')); // to serve static files inside 'public' folder
+app.use(express.static('./public')); // serve static files inside 'public' folder
 
 // routers setup to redirect calls to the right router
 app.use('/employee', employeeRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter); 
 
-// to handle unexpected HTTP requests
-app.use('*', function(req,res) {
+// handle unexpected HTTP requests
+app.use('*', (req,res) => {
     res.status(HTTP_STATUS_CODES.NOT_FOUND).json({ error: 'Not Found'});
 });
 
-// to handle unexpected errors
+// handle unexpected errors
 app.all('*', (err, req, res, next) => {
     res.status(err.code || 400).json(err);
 });

@@ -1,9 +1,10 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
 const { app, runServer, closeServer } = require('../app/server');
-//const { Employee } = require('../app/employee/employee.model');
+const { Employee } = require('../app/employee/employee.model');
 const { TEST_DATABASE_URL, HTTP_STATUS_CODES } = require('../app/config');
 const  User  = require('../app/user/user.model');
 
@@ -11,6 +12,8 @@ const { seedEmployeesData } = require('./fakeData');
 const { generateTestUser, generateToken } = require('./fakeUser');
 
 const expect = chai.expect;
+
+// allow us to use chai.request() method
 chai.use(chaiHttp);
 
 function tearDownDb() {
@@ -24,11 +27,13 @@ function checkResponse(res, statusCode, resType) {
     expect(res.body).to.be.a(resType);
 }
 
-function checkObjectContent(res, keyList) {
+function checkObjectContent(res, keyList, employee) {
     keyList.forEach(function(key) {
         expect(res).to.include.keys(key);
+        // expect(res.body).to.deep.include({
+        //     [key]: employee[key],
+        // })
     });
-
 }
 
 function checkArrayContent(res, keyList) {
@@ -40,74 +45,80 @@ function checkArrayContent(res, keyList) {
     })
 }
 
-describe('Employees API Resource', function() {
-    let testUser, jwToken;
-    const employeeProperties = ["id", "employeeId", "firstName", "lastName", "employer", "department",
-            "licensePlates", "employmentDate", "allowVehicle", "trainings", "ready2work"];
-    const employeeOverviewProperties = ["employeeId", "firstName", "lastName", "employer", "department",
-        "licensePlates", "allowVehicle", "trainings", "ready2work"];
+let testUser, jwToken;
+const employeeProperties = ["id", "employeeId", "firstName", "lastName", "employer", "department",
+"licensePlates", "employmentDate", "allowVehicle", "trainings", "ready2work"];
+const employeeOverviewProperties = ["employeeId", "firstName", "lastName", "employer", "department",
+"licensePlates", "allowVehicle", "trainings", "ready2work"];
 
+
+describe('Employees API Resource', function() {
+    
     before(function() {
         return runServer(TEST_DATABASE_URL);
     });
-   
+    
     beforeEach(function() {
         testUser = generateTestUser();
         return generateToken(testUser)
-            .then(_jwToken => {
-                jwToken = _jwToken;
-                return seedEmployeesData()
-            })
-            .catch(console.error)  
+        .then(function(_jwToken) {
+            jwToken = _jwToken;
+            return seedEmployeesData();
+        })
     });
-
+    
     afterEach(function() {
         return tearDownDb();
     });
-
+    
     after(function() {
         return closeServer();
     });
-
-    // it('Should get all employees', function() {
-    //     return chai.request(app)
-    //         .get('/employee')
-    //         .set('Authorization', `Bearer ${jwToken}`)
-    //         .then(function(res) {
-    //            /// //if (req.user.accessLevel >= User.ACCESS_ADMIN) {
-    //                 checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
-    //                 expect(res.body.length).to.be.at.least(1);
-    //                 checkArrayContent(res, employeeProperties);
-    //         ///    // }
-    //         ///    // else {
-    //         ///    //    expect error
-    //         ///    // }
-    //         })
-    //         .catch(err => {
-    //             console.log('Internal Error', err);
-    //             res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(err);
-    //         });
-    // });
-
-    it('Should get an employee by id', function () {
+    
+    it('Should get all employees', function() {
+     
         return chai.request(app)
-            .get('/employee')
-            .set('Authorization', `Bearer ${jwToken}`)
+        .get('/employee')
+        .set('Authorization', `Bearer ${jwToken}`)
+        .then(function(res) {
+            expect(res.body.length).to.be.at.least(1);
+            checkArrayContent(res, employeeProperties);
+            checkResponse(res, HTTP_STATUS_CODES.OK, 'array'); 
+           
+                })
+        .catch(err => {
+        console.log('Internal Error', err);
+        res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(err);
+        });
+    });
+
+    it('Should get an employee by id', function() {
+        let foundEmployee;
+        return Employee
+            .find()
             .then(function(employees) {
+                expect(employees).to.be.a('array');
+                expect(employees).to.have.lengthOf.at.least(1);
+                foundEmployee = employees[0];
+               
                 return chai.request(app)
-                    .get(`/employee/:${employees[0].id}`)
+                    .get(`/employee/${foundEmployee.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
             })
-            .then(function (res) {
+            .then(function(res) {
                 expect(res.body.length).to.be.at.least(1);
                 checkResponse(res, HTTP_STATUS_CODES.OK, 'object')
-                checkObjectContent(res, employeeProperties);
+                checkObjectContent(res, employeeProperties, employee);
+                
             })
-            .catch(err => {
+        
+            
+            .catch(function(err) {
                 console.log('Internal Error There');
                 res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(err);
-            });
-    });
+            })
+           
+    })
 
     // it(`Should get employee's overview`, function () {
     //     return chai.request(app)
@@ -122,7 +133,7 @@ describe('Employees API Resource', function() {
     //             expect(res.body.length).to.be.at.least(1);
     //             checkContent(res, employeeOverviewProperties);
     //         })
-    //         .catch(err => {
+    //         .catch(function(err) {
     //             console.log('Internal Error');
     //             res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(err);
     //         });
@@ -156,7 +167,7 @@ describe('Employees API Resource', function() {
     //             expect(res.body.length).to.be.at.least(1);
     //             checkContent(res, employeeProperties);
     //         })
-    //         .catch(err => {
+    //         .catch(function(err) {
     //             console.log('Internal Error');
     //             res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(err);
     //         });
@@ -171,7 +182,7 @@ describe('Employees API Resource', function() {
     //              expect(res.body.length).to.be.at.least(1);
     //              checkContent(res, employeeProperties);
     //          })
-    //          .catch(err => {
+    //          .catch(function(err) {
     //              console.log('Internal Error');
     //              res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(err);
     //          });
@@ -187,7 +198,7 @@ describe('Employees API Resource', function() {
     //              let responseKeys = ["deleted", "OK"];
     //              checkContent(res, responseKeys);
     //          })
-    //          .catch(err => {
+    //          .catch(function(err) {
     //              console.log('Internal Error');
     //              res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(err);
     //          });
@@ -200,7 +211,7 @@ describe('Employees API Resource', function() {
      //          .then(function (res) {
      //              expect(res).to.have.status(200);
      //          })
-     //          .catch(err => {
+     //          .catch(function(err) {
      //              console.log('Internal Error');
      //              res.status(500).send(err);
      //          });
