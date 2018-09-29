@@ -117,10 +117,11 @@ jwtPassportMiddleware,
         allowVehicle: req.body.allowVehicle,
         trainings: req.body.trainings
     }
-
+    //console.log("CREATE router: ", newEmployee);
     // validate newEmployee data using Joi schema
     const validation = Joi.validate(newEmployee, EmployeeJoiSchema);
     if (validation.error) {
+        console.log(validation.error);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
     }
     let trainings;
@@ -143,7 +144,10 @@ jwtPassportMiddleware,
 });
 
 // update employee by id
-employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), (req, res) => {
+employeeRouter.put('/:employeeId', 
+jwtPassportMiddleware, 
+//User.hasAccess(User.ACCESS_ADMIN), 
+(req, res) => {
     // check that id in request body matches id in request path
     if (req.params.employeeId !== req.body.id) {
         const message = `Request path id ${req.params.employeeId} and request body id ${req.body.id} must match`;
@@ -177,6 +181,7 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
 
     const validation = Joi.validate(toUpdate, UpdateEmployeeJoiSchema);
     if (validation.error) {
+        console.log(validation.error);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error});
     }
 

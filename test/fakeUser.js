@@ -5,9 +5,20 @@ mongoose.Promise = global.Promise;
 
 const { JWT_SECRET, JWT_EXPIRY } = require('../app/config');
 
-const { User } = require('../app/user/user.model');
+const {
+    User,
+    ACCESS_NO,
+    ACCESS_OVERVIEW_ONLY,
+    ACCESS_PUBLIC,
+    ACCESS_ADMIN
+} = require('../app/user/user.model');
 
-const accessLevel = 10;
+const accessLevel = [ACCESS_NO, ACCESS_OVERVIEW_ONLY, ACCESS_PUBLIC, ACCESS_ADMIN];
+
+function randomFromArray(arr) {
+    if (arr && arr.length)
+        return arr[Math.floor(Math.random() * arr.length)];
+}
 
 function generateTestUser() {
     return {
@@ -15,7 +26,7 @@ function generateTestUser() {
         username: faker.internet.userName(),
         password: faker.internet.password(),
         email: faker.internet.email(),
-        accessLevel: accessLevel
+        accessLevel: randomFromArray(accessLevel)
     };
 }
 
@@ -25,12 +36,12 @@ function seedTestUser(testUser, hashedPassword) {
             name: testUser.name,
             email: testUser.email,
             username: testUser.username,
-            password: hashedPassword
-            //accessLevel: getFromArray
+            password: hashedPassword,
+            accessLevel: testUser.accessLevel
         })
 }
 
-function generateJwToken(user) {
+function signJwToken(user) {
     return jsonwebtoken.sign(
         {
             user: {
@@ -56,11 +67,21 @@ function generateToken(testUser) {
         })
         .then(createdUser => {
             testUser.id = createdUser.id;
-            return generateJwToken(testUser)
+            return signJwToken(testUser)
         })
         .catch(err => {
             console.error(err);
         })
 }
 
-module.exports = { generateTestUser, generateToken };
+function generateUsers(numberOfUsers) {
+
+    for (let x = 1; x <= numberOfUsers; x++) {
+         let user = generateTestUser();
+         generateToken(user);
+    } 
+}
+
+
+
+module.exports = { generateTestUser, generateToken, generateUsers };

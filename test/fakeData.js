@@ -4,6 +4,7 @@ mongoose.Promise = global.Promise;
 
 const { User } = require('../app/user/user.model');
 const { Employee, Department, Training, Employer } = require('../app/employee/employee.model');
+const { generateUsers } = require('./fakeUser');
 
 function generateEmployerNames() {
     let employers = [];
@@ -46,37 +47,81 @@ function randomFromArray(arr){
         return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function findUser(User) {
-    return new Promise(function(resolve, reject) {
-        resolve(User.findOne().id)
-    })
-}
-
-function generateEmployeeData(employerIds, departmentIds, trainingIds, User) {
+function generateEmployeeData(employerIds, departmentIds, trainingIds, userIds) {
+    // let userId = userIds;
+    // if (typeof userIds === 'array') {
+    //     userId = randomFromArray(userIds);
+    // }
+    
     return {
-        //updatedBy: [findUser(User)],
+        //updatedBy: userId,
         employeeId: faker.lorem.words(1),
         //photo: 
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         employer: randomFromArray(employerIds),
         department: randomFromArray(departmentIds),
+        licensePlates: [faker.random.alphaNumeric(7), faker.random.alphaNumeric(7)],
         employmentDate: faker.date.past(),
         allowVehicle: faker.random.boolean(),
-        licensePlates: [faker.random.alphaNumeric(7), faker.random.alphaNumeric(7)],
         trainings: [{
             trainingInfo: randomFromArray(trainingIds),
             trainingDate: faker.date.recent(300)
             },
         {
-            trainingInfo: randomFromArray(Training),
+            trainingInfo: randomFromArray(trainingIds),
             trainingDate: faker.date.recent(366)
         },
         {
-            trainingInfo: randomFromArray(Training),
+            trainingInfo: randomFromArray(trainingIds),
             trainingDate: faker.date.recent(300)
         }]
     }
+}
+
+function createUpdatedFields(employer, department) {
+    return {
+        //photo: 
+        lastName: "NewLastName",
+        employer: employer,
+        department: department,
+        licensePlates: ["123NEW45"],
+        employmentDate: new Date(2000, 3, 2),
+        allowVehicle: false,
+        trainings: [{
+                trainingInfo: Training[0],
+                trainingDate: new Date()
+            },
+            {
+                trainingInfo: Training[1],
+                trainingDate: new Date()
+            },
+            {
+                trainingInfo: Training[2],
+                trainingDate: new Date()
+            }
+        ]
+    }
+}
+
+function findOne(collectionName) {
+    return collectionName
+        .findOne()
+        .then(function (document) {
+            return document;
+        })
+}
+
+function generateFieldsToUpdate() {
+    let employer;
+    return findOne(Employer)
+        .then(_employer => {
+            employer = _employer;
+            return findOne(Department)
+        })
+        .then(department => {
+            return createUpdatedFields(employer, department);
+        })
 }
 
 function generateEmployees(employerIds, departmentIds, trainingIds) {
@@ -101,26 +146,40 @@ function generateOneEmployee() {
             return Training.find();
         })
         .then(_training => {
-            _training = training;
+            training = _training;
+            
             return User.findOne();
         })
         .then(_user => {
             _user = user;
         
             return generateEmployeeData(employer, department, training, user);
-        })
-        
+        }) 
 }
 
+// function generateUserIds() {
+//     let numberOfUsers = 3;
+//     generateUsers(numberOfUsers);
+//     return User    
+//         .find()
+//         .then(users => {
+//             users.map(user => user.id);
+//             return users;
+//         })
+// }
+
 function seedEmployeesData() {
-   
-     let departments = generateDepartments();
-     let employerName = generateEmployerNames();
-     let trainings = generateTrainingList();
-    let employerIds, departmentIds;
- 
-    console.log('Generating new departments');
-    return Department.insertMany(departments)
+    let departments = generateDepartments();
+    let employerName = generateEmployerNames();
+    let trainings = generateTrainingList();
+
+    let employerIds, departmentIds, userIds;
+    // return generateUserIds()
+    //     .then(_userIds => {
+    //         userIds = _userIds;
+            console.log('Generating new departments');
+            return Department.insertMany(departments)
+       // })
         .then(_departmentIds => {
             departmentIds = _departmentIds;
             console.log('Generating new employers');
@@ -135,11 +194,11 @@ function seedEmployeesData() {
             console.log("Generating new employee data");
             return Employee
                 .insertMany(
-                generateEmployees(employerIds, departmentIds, trainingIds));
+                generateEmployees(employerIds, departmentIds, trainingIds, userIds));
             })   
         .catch(err => console.log("error", err));
 } 
 
 module.exports = { 
-    seedEmployeesData, generateOneEmployee
+    seedEmployeesData, generateOneEmployee, generateFieldsToUpdate
  }

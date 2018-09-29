@@ -32,10 +32,10 @@ const employersSchema = mongoose.Schema({
 })
 
 const employeesSchema = mongoose.Schema({
-    updatedBy: [{ 
-                type: ObjectId,
-                ref: "User"
-            }],
+    //updatedBy: [{ 
+            //     type: ObjectId,
+            //     ref: "User"
+            // }],
     employeeId: String,
     //photo: File,
     firstName: String,
@@ -95,18 +95,24 @@ employeesSchema.methods.serializeOverview = function(ready2work) {
 
 // validate data 
 const EmployeeJoiSchema = Joi.object().keys({
-    updatedBy: Joi.string().optional(),
+   // updatedBy: Joi.string().optional(),
     employeeId: Joi.string().required(),
     //photo: this.photo,
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     employer: Joi.object().keys({ 
+        _id: Joi.string(),
+        __v: Joi.number(),
         employerName: Joi.string(),
         departments: Joi.array().items(Joi.object().keys({
+                    _id: Joi.string(),
+                     __v: Joi.number(),
                     departmentName: Joi.string()
         }))
         }),
     department: Joi.object().keys({
+        _id: Joi.string(),
+         __v: Joi.number(),
         departmentName: Joi.string()}),
     licensePlates: Joi.array().items(Joi.string()),
     employmentDate: Joi.date(),
@@ -114,6 +120,8 @@ const EmployeeJoiSchema = Joi.object().keys({
     trainings: Joi.array().items(
                 Joi.object().keys({
                     trainingInfo: Joi.object().keys({
+                        _id: Joi.string(),
+                        __v: Joi.number(),
                         title: Joi.string(), 
                         expirationTime: Joi.date()}), 
                     trainingDate: Joi.date()
@@ -122,31 +130,39 @@ const EmployeeJoiSchema = Joi.object().keys({
 })
 
 const UpdateEmployeeJoiSchema = Joi.object().keys({
-    updatedBy: Joi.string().optional(),
+    //updatedBy: Joi.string().optional(),
     employeeId: Joi.string(),
     //photo: this.photo,
     firstName: Joi.string(),
     lastName: Joi.string(),
     employer: Joi.object().keys({
-        employerName: Joi.string(),
-        departments: Joi.array().items(Joi.object().keys({
-            departmentName: Joi.string()
-        }))
+        _id: Joi.string(),
+            __v: Joi.number(),
+            employerName: Joi.string(),
+            departments: Joi.array().items(Joi.object().keys({
+                _id: Joi.string(),
+                __v: Joi.number(),
+                departmentName: Joi.string()
+            }))
     }),
     department: Joi.object().keys({
-        departmentName: Joi.string()
-    }),
+       _id: Joi.string(),
+           __v: Joi.number(),
+           departmentName: Joi.string()
+       }),
     licensePlates: Joi.array().items(Joi.string()),
     employmentDate: Joi.date(),
     allowVehicle: Joi.boolean(),
     trainings: Joi.array().items(
-        Joi.object().keys({
-            trainingInfo: Joi.object().keys({
-                title: Joi.string(),
-                expirationTime: Joi.date()
-            }),
-            trainingDate: Joi.date()
-        })
+       Joi.object().keys({
+       trainingInfo: Joi.object().keys({
+           _id: Joi.string(),
+           __v: Joi.number(),
+           title: Joi.string(),
+           expirationTime: Joi.date()
+       }),
+       trainingDate: Joi.date()
+       })
     ),
 })
 

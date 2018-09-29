@@ -9,7 +9,7 @@ const {
     closeServer
 } = require('../app/server');
 const {
-    Employee
+    Employee, Employer, Department, Training
 } = require('../app/employee/employee.model');
 const {
     TEST_DATABASE_URL,
@@ -19,7 +19,8 @@ const User = require('../app/user/user.model');
 
 const {
     seedEmployeesData,
-    generateOneEmployee
+    generateOneEmployee,
+    generateFieldsToUpdate
 } = require('./fakeData');
 const {
     generateTestUser,
@@ -77,7 +78,8 @@ const employeeProperties = ["id", "employeeId", "firstName", "lastName", "employ
 const employeeOverviewProperties = ["employeeId", "firstName", "lastName", "employer", "department",
     "licensePlates", "allowVehicle", "trainings", "ready2work"
 ];
-
+const employeeUpdatedProperties = ["lastName", "employer", "department",
+    "licensePlates", "allowVehicle", "trainings"];
 
 describe('Employees API Resource', function () {
 
@@ -158,70 +160,85 @@ describe('Employees API Resource', function () {
     });
 
 
-    /// Test fail when accessLevel< requiredLevel for overview endpoint
-
+    
     it('Should create an employee', function () {
         
         return generateOneEmployee()
-            .then(function(newEmployee) {
-                console.log("CREATE", newEmployee);
-
-                return chai.request(app)
-                    .post('/employee')
-                    .set("Authorization", `Bearer ${jwToken}`)
-                    .send(newEmployee)
-            })
-            .then(function (res) {
-                checkResponse(res, HTTP_STATUS_CODES.CREATED, 'object');
-                //expect(res.body.length).to.be.at.least(1);
-                checkObjectContent(res.body, employeeOverviewProperties);
-            })
-            .catch(function(err) {
-                console.log(err);
-            });
+        .then(function(newEmployee) {
+            //console.log("CREATE", newEmployee);
+            
+            return chai.request(app)
+            .post('/employee')
+            .set("Authorization", `Bearer ${jwToken}`)
+            .send(newEmployee)
+        })
+        .then(function (res) {
+            checkResponse(res, HTTP_STATUS_CODES.CREATED, 'object');
+            //expect(res.body.length).to.be.at.least(1);
+            checkObjectContent(res.body, employeeOverviewProperties);
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
     });
+    
+    it('Should update employee by id', function () {
 
-    //  it('Should edit employee by id', function () {
-    //      return chai.request(app)
-    //          .put('/:employeeId')
-    //          .set("Authorization", `Bearer ${jwToken}`)
-    //          .then(function (res) {
-    //              checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-    //              expect(res.body.length).to.be.at.least(1);
-    //              checkContent(res, employeeProperties);
-    //          })
-    //          .catch(function(err) {
-    //              console.log('Internal Error');
-    //              res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(err);
-    //          });
-    //  });
-
-     it('Should delete employee by id', function () {
-         let foundEmployee;
-         return findOneEmployee()
+        let foundEmployee, updateEmployee;
+        return generateFieldsToUpdate()
+            .then(function(_updateEmployee) {
+                updateEmployee = _updateEmployee;
+                return findOneEmployee()
+            })
             .then(function (_foundEmployee) {
                 foundEmployee = _foundEmployee;
+                updateEmployee.id = foundEmployee.id;
+                //console.log("UPDATE ", updateEmployee);
                 return chai.request(app)
-                .delete(`/employee/${foundEmployee.id}`)
-                .set("Authorization", `Bearer ${jwToken}`)
+                    .put(`/employee/${foundEmployee.id}`)
+                    .set("Authorization", `Bearer ${jwToken}`)
+                    .send(updateEmployee)
             })
             .then(function (res) {
-                checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
+                //console.log("res", res);
                 //expect(res.body.length).to.be.at.least(1);
-                let responseKeys = ["deleted", "OK"];
-                checkObjectContent(res.body, responseKeys);
-             })
-             .catch(function(err) {
-                 console.log(err);
-             });
-     });
+                checkResponse(res, HTTP_STATUS_CODES.OK, 'object')
+                checkObjectContent(res.body, employeeUpdatedProperties, foundEmployee);
+            })
 
+        .catch(function (err) {
+            console.log(err);
+        });
+    });
 
-    //  it('Should allow user to login', function () {
-    //      return chai.request(app)
-    //          .post('/login')
-    //          .then(function (res) {
-    //              expect(res).to.have.status(200);
+    it('Should delete employee by id', function () {
+        let foundEmployee;
+        return findOneEmployee()
+        .then(function (_foundEmployee) {
+            foundEmployee = _foundEmployee;
+            return chai.request(app)
+            .delete(`/employee/${foundEmployee.id}`)
+            .set("Authorization", `Bearer ${jwToken}`)
+        })
+        .then(function (res) {
+            checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
+            //expect(res.body.length).to.be.at.least(1);
+            let responseKeys = ["deleted", "OK"];
+            checkObjectContent(res.body, responseKeys);
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+    });
+
+////////////////////////////////////////////////////////////                
+/// Test fail when accessLevel< requiredLevel for overview endpoint
+                
+                //  it('Should allow user to login', function () {
+                    //      return chai.request(app)
+                    //          .post('/login')
+                    //          .then(function (res) {
+                        //              expect(res).to.have.status(200);
     //          })
     //          .catch(function(err) {
     //              console.log('Internal Error');
