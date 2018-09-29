@@ -61,10 +61,10 @@ userSchema.statics.ACCESS_ADMIN = ACCESS_ADMIN;
 
 // check if user is allowed to access an endpoint
 userSchema.statics.hasAccess = function (accessLevel) {
-    // express is expecting a function with req, res, next as parameters
+    // express expects a function with req, res, next as parameters
     return function (req, res, next) {
         console.log(`checking if ${req.user.username} is allowed`);
-        if (req.user.username >= accessLevel) {
+        if (req.user.accessLevel >= accessLevel) {
             next();
         } 
         else {

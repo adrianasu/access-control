@@ -20,8 +20,7 @@ function validateEmployeeTrainings(employee, trainings) {
 }
 
 // get all employees 
-//employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
-employeeRouter.get('/', jwtPassportMiddleware, (req, res) => {
+employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
     // get trainings to validate employee's trainings status
      Training
          .find()
@@ -47,8 +46,8 @@ employeeRouter.get('/', jwtPassportMiddleware, (req, res) => {
 
 
 // get one employee by id
-//employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
-employeeRouter.get('/:employeeId', jwtPassportMiddleware, (req, res) => {
+employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
+//employeeRouter.get('/:employeeId', jwtPassportMiddleware, (req, res) => {
     let trainings; 
     return Training
         .find()
@@ -74,8 +73,9 @@ employeeRouter.get('/:employeeId', jwtPassportMiddleware, (req, res) => {
 // get overview employee by id
 employeeRouter.get('/overview/:employeeId', 
     jwtPassportMiddleware, 
-    //User.hasAccess(User.ACCESS_OVERVIEW_ONLY), 
+    User.hasAccess(User.ACCESS_OVERVIEW_ONLY), 
     (req, res) => {
+
     let trainings;
     return Training
         .find()
@@ -101,8 +101,9 @@ employeeRouter.get('/overview/:employeeId',
 // create new employee
 employeeRouter.post('/', 
 jwtPassportMiddleware, 
-//User.hasAccess(User.ACCESS_ADMIN), 
+User.hasAccess(User.ACCESS_ADMIN), 
 (req, res) => {
+    console.log("User Access Level", req.user.accessLevel);
     // we can access req.body payload bc we defined express.json() middleware in server.js
     const newEmployee = {
         //updatedBy: req.user.id,
@@ -146,7 +147,7 @@ jwtPassportMiddleware,
 // update employee by id
 employeeRouter.put('/:employeeId', 
 jwtPassportMiddleware, 
-//User.hasAccess(User.ACCESS_ADMIN), 
+User.hasAccess(User.ACCESS_ADMIN), 
 (req, res) => {
     // check that id in request body matches id in request path
     if (req.params.employeeId !== req.body.id) {
@@ -200,7 +201,7 @@ jwtPassportMiddleware,
 // delete employee by id
 employeeRouter.delete('/:employeeId', 
 jwtPassportMiddleware, 
-//User.hasAccess(User.ACCESS_ADMIN), 
+User.hasAccess(User.ACCESS_ADMIN), 
 (req, res) => {
     return Employee
         .findByIdAndDelete(req.params.employeeId)

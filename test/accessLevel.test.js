@@ -33,14 +33,11 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 let testUser, jwToken;
-const employeeProperties = ["id", "employeeId", "firstName", "lastName", "employer", "department",
-    "licensePlates", "employmentDate", "allowVehicle", "trainings", "ready2work"
-];
+// test for the lowest access level
+const userAccessLevel = User.ACCESS_OVERVIEW_ONLY;
 const employeeOverviewProperties = ["employeeId", "firstName", "lastName", "employer", "department",
     "licensePlates", "allowVehicle", "trainings", "ready2work"
 ];
-const employeeUpdatedProperties = ["lastName", "employer", "department",
-    "licensePlates", "allowVehicle", "trainings"];
 
 function tearDownDb() {
     console.warn('Deleting database');
@@ -62,14 +59,14 @@ function checkObjectContent(res, keyList, employee) {
     });
 }
 
-function checkArrayContent(res, keyList) {
-    const employee = res.body[0];
-    expect(res.body).to.have.lengthOf.at.least(1);
-    expect(employee.employer).to.be.a('object');
-    keyList.forEach(function (key) {
-        expect(employee).to.include.keys(key);
-    })
-}
+// function checkArrayContent(res, keyList) {
+//     const employee = res.body[0];
+//     expect(res.body).to.have.lengthOf.at.least(1);
+//     expect(employee.employer).to.be.a('object');
+//     keyList.forEach(function (key) {
+//         expect(employee).to.include.keys(key);
+//     })
+// }
 
 function findOneEmployee() {
      return Employee
@@ -89,7 +86,7 @@ describe('Employees API Resource', function () {
     });
 
     beforeEach(function () {
-        testUser = generateTestUser();
+        testUser = generateTestUser(userAccessLevel);
         return generateToken(testUser)
             .then(function (_jwToken) {
                 jwToken = _jwToken;
@@ -105,22 +102,23 @@ describe('Employees API Resource', function () {
         return closeServer();
     });
 
-    it('Should get all employees', function () {
+    it('Should not allow to get all employees', function () {
 
         return chai.request(app)
             .get('/employee')
             .set('Authorization', `Bearer ${jwToken}`)
             .then(function (res) {
-                expect(res.body.length).to.be.at.least(1);
-                checkArrayContent(res, employeeProperties);
-                checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
+                
+                //expect(res.body.length).to.be.at.least(1);
+                //checkArrayContent(res);
+                checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
             })
             .catch(function(err) {
-                console.log(err);
+                console.log("Error: Unauthorized user");
             });
     });
 
-    it('Should get an employee by id', function () {
+    it('Should not allow to get an employee by id', function () {
         let foundEmployee;
         return findOneEmployee()
             .then(function (_foundEmployee) {
@@ -130,11 +128,11 @@ describe('Employees API Resource', function () {
                     .set("Authorization", `Bearer ${jwToken}`)
                 })
                 .then(function(res) {
-                checkResponse(res, HTTP_STATUS_CODES.OK, 'object')
-                checkObjectContent(res.body, employeeProperties, foundEmployee);
+                checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object')
+                //checkObjectContent(res.body, employeeProperties, foundEmployee);
             })
             .catch(function (err) {
-                console.log(err);
+                console.log("Error: Unauthorized user");
             })
     })
 
@@ -156,9 +154,7 @@ describe('Employees API Resource', function () {
             })
     });
 
-
-    
-    it('Should create an employee', function () {
+    it('Should not allow to create an employee', function () {
        
         return generateOneEmployee()
         .then(function(newEmployee) {            
@@ -169,15 +165,15 @@ describe('Employees API Resource', function () {
           
         })
         .then(function (res) {
-            checkResponse(res, HTTP_STATUS_CODES.CREATED, 'object');
-            checkObjectContent(res.body, employeeOverviewProperties);
+            checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
+            //checkObjectContent(res.body, employeeOverviewProperties);
         })
         .catch(function(err) {
-            console.log(err);
+            console.log("Error: Unauthorized user");
         });
     });
     
-    it('Should update employee by id', function () {
+    it('Should not allow to update employee by id', function () {
 
         let foundEmployee, updateEmployee;
         return generateFieldsToUpdate()
@@ -194,16 +190,16 @@ describe('Employees API Resource', function () {
                     .send(updateEmployee)
             })
             .then(function (res) {
-                checkResponse(res, HTTP_STATUS_CODES.OK, 'object')
-                checkObjectContent(res.body, employeeUpdatedProperties, foundEmployee);
+                checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object')
+                //checkObjectContent(res.body, employeeUpdatedProperties, foundEmployee);
             })
 
         .catch(function (err) {
-            console.log(err);
+            console.log("Error: Unauthorized user");
         });
     });
 
-    it('Should delete employee by id', function () {
+    it('Should not allow to delete employee by id', function () {
         let foundEmployee;
         return findOneEmployee()
         .then(function (_foundEmployee) {
@@ -213,12 +209,12 @@ describe('Employees API Resource', function () {
             .set("Authorization", `Bearer ${jwToken}`)
         })
         .then(function (res) {
-            checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
+            checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
             let responseKeys = ["deleted", "OK"];
-            checkObjectContent(res.body, responseKeys);
+            //checkObjectContent(res.body, responseKeys);
         })
         .catch(function(err) {
-            console.log(err);
+            console.log("Error: Unauthorized user");
         });
     });                 
 })
