@@ -26,6 +26,7 @@ function seedTestUser(testUser, hashedPassword) {
             email: testUser.email,
             username: testUser.username,
             password: hashedPassword
+            //accessLevel: getFromArray
         })
 }
 

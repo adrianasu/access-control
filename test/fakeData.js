@@ -88,10 +88,35 @@ function generateEmployees(employerIds, departmentIds, trainingIds) {
     return seedEmployees;
 }
 
+function generateOneEmployee() {
+    let employer, department, training, user;
+        
+    return Employer.find()
+        .then(_employer => {
+            employer = _employer;
+            return Department.find();
+        })
+        .then(_department => {
+            department = _department;
+            return Training.find();
+        })
+        .then(_training => {
+            _training = training;
+            return User.findOne();
+        })
+        .then(_user => {
+            _user = user;
+        
+            return generateEmployeeData(employer, department, training, user);
+        })
+        
+}
+
 function seedEmployeesData() {
-    let departments = generateDepartments();
-    let employerName = generateEmployerNames();
-    let trainings = generateTrainingList();
+   
+     let departments = generateDepartments();
+     let employerName = generateEmployerNames();
+     let trainings = generateTrainingList();
     let employerIds, departmentIds;
  
     console.log('Generating new departments');
@@ -116,5 +141,5 @@ function seedEmployeesData() {
 } 
 
 module.exports = { 
-    seedEmployeesData
+    seedEmployeesData, generateOneEmployee
  }
