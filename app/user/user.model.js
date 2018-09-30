@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
 // mongoose serialize method to define the structure of the 'user' data we're sending in the reponse body
 userSchema.methods.serialize = function () {
     return {
-        id: this._id,
+        id: this.id,
         name: this.name,
         email: this.email,
         username: this.username,
@@ -61,10 +61,10 @@ userSchema.statics.ACCESS_ADMIN = ACCESS_ADMIN;
 
 // check if user is allowed to access an endpoint
 userSchema.statics.hasAccess = function (accessLevel) {
-    // express is expecting a function with req, res, next as parameters
+    // express expects a function with req, res, next as parameters
     return function (req, res, next) {
         console.log(`checking if ${req.user.username} is allowed`);
-        if (req.user.username >= accessLevel) {
+        if (req.user.accessLevel >= accessLevel) {
             next();
         } 
         else {
@@ -80,7 +80,7 @@ userSchema.statics.hasAccess = function (accessLevel) {
 // use Joi to determine that some data is valid to create a new user
 const UserJoiSchema = Joi.object().keys({
     name: Joi.string().min(1).trim().required(),
-    username: Joi.string().alphanum().min(4).max(30).trim().required(),
+    username: Joi.string().min(4).max(30).trim().required(),
     password: Joi.string().min(7).max(30).trim().required(),
     email: Joi.string().email().trim().required(),
     accessLevel: Joi.number().required()
@@ -89,7 +89,7 @@ const UserJoiSchema = Joi.object().keys({
 const UpdateUserJoiSchema = Joi.object().keys({
     name: Joi.string().min(1).trim(),
     email: Joi.string().email().trim(),
-    accessLevel: Joi.number().required()
+    accessLevel: Joi.number()
 });
 
 const User = mongoose.model('user', userSchema);

@@ -70,7 +70,9 @@ userRouter.post('/', (req, res) => {
         });
 });
 // retrieve all users using mongoose function find
-userRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), (req, res) => {
+userRouter.get('/', jwtPassportMiddleware, 
+    User.hasAccess(User.ACCESS_ADMIN), 
+    (req, res) => {
     Users
         .find()
         .then(_users => {
@@ -82,7 +84,9 @@ userRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), (r
 });
 
 // get one 'user' using mongoose function findById
-userRouter.get('/:userId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), (req, res) => {
+userRouter.get('/:userId', jwtPassportMiddleware, 
+    User.hasAccess(User.ACCESS_PUBLIC),
+    (req, res) => {
     Users
         .findById(req.params.userId)
         .then(user => {
@@ -94,11 +98,13 @@ userRouter.get('/:userId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADM
 });
 
 // update user name or email by id
-userRouter.put('/:userId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
+userRouter.put('/:userId', jwtPassportMiddleware,
+    User.hasAccess(User.ACCESS_PUBLIC), 
+    (req, res) => {
     // check that id in request body matches id in request path
     if (req.params.userId !== req.body.id) {
         const message = `Request path id ${req.params.userId} and request body id ${req.body.id} must match`;
-        console.error(message);
+        console.log(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
             message: message
         });
@@ -118,7 +124,7 @@ userRouter.put('/:userId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUB
     // if request body doesn't contain any updateable field send error message
     if (toUpdate.length === 0) {
         const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
-        console.error(message);
+        console.log(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
             message: message
         });
@@ -126,9 +132,11 @@ userRouter.put('/:userId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUB
     
     if ("accessLevel" in toUpdate) {
         User.hasAccess(User.ACCESS_ADMIN);
+        console.log("CHANGE LEVEL");
     }
 
     const validation = Joi.validate(toUpdate, User.UpdateUserJoiSchema);
+    
     if (validation.error) {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
             error: validation.error
@@ -154,7 +162,9 @@ userRouter.put('/:userId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUB
 
 
 // delete one 'user' using mongoose function findByIdAndDelete
-userRouter.delete('/:userId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), (req, res) => {
+userRouter.delete('/:userId', jwtPassportMiddleware, 
+    User.hasAccess(User.ACCESS_ADMIN), 
+    (req, res) => {
     Users
     .findByIdAndDelete(req.params.userId)
         .then(deletedUser => {

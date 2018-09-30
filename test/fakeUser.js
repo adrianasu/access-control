@@ -15,18 +15,13 @@ const {
 
 const accessLevel = [ACCESS_NO, ACCESS_OVERVIEW_ONLY, ACCESS_PUBLIC, ACCESS_ADMIN];
 
-function randomFromArray(arr) {
-    if (arr && arr.length)
-        return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function generateTestUser() {
+function generateTestUser(userAccessLevel = ACCESS_ADMIN) {
     return {
         name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+        email: faker.internet.email(),
         username: faker.internet.userName(),
         password: faker.internet.password(),
-        email: faker.internet.email(),
-        accessLevel: randomFromArray(accessLevel)
+        accessLevel: userAccessLevel
     };
 }
 
@@ -48,7 +43,8 @@ function signJwToken(user) {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                username: user.username
+                username: user.username,
+                accessLevel: user.accessLevel
             }
         },
         JWT_SECRET,
@@ -74,14 +70,4 @@ function generateToken(testUser) {
         })
 }
 
-function generateUsers(numberOfUsers) {
-
-    for (let x = 1; x <= numberOfUsers; x++) {
-         let user = generateTestUser();
-         generateToken(user);
-    } 
-}
-
-
-
-module.exports = { generateTestUser, generateToken, generateUsers };
+module.exports = { generateTestUser, generateToken };

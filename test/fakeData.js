@@ -4,7 +4,7 @@ mongoose.Promise = global.Promise;
 
 const { User } = require('../app/user/user.model');
 const { Employee, Department, Training, Employer } = require('../app/employee/employee.model');
-const { generateUsers } = require('./fakeUser');
+
 
 function generateEmployerNames() {
     let employers = [];
@@ -156,17 +156,6 @@ function generateOneEmployee() {
             return generateEmployeeData(employer, department, training, user);
         }) 
 }
-
-// function generateUserIds() {
-//     let numberOfUsers = 3;
-//     generateUsers(numberOfUsers);
-//     return User    
-//         .find()
-//         .then(users => {
-//             users.map(user => user.id);
-//             return users;
-//         })
-// }
 
 function seedEmployeesData() {
     let departments = generateDepartments();

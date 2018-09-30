@@ -9,7 +9,7 @@ const {
     closeServer
 } = require('../app/server');
 const {
-    Employee, Employer, Department, Training
+    Employee
 } = require('../app/employee/employee.model');
 const {
     TEST_DATABASE_URL,
@@ -32,6 +32,16 @@ const expect = chai.expect;
 // allow us to use chai.request() method
 chai.use(chaiHttp);
 
+let testUser, jwToken;
+const employeeProperties = ["id", "employeeId", "firstName", "lastName", "employer", "department",
+    "licensePlates", "employmentDate", "allowVehicle", "trainings", "ready2work"
+];
+const employeeOverviewProperties = ["employeeId", "firstName", "lastName", "employer", "department",
+    "licensePlates", "allowVehicle", "trainings", "ready2work"
+];
+const employeeUpdatedProperties = ["lastName", "employer", "department",
+    "licensePlates", "allowVehicle", "trainings"];
+
 function tearDownDb() {
     console.warn('Deleting database');
     return mongoose.connection.dropDatabase();
@@ -53,8 +63,8 @@ function checkObjectContent(res, keyList, employee) {
 }
 
 function checkArrayContent(res, keyList) {
-    expect(res.body).to.have.lengthOf.at.least(1);
     const employee = res.body[0];
+    expect(res.body).to.have.lengthOf.at.least(1);
     expect(employee.employer).to.be.a('object');
     keyList.forEach(function (key) {
         expect(employee).to.include.keys(key);
@@ -71,17 +81,8 @@ function findOneEmployee() {
         })
 }
 
-let testUser, jwToken;
-const employeeProperties = ["id", "employeeId", "firstName", "lastName", "employer", "department",
-    "licensePlates", "employmentDate", "allowVehicle", "trainings", "ready2work"
-];
-const employeeOverviewProperties = ["employeeId", "firstName", "lastName", "employer", "department",
-    "licensePlates", "allowVehicle", "trainings", "ready2work"
-];
-const employeeUpdatedProperties = ["lastName", "employer", "department",
-    "licensePlates", "allowVehicle", "trainings"];
 
-describe('Employees API Resource', function () {
+describe('Employees API Resource tests', function () {
 
     before(function () {
         return runServer(TEST_DATABASE_URL);
@@ -124,13 +125,11 @@ describe('Employees API Resource', function () {
         return findOneEmployee()
             .then(function (_foundEmployee) {
                 foundEmployee = _foundEmployee;
-                //console.log(foundEmployee);
                 return chai.request(app)
                     .get(`/employee/${foundEmployee.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
                 })
                 .then(function(res) {
-                //expect(res.body.length).to.be.at.least(1);
                 checkResponse(res, HTTP_STATUS_CODES.OK, 'object')
                 checkObjectContent(res.body, employeeProperties, foundEmployee);
             })
@@ -144,13 +143,11 @@ describe('Employees API Resource', function () {
         return findOneEmployee()
             .then(function (_foundEmployee) {
                 foundEmployee = _foundEmployee;
-                //console.log(foundEmployee);
                 return chai.request(app)
                     .get(`/employee/overview/${foundEmployee.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
             })
             .then(function (res) {
-                //expect(res.body.length).to.be.at.least(1);
                 checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
                 checkObjectContent(res.body, employeeOverviewProperties, foundEmployee);
             })
@@ -162,19 +159,17 @@ describe('Employees API Resource', function () {
 
     
     it('Should create an employee', function () {
-        
+       
         return generateOneEmployee()
-        .then(function(newEmployee) {
-            //console.log("CREATE", newEmployee);
-            
+        .then(function(newEmployee) {            
             return chai.request(app)
             .post('/employee')
             .set("Authorization", `Bearer ${jwToken}`)
             .send(newEmployee)
+          
         })
         .then(function (res) {
             checkResponse(res, HTTP_STATUS_CODES.CREATED, 'object');
-            //expect(res.body.length).to.be.at.least(1);
             checkObjectContent(res.body, employeeOverviewProperties);
         })
         .catch(function(err) {
@@ -193,15 +188,12 @@ describe('Employees API Resource', function () {
             .then(function (_foundEmployee) {
                 foundEmployee = _foundEmployee;
                 updateEmployee.id = foundEmployee.id;
-                //console.log("UPDATE ", updateEmployee);
                 return chai.request(app)
                     .put(`/employee/${foundEmployee.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
                     .send(updateEmployee)
             })
             .then(function (res) {
-                //console.log("res", res);
-                //expect(res.body.length).to.be.at.least(1);
                 checkResponse(res, HTTP_STATUS_CODES.OK, 'object')
                 checkObjectContent(res.body, employeeUpdatedProperties, foundEmployee);
             })
@@ -222,28 +214,11 @@ describe('Employees API Resource', function () {
         })
         .then(function (res) {
             checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-            //expect(res.body.length).to.be.at.least(1);
             let responseKeys = ["deleted", "OK"];
             checkObjectContent(res.body, responseKeys);
         })
         .catch(function(err) {
             console.log(err);
         });
-    });
-
-////////////////////////////////////////////////////////////                
-/// Test fail when accessLevel< requiredLevel for overview endpoint
-                
-                //  it('Should allow user to login', function () {
-                    //      return chai.request(app)
-                    //          .post('/login')
-                    //          .then(function (res) {
-                        //              expect(res).to.have.status(200);
-    //          })
-    //          .catch(function(err) {
-    //              console.log('Internal Error');
-    //              res.status(500).send(err);
-    //          });
-    //  });
-
+    });                 
 })
