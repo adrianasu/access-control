@@ -82,7 +82,7 @@ function findOneEmployee() {
 }
 
 
-describe('Employees API Resource', function () {
+describe('Employees API Resource tests', function () {
 
     before(function () {
         return runServer(TEST_DATABASE_URL);

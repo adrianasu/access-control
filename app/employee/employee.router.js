@@ -20,7 +20,8 @@ function validateEmployeeTrainings(employee, trainings) {
 }
 
 // get all employees 
-employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
+employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), 
+(req, res) => {
     // get trainings to validate employee's trainings status
      Training
          .find()
@@ -47,7 +48,6 @@ employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC
 
 // get one employee by id
 employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
-//employeeRouter.get('/:employeeId', jwtPassportMiddleware, (req, res) => {
     let trainings; 
     return Training
         .find()
@@ -99,9 +99,7 @@ employeeRouter.get('/overview/:employeeId',
 });
 
 // create new employee
-employeeRouter.post('/', 
-jwtPassportMiddleware, 
-User.hasAccess(User.ACCESS_ADMIN), 
+employeeRouter.post('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), 
 (req, res) => {
     console.log("User Access Level", req.user.accessLevel);
     // we can access req.body payload bc we defined express.json() middleware in server.js

@@ -18,9 +18,9 @@ const accessLevel = [ACCESS_NO, ACCESS_OVERVIEW_ONLY, ACCESS_PUBLIC, ACCESS_ADMI
 function generateTestUser(userAccessLevel = ACCESS_ADMIN) {
     return {
         name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+        email: faker.internet.email(),
         username: faker.internet.userName(),
         password: faker.internet.password(),
-        email: faker.internet.email(),
         accessLevel: userAccessLevel
     };
 }
@@ -70,14 +70,4 @@ function generateToken(testUser) {
         })
 }
 
-function generateUsers(numberOfUsers) {
-
-    for (let x = 1; x <= numberOfUsers; x++) {
-         let user = generateTestUser();
-         generateToken(user);
-    } 
-}
-
-
-
-module.exports = { generateTestUser, generateToken, generateUsers };
+module.exports = { generateTestUser, generateToken };
