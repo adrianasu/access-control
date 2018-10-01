@@ -118,60 +118,60 @@ describe('Employees API Resource edge cases tests', function () {
             });
     });
 
-    // it('Should not allow to get an employee by id', function () {
-    //     let foundEmployee;
-    //     return findOneEmployee()
-    //         .then(function (_foundEmployee) {
-    //             foundEmployee = _foundEmployee;
-    //             return chai.request(app)
-    //                 .get(`/employee/${foundEmployee.id}`)
-    //                 .set("Authorization", `Bearer ${jwToken}`)
-    //             })
-    //             .then(function(res) {
-    //             checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object')
-    //             //checkObjectContent(res.body, employeeProperties, foundEmployee);
-    //         })
-    //         .catch(function (err) {
-    //             console.log("Unauthorized user");
-    //         })
-    // })
+    it('Should not allow to get an employee by id', function () {
+        let foundEmployee;
+        return findOneEmployee()
+            .then(function (_foundEmployee) {
+                foundEmployee = _foundEmployee;
+                return chai.request(app)
+                    .get(`/employee/${foundEmployee.id}`)
+                    .set("Authorization", `Bearer ${jwToken}`)
+                })
+                .then(function(res) {
+                checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object')
+                //checkObjectContent(res.body, employeeProperties, foundEmployee);
+            })
+            .catch(function (err) {
+                console.log("Unauthorized user");
+            })
+    })
 
-    // it(`Should get employee's overview`, function () {
-    //     let foundEmployee;
-    //     return findOneEmployee()
-    //         .then(function (_foundEmployee) {
-    //             foundEmployee = _foundEmployee;
-    //             return chai.request(app)
-    //                 .get(`/employee/overview/${foundEmployee.id}`)
-    //                 .set("Authorization", `Bearer ${jwToken}`)
-    //         })
-    //         .then(function (res) {
-    //             checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-    //             checkObjectContent(res.body, employeeOverviewProperties, foundEmployee);
-    //         })
-    //         .catch(function (err) {
-    //             console.log('Internal Error');
-    //         })
-    // });
+    it(`Should get employee's overview`, function () {
+        let foundEmployee;
+        return findOneEmployee()
+            .then(function (_foundEmployee) {
+                foundEmployee = _foundEmployee;
+                return chai.request(app)
+                    .get(`/employee/overview/${foundEmployee.id}`)
+                    .set("Authorization", `Bearer ${jwToken}`)
+            })
+            .then(function (res) {
+                checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
+                checkObjectContent(res.body, employeeOverviewProperties, foundEmployee);
+            })
+            .catch(function (err) {
+                console.log('Internal Error');
+            })
+    });
 
-    // it('Should not allow to create an employee', function () {
+    it('Should not allow to create an employee', function () {
        
-    //     return generateOneEmployee()
-    //     .then(function(newEmployee) {            
-    //         return chai.request(app)
-    //         .post('/employee')
-    //         .set("Authorization", `Bearer ${jwToken}`)
-    //         .send(newEmployee)
+        return generateOneEmployee()
+        .then(function(newEmployee) {            
+            return chai.request(app)
+            .post('/employee')
+            .set("Authorization", `Bearer ${jwToken}`)
+            .send(newEmployee)
           
-    //     })
-    //     .then(function (res) {
-    //         checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
-    //         //checkObjectContent(res.body, employeeOverviewProperties);
-    //     })
-    //     .catch(function(err) {
-    //         console.log("Unauthorized user");
-    //     });
-    // });
+        })
+        .then(function (res) {
+            checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
+            //checkObjectContent(res.body, employeeOverviewProperties);
+        })
+        .catch(function(err) {
+            console.log("Unauthorized user");
+        });
+    });
     
     // it('Should not allow to update employee by id', function () {
 
@@ -199,22 +199,22 @@ describe('Employees API Resource edge cases tests', function () {
     //     });
     // });
 
-    // it('Should not allow to delete employee by id', function () {
-    //     let foundEmployee;
-    //     return findOneEmployee()
-    //     .then(function (_foundEmployee) {
-    //         foundEmployee = _foundEmployee;
-    //         return chai.request(app)
-    //         .delete(`/employee/${foundEmployee.id}`)
-    //         .set("Authorization", `Bearer ${jwToken}`)
-    //     })
-    //     .then(function (res) {
-    //         checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
-    //         let responseKeys = ["deleted", "OK"];
-    //         //checkObjectContent(res.body, responseKeys);
-    //     })
-    //     .catch(function(err) {
-    //         console.log("Unauthorized user");
-    //     });
-    // });                 
+    it('Should not allow to delete employee by id', function () {
+        let foundEmployee;
+        return findOneEmployee()
+        .then(function (_foundEmployee) {
+            foundEmployee = _foundEmployee;
+            return chai.request(app)
+            .delete(`/employee/${foundEmployee.id}`)
+            .set("Authorization", `Bearer ${jwToken}`)
+        })
+        .then(function (res) {
+            checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
+            let responseKeys = ["deleted", "OK"];
+            //checkObjectContent(res.body, responseKeys);
+        })
+        .catch(function(err) {
+            console.log("Unauthorized user");
+        });
+    });                 
 })
