@@ -1,33 +1,37 @@
-const token;
-const userId;
-
-const { ACCESS_OVERVIEW, ACCESS_PUBLIC, ACCESS_ADMIN } = require('../user/user.model');
 
 function getToken(username, password) {
   let settings = {
-      data: {
-          username: username,
-          password: password
-      },
       type: "POST",
-      dataType: "json"
+      url: "/auth/login",
+      contentType: "application/json",
+      dataType: "json",
+      user: {
+          user: {
+              password: password,
+              username: username
+          }
+      },
   };
   return $.ajax(settings);
 } 
 
-function handleError(error) {
+function handleError(xhr) {
+    let message = "Something went wrong, please try again.";
+    if (xhr && xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.description) {
+        message = xhr.responseJSON.error.description;
+    }
     $('.js-start-loader').hide();
-    $('.js-error-message').html(`<p>${error}</p>`).show();
+    $('.js-error-message').html(`<p>${message}</p>`).show();
 }
 
 function handleLogIn(event) {
     let user, jwToken;
     event.preventDefault();
     $('.js-start-loader').show();
-    const usernameInput = $('#js-username');
-    const passwordInput = $('#js-password');
-    const username = usernameInput.val();
-    const password = passwordInput.val();
+    let usernameInput = $('#js-username');
+    let passwordInput = $('#js-password');
+    let username = usernameInput.val();
+    let password = passwordInput.val();
     usernameInput = "";
     passwordInput = "";
     return getToken(username, password)
@@ -35,12 +39,13 @@ function handleLogIn(event) {
             jwToken = jsonResponse.jwToken;
             user = jsonResponse.user;
             $('.js-start-loader').hide();
-           
+            let ACCESS_OVERVIEW = 10;
             if (user.accessLevel > ACCESS_OVERVIEW) {
-                
+                console.log("Yay");
+
             }
         })
-        .catch(error => handleError)
+        .catch(handleError)
 }
 
 function watchSubmitButton() {

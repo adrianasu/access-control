@@ -35,6 +35,7 @@ authRouter.post('/login', localPassportMiddleware, (req, res) => {
         jwToken,
         user
     });
+    
 });
 
 // for creating new JWT when the previous one is about to get expired

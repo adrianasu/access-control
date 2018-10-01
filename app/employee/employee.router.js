@@ -43,6 +43,7 @@ employeeRouter.get('/',
                 })
             })
             .catch(err => {
+                
                 return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
             });
 });
