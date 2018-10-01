@@ -16,6 +16,7 @@ const {
     HTTP_STATUS_CODES
 } = require('../app/config');
 const User = require('../app/user/user.model');
+const Users = User.User; 
 
 const {
     seedEmployeesData,
@@ -85,14 +86,14 @@ describe('Users API resource tests', function () {
     });
 
     it('Should create a new user', function () {
-        let newUser = generateTestUser();
-        return chai.request(app)
-            .post('/user')
-            .send(newUser)
-            .then(function(res) {
-                checkResponse(res, HTTP_STATUS_CODES.CREATED, 'object');
-                checkObjectContent(res, newUserKeys, newUser);
-            });
+         let newUser = generateTestUser();
+         return chai.request(app)
+             .post('/user')
+             .send(newUser)
+             .then(function (res) {
+                 checkResponse(res, HTTP_STATUS_CODES.CREATED, 'object');
+                 checkObjectContent(res, newUserKeys, newUser);
+             });
     });
 
     it('Should return all users', function () {

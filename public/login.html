@@ -1,12 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="description" content="Employees Access Control App that validates the status of some requirements. 
+                                        In this case we are validating the required trainings.">
+    <meta name="author" content="Adriana Suarez">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+
+    <title>LogIn</title>
 </head>
 <body>
-    <p>Login</p>
+    <h1>Ready2Work</h1>
+    <form class="js-login-form">
+        <legend>Log In</legend>
+        <label for="username">username</label>
+        <input type="text" name="username" id="username">
+        <label for="password">password</label>
+        <input type="text" name="password" id="password">
+        <button role="button" type="submit">Log In</button>
+    </form>
+    <div clas="js-start-loader" hidden>
+        
+    </div>
+    <div class="js-error-message" hidden></div>
+
+    <div class="js-search-page" aria-live="assertive" hidden>
+
+    </div>
+
+    <script type="text/javascript" src="login.js"></script>
 </body>
 </html>

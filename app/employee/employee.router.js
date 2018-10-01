@@ -20,8 +20,10 @@ function validateEmployeeTrainings(employee, trainings) {
 }
 
 // get all employees 
-employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), 
-(req, res) => {
+employeeRouter.get('/', 
+    jwtPassportMiddleware, 
+    User.hasAccess(User.ACCESS_PUBLIC), 
+    (req, res) => {
     // get trainings to validate employee's trainings status
      Training
          .find()
@@ -54,7 +56,7 @@ employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
         .then(_trainings => {
             trainings = _trainings
             return Employee
-                .findById(req.params.employeeId)
+                .findOne({employeeId: req.params.employeeId})
         })
         .then(employee => {
             //console.log(employee);
@@ -82,7 +84,7 @@ employeeRouter.get('/overview/:employeeId',
         .then(_trainings => {
             trainings = _trainings
             return Employee
-                .findById(req.params.employeeId)
+                .findOne({employeeId: req.params.employeeId})
         })
         .then(employee => {
             //console.log(employee);
@@ -99,8 +101,10 @@ employeeRouter.get('/overview/:employeeId',
 });
 
 // create new employee
-employeeRouter.post('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), 
-(req, res) => {
+employeeRouter.post('/', 
+    jwtPassportMiddleware, 
+    User.hasAccess(User.ACCESS_ADMIN), 
+    (req, res) => {
     console.log("User Access Level", req.user.accessLevel);
     // we can access req.body payload bc we defined express.json() middleware in server.js
     const newEmployee = {
@@ -142,14 +146,14 @@ employeeRouter.post('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN
             });
 });
 
-// update employee by id
+// update employee by id 
 employeeRouter.put('/:employeeId', 
-jwtPassportMiddleware, 
-User.hasAccess(User.ACCESS_ADMIN), 
-(req, res) => {
+    jwtPassportMiddleware, 
+    User.hasAccess(User.ACCESS_ADMIN), 
+    (req, res) => {
     // check that id in request body matches id in request path
-    if (req.params.employeeId !== req.body.id) {
-        const message = `Request path id ${req.params.employeeId} and request body id ${req.body.id} must match`;
+    if (req.params.employeeId !== req.body.employeeId) {
+        const message = `Request path id ${req.params.employeeId} and request body id ${req.body.employeeId} must match`;
         console.error(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
             message: message
@@ -186,7 +190,7 @@ User.hasAccess(User.ACCESS_ADMIN),
 
     Employee
     // $set operator replaces the value of a field with the specified value
-        .findByIdAndUpdate(req.params.employeeId, { $set: toUpdate }, { new: true })
+        .findOneAndUpdate({employeeId: req.params.employeeId}, { $set: toUpdate }, { new: true })
         .then(updatedEmployee => {
             console.log(`Updating employee with id: \`${req.params.employeeId}\``);
             return res.status(HTTP_STATUS_CODES.OK).json(updatedEmployee.serialize());
@@ -198,11 +202,11 @@ User.hasAccess(User.ACCESS_ADMIN),
 
 // delete employee by id
 employeeRouter.delete('/:employeeId', 
-jwtPassportMiddleware, 
-User.hasAccess(User.ACCESS_ADMIN), 
-(req, res) => {
+    jwtPassportMiddleware, 
+    User.hasAccess(User.ACCESS_ADMIN), 
+    (req, res) => {
     return Employee
-        .findByIdAndDelete(req.params.employeeId)
+        .findOneAndDelete({employeeId: req.params.employeeId})
         .then(deletedEmployee => {
             console.log(`Deleting employee with id: \`${req.params.employeeId}\``);
             res.status(HTTP_STATUS_CODES.OK).json({

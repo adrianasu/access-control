@@ -1,8 +1,16 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
+// instantiate mongoose-gridfs
+// const gridfs = require('mongoose-gridfs')({
+//     collection: 'photos',
+//     model: 'Photo'
+// })
+
 mongoose.Promise = global.Promise;
 const ObjectId = mongoose.Schema.Types.ObjectId;
+
+// const photoSchema = gridfs.schema;
 
 const departmentsSchema = mongoose.Schema({
     departmentName: {
@@ -33,25 +41,25 @@ const employersSchema = mongoose.Schema({
 
 const employeesSchema = mongoose.Schema({
     //updatedBy: [{ 
-            //     type: ObjectId,
-            //     ref: "User"
-            // }],
-    employeeId: String,
-    //photo: File,
-    firstName: String,
-    lastName: String,
-    employer: {type: ObjectId, ref:"Employer"},
-    department: {
-        type: ObjectId,
-        ref: "Department"
-    },
-    licensePlates: [String],
-    employmentDate: Date,
-    allowVehicle: Boolean,
-    trainings: 
-    [{
-        trainingInfo: 
-        {
+        //     type: ObjectId,
+        //     ref: "User"
+        // }],
+        employeeId: String,
+        //photo: { type: ObjectId, ref: "Photo"},
+        firstName: String,
+        lastName: String,
+        employer: {type: ObjectId, ref:"Employer"},
+        department: {
+            type: ObjectId,
+            ref: "Department"
+        },
+        licensePlates: [String],
+        employmentDate: Date,
+        allowVehicle: Boolean,
+        trainings: 
+        [{
+            trainingInfo: 
+            {
             type: ObjectId,
             ref: "Training"
         },
@@ -95,7 +103,7 @@ employeesSchema.methods.serializeOverview = function(ready2work) {
 
 // validate data 
 const EmployeeJoiSchema = Joi.object().keys({
-   // updatedBy: Joi.string().optional(),
+    // updatedBy: Joi.string().optional(),
     employeeId: Joi.string().required(),
     //photo: this.photo,
     firstName: Joi.string().required(),
@@ -105,114 +113,118 @@ const EmployeeJoiSchema = Joi.object().keys({
         __v: Joi.number(),
         employerName: Joi.string(),
         departments: Joi.array().items(Joi.object().keys({
-                    _id: Joi.string(),
-                     __v: Joi.number(),
-                    departmentName: Joi.string()
-        }))
-        }),
-    department: Joi.object().keys({
-        _id: Joi.string(),
-         __v: Joi.number(),
-        departmentName: Joi.string()}),
-    licensePlates: Joi.array().items(Joi.string()),
-    employmentDate: Joi.date(),
-    allowVehicle: Joi.boolean(),
-    trainings: Joi.array().items(
-                Joi.object().keys({
-                    trainingInfo: Joi.object().keys({
-                        _id: Joi.string(),
-                        __v: Joi.number(),
-                        title: Joi.string(), 
-                        expirationTime: Joi.date()}), 
-                    trainingDate: Joi.date()
-                    })
-                ), 
-})
-
-const UpdateEmployeeJoiSchema = Joi.object().keys({
-    //updatedBy: Joi.string().optional(),
-    employeeId: Joi.string(),
-    //photo: this.photo,
-    firstName: Joi.string(),
-    lastName: Joi.string(),
-    employer: Joi.object().keys({
-        _id: Joi.string(),
+            _id: Joi.string(),
             __v: Joi.number(),
-            employerName: Joi.string(),
-            departments: Joi.array().items(Joi.object().keys({
-                _id: Joi.string(),
-                __v: Joi.number(),
-                departmentName: Joi.string()
-            }))
+            departmentName: Joi.string()
+        }))
     }),
     department: Joi.object().keys({
-       _id: Joi.string(),
-           __v: Joi.number(),
-           departmentName: Joi.string()
-       }),
-    licensePlates: Joi.array().items(Joi.string()),
-    employmentDate: Joi.date(),
-    allowVehicle: Joi.boolean(),
-    trainings: Joi.array().items(
-       Joi.object().keys({
-       trainingInfo: Joi.object().keys({
-           _id: Joi.string(),
-           __v: Joi.number(),
-           title: Joi.string(),
-           expirationTime: Joi.date()
-       }),
-       trainingDate: Joi.date()
-       })
-    ),
-})
-
-employersSchema.pre('find', function (next) {
-    this.populate('departments');
-    next();
-});
-
-employersSchema.pre('findOne', function (next) {
-    this.populate('departments');
-    next();
-});
-
-employeesSchema.pre('find', function (next) {
-    this.populate('department employer trainings.trainingInfo user')
-    next();
-});
-
-employeesSchema.pre('findOne', function (next) {
-    this.populate('department employer trainings.trainingInfo user')
-    next();
-});
-
-// instance method to determine if a training is valid or expired
-employeesSchema.methods.isValid = function(trainingName) {
-let valid = false;
-    this.trainings.forEach(training => {
-        if (training.trainingInfo
-            && trainingName === training.trainingInfo.title) {
-                let expireDate = new Date(training.trainingInfo
-                    .expirationTime.getTime() + training.trainingDate.getTime());
-                    if (expireDate > Date.now()) {
-                        // training still valid
-                        valid = true;
-                    }
-                }
-            });
-    return valid;
-}
-
-const Employee = mongoose.model("Employee", employeesSchema);
-const Department = mongoose.model("Department", departmentsSchema);
-const Employer = mongoose.model("Employer", employersSchema);
-const Training = mongoose.model("Training", trainingsSchema);
-
-module.exports = {
-    Employee,
-    Training,
-    Department,
-    Employer,
-    EmployeeJoiSchema,
-    UpdateEmployeeJoiSchema
-};
+        _id: Joi.string(),
+        __v: Joi.number(),
+        departmentName: Joi.string()}),
+        licensePlates: Joi.array().items(Joi.string()),
+        employmentDate: Joi.date(),
+        allowVehicle: Joi.boolean(),
+        trainings: Joi.array().items(
+            Joi.object().keys({
+                trainingInfo: Joi.object().keys({
+                    _id: Joi.string(),
+                    __v: Joi.number(),
+                    title: Joi.string(), 
+                    expirationTime: Joi.date()}), 
+                    trainingDate: Joi.date()
+                })
+                ), 
+            })
+            
+            const UpdateEmployeeJoiSchema = Joi.object().keys({
+                //updatedBy: Joi.string().optional(),
+                employeeId: Joi.string(),
+                //photo: this.photo,
+                firstName: Joi.string(),
+                lastName: Joi.string(),
+                employer: Joi.object().keys({
+                    _id: Joi.string(),
+                    __v: Joi.number(),
+                    employerName: Joi.string(),
+                    departments: Joi.array().items(Joi.object().keys({
+                        _id: Joi.string(),
+                        __v: Joi.number(),
+                        departmentName: Joi.string()
+                    }))
+                }),
+                department: Joi.object().keys({
+                    _id: Joi.string(),
+                    __v: Joi.number(),
+                    departmentName: Joi.string()
+                }),
+                licensePlates: Joi.array().items(Joi.string()),
+                employmentDate: Joi.date(),
+                allowVehicle: Joi.boolean(),
+                trainings: Joi.array().items(
+                    Joi.object().keys({
+                        trainingInfo: Joi.object().keys({
+                            _id: Joi.string(),
+                            __v: Joi.number(),
+                            title: Joi.string(),
+                            expirationTime: Joi.date()
+                        }),
+                        trainingDate: Joi.date()
+                    })
+                    ),
+                })
+                
+                employersSchema.pre('find', function (next) {
+                    this.populate('departments');
+                    next();
+                });
+                
+                employersSchema.pre('findOne', function (next) {
+                    this.populate('departments');
+                    next();
+                });
+                
+                employeesSchema.pre('find', function (next) {
+                    this.populate('department employer trainings.trainingInfo user')
+                    next();
+                });
+                
+                employeesSchema.pre('findOne', function (next) {
+                    this.populate('department employer trainings.trainingInfo user')
+                    next();
+                });
+                
+                // instance method to determine if a training is valid or expired
+                employeesSchema.methods.isValid = function(trainingName) {
+                    let valid = false;
+                    this.trainings.forEach(training => {
+                        if (training.trainingInfo
+                            && trainingName === training.trainingInfo.title) {
+                                let expireDate = new Date(training.trainingInfo
+                                    .expirationTime.getTime() + training.trainingDate.getTime());
+                                    if (expireDate > Date.now()) {
+                                        // training still valid
+                                        valid = true;
+                                    }
+                                }
+                            });
+                            return valid;
+                        }
+                        
+                        // const Photo = gridfs.model;
+                        // const Photo = mongoose.model("Photo", photoSchema);
+                        const Employee = mongoose.model("Employee", employeesSchema);
+                        const Department = mongoose.model("Department", departmentsSchema);
+                        const Employer = mongoose.model("Employer", employersSchema);
+                        const Training = mongoose.model("Training", trainingsSchema);
+                        
+                        module.exports = {
+                            //Photo,
+                            Employee,
+                            Training,
+                            Department,
+                            Employer,
+                            EmployeeJoiSchema,
+                            UpdateEmployeeJoiSchema
+                        };
+                        

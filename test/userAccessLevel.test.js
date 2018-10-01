@@ -139,29 +139,29 @@ describe('Users API resource edge cases tests', function () {
             });
     });
 
-    it('Should not update accessLevel of a user by id', function () {
+    // it('Should not update accessLevel of a user by id', function () {
 
-        let updateUser = {
-            accessLevel: 30
-        }
+    //     let updateUser = {
+    //         accessLevel: 30
+    //     }
 
-        return User
-            .findOne()
-            .then(function(foundUser) {
-                updateUser.id = foundUser.id;
+    //     return User
+    //         .findOne()
+    //         .then(function(foundUser) {
+    //             updateUser.id = foundUser.id;
 
-                return chai.request(app)
-                    .put(`/user/${foundUser.id}`)
-                    .set("Authorization", `Bearer ${jwToken}`)
-                    .send(updateUser)
-            })
-            .then(function (res) {
-                expect(res).to.have.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
-    });
+    //             return chai.request(app)
+    //                 .put(`/user/${foundUser.id}`)
+    //                 .set("Authorization", `Bearer ${jwToken}`)
+    //                 .send(updateUser)
+    //         })
+    //         .then(function (res) {
+    //             expect(res).to.have.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+    //         })
+    //         .catch(function (err) {
+    //             console.log(err);
+    //         });
+    // });
 
     it('Should not delete user by id', function () {
  

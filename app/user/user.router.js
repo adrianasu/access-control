@@ -11,12 +11,13 @@ const userRouter = express.Router();
 
 // create new user
 userRouter.post('/', (req, res) => {
+    
     const newUser = {
         name: req.body.name,
         email: req.body.email,
         username: req.body.username,
         password: req.body.password,
-        accessLevel: req.body.accessLevel
+        accessLevel: User.ACCESS_OVERVIEW_ONLY
     };
 
     // validate new user data with Joi
@@ -69,6 +70,8 @@ userRouter.post('/', (req, res) => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });
+
+
 // retrieve all users using mongoose function find
 userRouter.get('/', jwtPassportMiddleware, 
     User.hasAccess(User.ACCESS_ADMIN), 
