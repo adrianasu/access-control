@@ -113,31 +113,31 @@ describe('Users API resource edge cases tests', function () {
             });
     });
 
-    it('Should update name and email of a user by id', function () {
+    // it('Should update name and email of a user by id', function () {
          
-        let updateUser = {
-            name: "New Name",
-            email: "new@email.com"
-        } 
+    //     let updateUser = {
+    //         name: "New Name",
+    //         email: "new@email.com"
+    //     } 
         
-       return User
-           .findOne()
-           .then(function (foundUser) {
-                updateUser.id = foundUser.id;
+    //    return User
+    //        .findOne()
+    //        .then(function (foundUser) {
+    //             updateUser.id = foundUser.id;
           
-                return chai.request(app)
-                    .put(`/user/${foundUser.id}`)
-                    .set("Authorization", `Bearer ${jwToken}`)
-                    .send(updateUser)
-            })
-            .then(function (res) {
-                checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-                checkObjectContent(res, Object.keys(updateUser), updateUser);
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
-    });
+    //             return chai.request(app)
+    //                 .put(`/user/${foundUser.id}`)
+    //                 .set("Authorization", `Bearer ${jwToken}`)
+    //                 .send(updateUser)
+    //         })
+    //         .then(function (res) {
+    //             checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
+    //             checkObjectContent(res, Object.keys(updateUser), updateUser);
+    //         })
+    //         .catch(function (err) {
+    //             console.log(err);
+    //         });
+    // });
 
     // it('Should not update accessLevel of a user by id', function () {
 

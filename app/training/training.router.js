@@ -5,6 +5,7 @@ const trainingRouter = express.Router();
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
 const { Training } = require('../employee/employee.model');
+const User = require('../user/user.model');
 
 const TrainingJoiSchema = Joi.object().keys({
         _id: Joi.string(),
@@ -164,6 +165,6 @@ trainingRouter.delete('/:trainingId',
 });
 
 
-module.exports = { employeeRouter };
+module.exports = { trainingRouter };
 
 

@@ -53,20 +53,9 @@ function checkResponse(res, statusCode, resType) {
 function checkObjectContent(res, keyList, employee) {
     keyList.forEach(function (key) {
         expect(res).to.include.keys(key);
-        // expect(res.body).to.deep.include({
-        //     [key]: employee[key],
-        // })
+    
     });
 }
-
-// function checkArrayContent(res, keyList) {
-//     const employee = res.body[0];
-//     expect(res.body).to.have.lengthOf.at.least(1);
-//     expect(employee.employer).to.be.a('object');
-//     keyList.forEach(function (key) {
-//         expect(employee).to.include.keys(key);
-//     })
-// }
 
 function findOneEmployee() {
      return Employee
@@ -108,9 +97,7 @@ describe('Employees API Resource edge cases tests', function () {
             .get('/employee')
             .set('Authorization', `Bearer ${jwToken}`)
             .then(function (res) {
-                
-                //expect(res.body.length).to.be.at.least(1);
-                //checkArrayContent(res);
+             
                 checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
             })
             .catch(function(err) {
@@ -129,7 +116,6 @@ describe('Employees API Resource edge cases tests', function () {
                 })
                 .then(function(res) {
                 checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object')
-                //checkObjectContent(res.body, employeeProperties, foundEmployee);
             })
             .catch(function (err) {
                 console.log("Unauthorized user");
@@ -166,7 +152,6 @@ describe('Employees API Resource edge cases tests', function () {
         })
         .then(function (res) {
             checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
-            //checkObjectContent(res.body, employeeOverviewProperties);
         })
         .catch(function(err) {
             console.log("Unauthorized user");
@@ -210,8 +195,6 @@ describe('Employees API Resource edge cases tests', function () {
         })
         .then(function (res) {
             checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
-            let responseKeys = ["deleted", "OK"];
-            //checkObjectContent(res.body, responseKeys);
         })
         .catch(function(err) {
             console.log("Unauthorized user");

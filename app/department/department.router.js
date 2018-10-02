@@ -5,6 +5,7 @@ const departmentRouter = express.Router();
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
 const { Department } = require('../employee/employee.model');
+const User  = require('../user/user.model');
 
 const DepartmentJoiSchema = Joi.object().keys({
         _id: Joi.string(),
@@ -109,6 +110,6 @@ departmentRouter.delete('/:departmentId',
 });
 
 
-module.exports = { employeeRouter };
+module.exports = { departmentRouter };
 
 

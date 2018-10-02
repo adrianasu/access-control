@@ -5,6 +5,7 @@ const employerRouter = express.Router();
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
 const { Employer } = require('../employee/employee.model');
+const { User } = require('../user/user.model');
 
 const EmployerJoiSchema = Joi.object().keys({
                 employerName: Joi.string(),
@@ -162,6 +163,6 @@ employerRouter.delete('/:employerId',
 });
 
 
-module.exports = { employeeRouter };
+module.exports = { employerRouter };
 
 

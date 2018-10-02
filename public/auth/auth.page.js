@@ -2,13 +2,14 @@ let STATE = {};
 // modules defined in public/utilities
 const RENDER = window.RENDER_MODULE;
 const HTTP_USER = window.HTTP_USER_MODULE;
+const HTTP_EMPLOYEE = window.HTTP_EMPLOYEE_MODULE;
 const CACHE = window.CACHE_MODULE;
 
 const ACCESS_OVERVIEW = 10;
 
 function handleSignUp(event) {
     event.preventDefault();
-    $('.js-start-loader').show();
+    $('.js-loader').show();
 
     const userData = {
         name: $('#js-name').val(),
@@ -26,23 +27,14 @@ function handleSignUp(event) {
             window.open('/login.html', '_self');
         },
         onError: err => {
-            handleError(err);
+            HTTP_EMPLOYEE.handleError(err);
         }
     })
 }
 
-function handleError(xhr) {
-    let message = "Something went wrong, please try again.";
-    if (xhr && xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.description) {
-        message = xhr.responseJSON.error.description;
-    }
-    $('.js-start-loader').hide();
-    $('.js-error-message').html(`<p>${message}</p>`).show();
-}
-
 function handleLogIn(event) {
     event.preventDefault();
-    $('.js-start-loader').show();
+    $('.js-loader').show();
 
     const userData = {
         username: $('#js-username').val(),
@@ -66,23 +58,20 @@ function handleLogIn(event) {
             }
         },
         onError: err => {
-            handleError(err);
+            HTTP_EMPLOYEE.handleError(err);
         }
     })
 }
 
-function watchSubmitButton() {
+function watchSubmitButtons() {
     $('.js-login-form').on('submit', handleLogIn);
     $('.js-signup-form').on('submit', handleSignUp);
 }
 
-function showLogInPage() {
-    $('.js-login-form').show();
-}
 
 function main() {
-    showLogInPage();
-    watchSubmitButton();
+   
+    watchSubmitButtons();
 }
 
 $(main);

@@ -5,7 +5,17 @@ window.HTTP_EMPLOYEE_MODULE = {
     employeesGetAll,
     employeeGetById,
     employeeOverviewById,
+    handleError
 };
+
+function handleError(xhr) {
+    let message = "Something went wrong, please try again.";
+    if (xhr && xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.description) {
+        message = xhr.responseJSON.error.description;
+    }
+    $('.js-loader').hide();
+    $('.js-error-message').html(`<p>${message}</p>`).show();
+}
 
 function employeeCreate(settings) {
     const { jwToken, employeeData, onSuccess, onError } = settings;
