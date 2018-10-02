@@ -100,7 +100,6 @@ employeesSchema.methods.serializeOverview = function(ready2work) {
     };
 }
 
-
 // validate data 
 const EmployeeJoiSchema = Joi.object().keys({
     // updatedBy: Joi.string().optional(),
@@ -137,94 +136,128 @@ const EmployeeJoiSchema = Joi.object().keys({
                 ), 
             })
             
-            const UpdateEmployeeJoiSchema = Joi.object().keys({
-                //updatedBy: Joi.string().optional(),
-                employeeId: Joi.string(),
-                //photo: this.photo,
-                firstName: Joi.string(),
-                lastName: Joi.string(),
-                employer: Joi.object().keys({
-                    _id: Joi.string(),
-                    __v: Joi.number(),
-                    employerName: Joi.string(),
-                    departments: Joi.array().items(Joi.object().keys({
-                        _id: Joi.string(),
-                        __v: Joi.number(),
-                        departmentName: Joi.string()
-                    }))
-                }),
-                department: Joi.object().keys({
-                    _id: Joi.string(),
-                    __v: Joi.number(),
-                    departmentName: Joi.string()
-                }),
-                licensePlates: Joi.array().items(Joi.string()),
-                employmentDate: Joi.date(),
-                allowVehicle: Joi.boolean(),
-                trainings: Joi.array().items(
-                    Joi.object().keys({
-                        trainingInfo: Joi.object().keys({
-                            _id: Joi.string(),
-                            __v: Joi.number(),
-                            title: Joi.string(),
-                            expirationTime: Joi.date()
-                        }),
-                        trainingDate: Joi.date()
-                    })
-                    ),
-                })
-                
-                employersSchema.pre('find', function (next) {
-                    this.populate('departments');
-                    next();
-                });
-                
-                employersSchema.pre('findOne', function (next) {
-                    this.populate('departments');
-                    next();
-                });
-                
-                employeesSchema.pre('find', function (next) {
-                    this.populate('department employer trainings.trainingInfo user')
-                    next();
-                });
-                
-                employeesSchema.pre('findOne', function (next) {
-                    this.populate('department employer trainings.trainingInfo user')
-                    next();
-                });
-                
-                // instance method to determine if a training is valid or expired
-                employeesSchema.methods.isValid = function(trainingName) {
-                    let valid = false;
-                    this.trainings.forEach(training => {
-                        if (training.trainingInfo
-                            && trainingName === training.trainingInfo.title) {
-                                let expireDate = new Date(training.trainingInfo
-                                    .expirationTime.getTime() + training.trainingDate.getTime());
-                                    if (expireDate > Date.now()) {
-                                        // training still valid
-                                        valid = true;
-                                    }
-                                }
-                            });
-                            return valid;
+const UpdateEmployeeJoiSchema = Joi.object().keys({
+    //updatedBy: Joi.string().optional(),
+    employeeId: Joi.string(),
+    //photo: this.photo,
+    firstName: Joi.string(),
+    lastName: Joi.string(),
+    employer: Joi.object().keys({
+        _id: Joi.string(),
+        __v: Joi.number(),
+        employerName: Joi.string(),
+        departments: Joi.array().items(Joi.object().keys({
+            _id: Joi.string(),
+            __v: Joi.number(),
+            departmentName: Joi.string()
+        }))
+    }),
+    department: Joi.object().keys({
+        _id: Joi.string(),
+        __v: Joi.number(),
+        departmentName: Joi.string()
+    }),
+    licensePlates: Joi.array().items(Joi.string()),
+    employmentDate: Joi.date(),
+    allowVehicle: Joi.boolean(),
+    trainings: Joi.array().items(
+        Joi.object().keys({
+            trainingInfo: Joi.object().keys({
+                _id: Joi.string(),
+                __v: Joi.number(),
+                title: Joi.string(),
+                expirationTime: Joi.date()
+            }),
+            trainingDate: Joi.date()
+        })
+        ),
+    })
+
+// const EmployerJoiSchema = Joi.object().keys({
+//     employer: Joi.object().keys({
+//             _id: Joi.string(),
+//             __v: Joi.number(),
+//             employerName: Joi.string(),
+//             departments: Joi.array().items(Joi.object().keys({
+//                 _id: Joi.string(),
+//                 __v: Joi.number(),
+//                 departmentName: Joi.string()
+//             }))
+//         })
+// });
+
+// const DepartmentJoiSchema = Joi.object().keys({
+//         department: Joi.object().keys({
+//             _id: Joi.string(),
+//             __v: Joi.number(),
+//             departmentName: Joi.string()
+//         })
+// });
+     
+// const TrainingJoiSchema = Joi.object().keys({
+//     trainings: Joi.array().items(
+//         Joi.object().keys({
+//                 trainingInfo: Joi.object().keys({
+//                     _id: Joi.string(),
+//                     __v: Joi.number(),
+//                     title: Joi.string(),
+//                     expirationTime: Joi.date()
+//                 })
+//         })
+//     )
+// });
+    
+    employersSchema.pre('find', function (next) {
+        this.populate('departments');
+        next();
+    });
+    
+    employersSchema.pre('findOne', function (next) {
+        this.populate('departments');
+        next();
+    });
+    
+    employeesSchema.pre('find', function (next) {
+        this.populate('department employer trainings.trainingInfo user')
+        next();
+    });
+    
+    employeesSchema.pre('findOne', function (next) {
+        this.populate('department employer trainings.trainingInfo user')
+        next();
+    });
+    
+    // instance method to determine if a training is valid or expired
+    employeesSchema.methods.isValid = function(trainingName) {
+        let valid = false;
+        this.trainings.forEach(training => {
+            if (training.trainingInfo
+                && trainingName === training.trainingInfo.title) {
+                    let expireDate = new Date(training.trainingInfo
+                        .expirationTime.getTime() + training.trainingDate.getTime());
+                        if (expireDate > Date.now()) {
+                            // training still valid
+                            valid = true;
                         }
-                        
-                        // const Photo = gridfs.model;
-                        // const Photo = mongoose.model("Photo", photoSchema);
-                        const Employee = mongoose.model("Employee", employeesSchema);
-                        const Department = mongoose.model("Department", departmentsSchema);
-                        const Employer = mongoose.model("Employer", employersSchema);
-                        const Training = mongoose.model("Training", trainingsSchema);
-                        
-                        module.exports = {
-                            //Photo,
-                            Employee,
-                            Training,
-                            Department,
-                            Employer,
-                            EmployeeJoiSchema,
-                            UpdateEmployeeJoiSchema
-                        };
-                        
+                    }
+                });
+                return valid;
+            }
+            
+            // const Photo = gridfs.model;
+            // const Photo = mongoose.model("Photo", photoSchema);
+            const Employee = mongoose.model("Employee", employeesSchema);
+            const Department = mongoose.model("Department", departmentsSchema);
+            const Employer = mongoose.model("Employer", employersSchema);
+            const Training = mongoose.model("Training", trainingsSchema);
+            
+            module.exports = {
+                //Photo,
+                Employee,
+                Training,
+                Department,
+                Employer,
+                EmployeeJoiSchema,
+                UpdateEmployeeJoiSchema
+            };
+            

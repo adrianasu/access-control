@@ -26,12 +26,19 @@
     <div clas="js-start-loader" hidden>
         <span class="invisible-text" role="alert" aria-busy="true">Loading</span>
     </div>
+    <nav>
+        <a href="/signup.html">Don't have an account? Sign up here.</a>
+    </nav>
     <div class="js-error-message" hidden></div>
 
     <div class="js-search-page" aria-live="assertive" hidden>
 
     </div>
-
-    <script type="text/javascript" src="login.js"></script>
+    <script src="../utilities/cache.module.js"></script>
+    <script src="../utilities/render.module.js"></script>
+    <script src="../utilities/http.user.module.js"></script>
+    <script src="../utilities/http.employee.module.js"></script>
+ 
+    <script type="text/javascript" src="auth.page.js"></script>
 </body>
 </html>

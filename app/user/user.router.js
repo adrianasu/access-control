@@ -105,7 +105,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
     User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
     // check that id in request body matches id in request path
-    if (req.params.userId !== req.body.id) {
+    if (req.params.userId !== req.body.user.id) {
         const message = `Request path id ${req.params.userId} and request body id ${req.body.id} must match`;
         console.log(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({

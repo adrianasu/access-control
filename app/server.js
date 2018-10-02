@@ -8,6 +8,9 @@ const { DATABASE_URL, PORT, HTTP_STATUS_CODES } = require("./config");
 const { employeeRouter } = require('./employee/employee.router');
 const { userRouter } = require('./user/user.router');
 const { authRouter } = require('./auth/auth.router');
+const { employerRouter } = require('./employer/employer.router');
+const { departmentRouter } = require('./department/department.router');
+const { trainingRouter } = require('./training/training.router');
 const { localStrategy, jwtStrategy } = require('./auth/auth.strategy');
 
 const app = express(); // initialize express server
@@ -26,6 +29,9 @@ app.use(express.static('./public')); // serve static files inside 'public' folde
 app.use('/employee', employeeRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter); 
+app.use('/employer', employerRouter);
+app.use('/department', departmentRouter);
+app.use('/training', trainingRouter);
 
 // handle unexpected HTTP requests
 app.use('*', (req,res) => {

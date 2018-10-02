@@ -121,7 +121,7 @@ employeeRouter.post('/',
         allowVehicle: req.body.allowVehicle,
         trainings: req.body.trainings
     }
-    //console.log("CREATE router: ", newEmployee);
+   
     // validate newEmployee data using Joi schema
     const validation = Joi.validate(newEmployee, EmployeeJoiSchema);
     if (validation.error) {

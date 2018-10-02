@@ -125,36 +125,36 @@ describe('Users API resource tests', function () {
             });
     });
 
-    // it('Should update a user by id', function () {
+    it('Should update a user by id', function () {
         
-    //     let foundUser;  
-    //     let updateUser = {
-    //         name: "New Name",
-    //         email: "new@email.com"
-    //     } 
+        let foundUser;  
+        let updateUser = {
+            name: "New Name",
+            email: "new@email.com"
+        } 
         
-    //     return chai.request(app)
-    //     .get('/user')
-    //     .set("Authorization", `Bearer ${jwToken}`)
-    //     .then(function(res) {
-    //         checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
-    //         checkArrayContent(res, userKeys);
-    //         foundUser = res.body[0];
-    //         updateUser.id = foundUser.id;
+        return chai.request(app)
+        .get('/user')
+        .set("Authorization", `Bearer ${jwToken}`)
+        .then(function(res) {
+            checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
+            checkArrayContent(res, userKeys);
+            foundUser = res.body[0];
+            updateUser.id = foundUser.id;
            
-    //     return chai.request(app)
-    //         .put(`/user/${foundUser.id}`)
-    //         .set("Authorization", `Bearer ${jwToken}`)
-    //         .send(updateUser)
-    //     })
-    //     .then(function (res) {
-    //         checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-    //         checkObjectContent(res, Object.keys(updateUser), updateUser);
-    //     })
-    //     .catch(function (err) {
-    //         console.log(err);
-    //     });
-    // });
+        return chai.request(app)
+            .put(`/user/${foundUser.id}`)
+            .set("Authorization", `Bearer ${jwToken}`)
+            .send(updateUser)
+        })
+        .then(function (res) {
+            checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
+            checkObjectContent(res, Object.keys(updateUser), updateUser);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+    });
 
 it('Should delete user by id', function () {
     let foundUser;
