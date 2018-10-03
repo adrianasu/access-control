@@ -59,6 +59,13 @@ userSchema.statics.ACCESS_OVERVIEW_ONLY = ACCESS_OVERVIEW_ONLY;
 userSchema.statics.ACCESS_PUBLIC = ACCESS_PUBLIC;
 userSchema.statics.ACCESS_ADMIN = ACCESS_ADMIN;
 
+userSchema.method.canChangeAccessLevel = function(accessLevel) {
+    console.log("REQ.USER ");
+
+     
+    
+}
+
 // check if user is allowed to access an endpoint
 userSchema.statics.hasAccess = function (accessLevel) {
     // express expects a function with req, res, next as parameters
@@ -69,7 +76,7 @@ userSchema.statics.hasAccess = function (accessLevel) {
         } 
         else {
             const err = {
-                message: "Accesss not allowed",
+                message: "Access not allowed",
                 code: 403
             };
             next(err);
@@ -98,6 +105,7 @@ module.exports = { User,
     UserJoiSchema, 
     UpdateUserJoiSchema, 
     hasAccess: userSchema.statics.hasAccess,
+    canChangeAccessLevel: userSchema.method.canChangeAccessLevel,
     ACCESS_NO,
     ACCESS_OVERVIEW_ONLY,
     ACCESS_PUBLIC,

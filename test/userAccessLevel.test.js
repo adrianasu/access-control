@@ -90,7 +90,7 @@ describe('Users API resource edge cases tests', function () {
 
     it('Should not return all users', function () {
         return chai.request(app)
-            .get('/user')
+            .get('/api/user')
             .set("Authorization", `Bearer ${jwToken}`)
             .then(function (res) {
             expect(res).to.have.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);                
@@ -104,7 +104,7 @@ describe('Users API resource edge cases tests', function () {
             .then(function(_foundUser) {
                 foundUser = _foundUser;    
                 return chai.request(app)
-                    .get(`/user/${foundUser.id}`)
+                    .get(`/api/user/${foundUser.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
             })
             .then(function (res) {
@@ -113,50 +113,27 @@ describe('Users API resource edge cases tests', function () {
             });
     });
 
-    it('Should update name and email of a user by id', function () {
-         
+    
+    it(`Should not update a user bc accessLevel to update is higher than the users's`, function () {
+
         let updateUser = {
             name: "New Name",
-            email: "new@email.com"
-        } 
-        
-       return User
-           .findOne()
-           .then(function (foundUser) {
-                updateUser.id = foundUser.id;
-          
-                return chai.request(app)
-                    .put(`/user/${foundUser.id}`)
-                    .set("Authorization", `Bearer ${jwToken}`)
-                    .send(updateUser)
-            })
-            .then(function (res) {
-                checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-                checkObjectContent(res, Object.keys(updateUser), updateUser);
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
-    });
-
-    it('Should not update accessLevel of a user by id', function () {
-
-        let updateUser = {
-            accessLevel: 30
+            email: "new@email.com",
+            accessLevel: 100
         }
 
         return User
             .findOne()
-            .then(function(foundUser) {
-                updateUser.id = foundUser.id;
+            .then(function (foundUser) {
+                    updateUser.id = foundUser.id;
 
                 return chai.request(app)
-                    .put(`/user/${foundUser.id}`)
+                    .put(`/api/user/${updateUser.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
                     .send(updateUser)
             })
             .then(function (res) {
-                expect(res).to.have.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+                checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
             })
             .catch(function (err) {
                 console.log(err);
@@ -170,7 +147,7 @@ describe('Users API resource edge cases tests', function () {
             .then(function (foundUser) {
         
                 return chai.request(app)
-                    .delete(`/user/${foundUser.id}`)
+                    .delete(`/api/user/${foundUser.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
             })
             .then(function (res) {

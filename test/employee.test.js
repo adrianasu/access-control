@@ -108,7 +108,7 @@ describe('Employees API Resource tests', function () {
     it('Should get all employees', function () {
 
         return chai.request(app)
-            .get('/employee')
+            .get('/api/employee')
             .set('Authorization', `Bearer ${jwToken}`)
             .then(function (res) {
                 expect(res.body.length).to.be.at.least(1);
@@ -120,13 +120,13 @@ describe('Employees API Resource tests', function () {
             });
     });
 
-    it('Should get an employee by id', function () {
+    it('Should get an employee by employeeId', function () {
         let foundEmployee;
         return findOneEmployee()
             .then(function (_foundEmployee) {
                 foundEmployee = _foundEmployee;
                 return chai.request(app)
-                    .get(`/employee/${foundEmployee.id}`)
+                    .get(`/api/employee/${foundEmployee.employeeId}`)
                     .set("Authorization", `Bearer ${jwToken}`)
                 })
                 .then(function(res) {
@@ -144,7 +144,7 @@ describe('Employees API Resource tests', function () {
             .then(function (_foundEmployee) {
                 foundEmployee = _foundEmployee;
                 return chai.request(app)
-                    .get(`/employee/overview/${foundEmployee.id}`)
+                    .get(`/api/employee/overview/${foundEmployee.employeeId}`)
                     .set("Authorization", `Bearer ${jwToken}`)
             })
             .then(function (res) {
@@ -163,7 +163,7 @@ describe('Employees API Resource tests', function () {
         return generateOneEmployee()
         .then(function(newEmployee) {            
             return chai.request(app)
-            .post('/employee')
+            .post('/api/employee')
             .set("Authorization", `Bearer ${jwToken}`)
             .send(newEmployee)
           
@@ -177,7 +177,7 @@ describe('Employees API Resource tests', function () {
         });
     });
     
-    it('Should update employee by id', function () {
+    it('Should update employee by employeeId', function () {
 
         let foundEmployee, updateEmployee;
         return generateFieldsToUpdate()
@@ -187,9 +187,9 @@ describe('Employees API Resource tests', function () {
             })
             .then(function (_foundEmployee) {
                 foundEmployee = _foundEmployee;
-                updateEmployee.id = foundEmployee.id;
+                updateEmployee.employeeId = foundEmployee.employeeId;
                 return chai.request(app)
-                    .put(`/employee/${foundEmployee.id}`)
+                    .put(`/api/employee/${foundEmployee.employeeId}`)
                     .set("Authorization", `Bearer ${jwToken}`)
                     .send(updateEmployee)
             })
@@ -203,13 +203,13 @@ describe('Employees API Resource tests', function () {
         });
     });
 
-    it('Should delete employee by id', function () {
+    it('Should delete employee by employeeId', function () {
         let foundEmployee;
         return findOneEmployee()
         .then(function (_foundEmployee) {
             foundEmployee = _foundEmployee;
             return chai.request(app)
-            .delete(`/employee/${foundEmployee.id}`)
+            .delete(`/api/employee/${foundEmployee.employeeId}`)
             .set("Authorization", `Bearer ${jwToken}`)
         })
         .then(function (res) {

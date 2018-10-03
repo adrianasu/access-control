@@ -53,20 +53,9 @@ function checkResponse(res, statusCode, resType) {
 function checkObjectContent(res, keyList, employee) {
     keyList.forEach(function (key) {
         expect(res).to.include.keys(key);
-        // expect(res.body).to.deep.include({
-        //     [key]: employee[key],
-        // })
+    
     });
 }
-
-// function checkArrayContent(res, keyList) {
-//     const employee = res.body[0];
-//     expect(res.body).to.have.lengthOf.at.least(1);
-//     expect(employee.employer).to.be.a('object');
-//     keyList.forEach(function (key) {
-//         expect(employee).to.include.keys(key);
-//     })
-// }
 
 function findOneEmployee() {
      return Employee
@@ -105,12 +94,10 @@ describe('Employees API Resource edge cases tests', function () {
     it('Should not allow to get all employees', function () {
 
         return chai.request(app)
-            .get('/employee')
+            .get('/api/employee')
             .set('Authorization', `Bearer ${jwToken}`)
             .then(function (res) {
-                
-                //expect(res.body.length).to.be.at.least(1);
-                //checkArrayContent(res);
+             
                 checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
             })
             .catch(function(err) {
@@ -118,60 +105,58 @@ describe('Employees API Resource edge cases tests', function () {
             });
     });
 
-    // it('Should not allow to get an employee by id', function () {
-    //     let foundEmployee;
-    //     return findOneEmployee()
-    //         .then(function (_foundEmployee) {
-    //             foundEmployee = _foundEmployee;
-    //             return chai.request(app)
-    //                 .get(`/employee/${foundEmployee.id}`)
-    //                 .set("Authorization", `Bearer ${jwToken}`)
-    //             })
-    //             .then(function(res) {
-    //             checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object')
-    //             //checkObjectContent(res.body, employeeProperties, foundEmployee);
-    //         })
-    //         .catch(function (err) {
-    //             console.log("Unauthorized user");
-    //         })
-    // })
+    it('Should not allow to get an employee by id', function () {
+        let foundEmployee;
+        return findOneEmployee()
+            .then(function (_foundEmployee) {
+                foundEmployee = _foundEmployee;
+                return chai.request(app)
+                    .get(`/api/employee/${foundEmployee.id}`)
+                    .set("Authorization", `Bearer ${jwToken}`)
+                })
+                .then(function(res) {
+                checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object')
+            })
+            .catch(function (err) {
+                console.log("Unauthorized user");
+            })
+    })
 
-    // it(`Should get employee's overview`, function () {
-    //     let foundEmployee;
-    //     return findOneEmployee()
-    //         .then(function (_foundEmployee) {
-    //             foundEmployee = _foundEmployee;
-    //             return chai.request(app)
-    //                 .get(`/employee/overview/${foundEmployee.id}`)
-    //                 .set("Authorization", `Bearer ${jwToken}`)
-    //         })
-    //         .then(function (res) {
-    //             checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-    //             checkObjectContent(res.body, employeeOverviewProperties, foundEmployee);
-    //         })
-    //         .catch(function (err) {
-    //             console.log('Internal Error');
-    //         })
-    // });
+    it(`Should get employee's overview`, function () {
+        let foundEmployee;
+        return findOneEmployee()
+            .then(function (_foundEmployee) {
+                foundEmployee = _foundEmployee;
+                return chai.request(app)
+                    .get(`/api/employee/overview/${foundEmployee.id}`)
+                    .set("Authorization", `Bearer ${jwToken}`)
+            })
+            .then(function (res) {
+                checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
+                checkObjectContent(res.body, employeeOverviewProperties, foundEmployee);
+            })
+            .catch(function (err) {
+                console.log('Internal Error');
+            })
+    });
 
-    // it('Should not allow to create an employee', function () {
+    it('Should not allow to create an employee', function () {
        
-    //     return generateOneEmployee()
-    //     .then(function(newEmployee) {            
-    //         return chai.request(app)
-    //         .post('/employee')
-    //         .set("Authorization", `Bearer ${jwToken}`)
-    //         .send(newEmployee)
+        return generateOneEmployee()
+        .then(function(newEmployee) {            
+            return chai.request(app)
+            .post('/api/employee')
+            .set("Authorization", `Bearer ${jwToken}`)
+            .send(newEmployee)
           
-    //     })
-    //     .then(function (res) {
-    //         checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
-    //         //checkObjectContent(res.body, employeeOverviewProperties);
-    //     })
-    //     .catch(function(err) {
-    //         console.log("Unauthorized user");
-    //     });
-    // });
+        })
+        .then(function (res) {
+            checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
+        })
+        .catch(function(err) {
+            console.log("Unauthorized user");
+        });
+    });
     
     // it('Should not allow to update employee by id', function () {
 
@@ -185,7 +170,7 @@ describe('Employees API Resource edge cases tests', function () {
     //             foundEmployee = _foundEmployee;
     //             updateEmployee.id = foundEmployee.id;
     //             return chai.request(app)
-    //                 .put(`/employee/${foundEmployee.id}`)
+    //                 .put(`/api/employee/${foundEmployee.id}`)
     //                 .set("Authorization", `Bearer ${jwToken}`)
     //                 .send(updateEmployee)
     //         })
@@ -199,22 +184,20 @@ describe('Employees API Resource edge cases tests', function () {
     //     });
     // });
 
-    // it('Should not allow to delete employee by id', function () {
-    //     let foundEmployee;
-    //     return findOneEmployee()
-    //     .then(function (_foundEmployee) {
-    //         foundEmployee = _foundEmployee;
-    //         return chai.request(app)
-    //         .delete(`/employee/${foundEmployee.id}`)
-    //         .set("Authorization", `Bearer ${jwToken}`)
-    //     })
-    //     .then(function (res) {
-    //         checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
-    //         let responseKeys = ["deleted", "OK"];
-    //         //checkObjectContent(res.body, responseKeys);
-    //     })
-    //     .catch(function(err) {
-    //         console.log("Unauthorized user");
-    //     });
-    // });                 
+    it('Should not allow to delete employee by id', function () {
+        let foundEmployee;
+        return findOneEmployee()
+        .then(function (_foundEmployee) {
+            foundEmployee = _foundEmployee;
+            return chai.request(app)
+            .delete(`/api/employee/${foundEmployee.id}`)
+            .set("Authorization", `Bearer ${jwToken}`)
+        })
+        .then(function (res) {
+            checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');
+        })
+        .catch(function(err) {
+            console.log("Unauthorized user");
+        });
+    });                 
 })

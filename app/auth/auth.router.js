@@ -2,6 +2,7 @@ const express = require('express');
 // jsonwebtoken to implement JSON Web Tokens
 const jwt = require('jsonwebtoken');
 
+
 const {
     localPassportMiddleware,
     jwtPassportMiddleware
@@ -13,6 +14,7 @@ const {
 } = require('../config.js');
 
 const authRouter = express.Router();
+
 
 // return JWT as string
 function createJWToken(user) {
@@ -33,6 +35,7 @@ authRouter.post('/login', localPassportMiddleware, (req, res) => {
         jwToken,
         user
     });
+    
 });
 
 // for creating new JWT when the previous one is about to get expired

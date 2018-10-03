@@ -3,20 +3,26 @@ const Joi = require('joi');
 
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
-//const { User, UserJoiSchema, UpdateUserJoiSchema } = require('./user.model');
+//const { canChangeAccessLevel } = require('./user.model');
 const User = require('./user.model');
 const Users = User.User;
 
 const userRouter = express.Router();
 
+
+
+
+
+
 // create new user
 userRouter.post('/', (req, res) => {
+    
     const newUser = {
         name: req.body.name,
         email: req.body.email,
         username: req.body.username,
         password: req.body.password,
-        accessLevel: req.body.accessLevel
+        accessLevel: User.ACCESS_OVERVIEW_ONLY
     };
 
     // validate new user data with Joi
@@ -58,7 +64,6 @@ userRouter.post('/', (req, res) => {
                 .create(newUser)
                 .then(createdUser => {
                     // success
-                    console.log(createdUser);
                     return res.status(HTTP_STATUS_CODES.CREATED).json(createdUser.serialize());
                 })
                 .catch(error => {
@@ -69,6 +74,8 @@ userRouter.post('/', (req, res) => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
         });
 });
+
+
 // retrieve all users using mongoose function find
 userRouter.get('/', jwtPassportMiddleware, 
     User.hasAccess(User.ACCESS_ADMIN), 
@@ -97,7 +104,7 @@ userRouter.get('/:userId', jwtPassportMiddleware,
         });
 });
 
-// update user name or email by id
+// update user's name, email or accessLevel by id
 userRouter.put('/:userId', jwtPassportMiddleware,
     User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
@@ -130,11 +137,17 @@ userRouter.put('/:userId', jwtPassportMiddleware,
         });
     }
     
-    if ("accessLevel" in toUpdate) {
-        User.hasAccess(User.ACCESS_ADMIN);
-        console.log("CHANGE LEVEL");
+//check if accessLevel is actually going to change
+    if ("accessLevel" in toUpdate &&
+        req.user.accessLevel < req.body.accessLevel ) {
+        
+        const message = `Unauthorized access level`;
+        console.log(message);
+        return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
+            message: message
+        });
     }
-
+ 
     const validation = Joi.validate(toUpdate, User.UpdateUserJoiSchema);
     
     if (validation.error) {

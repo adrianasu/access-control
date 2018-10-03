@@ -16,6 +16,7 @@ const {
     HTTP_STATUS_CODES
 } = require('../app/config');
 const User = require('../app/user/user.model');
+const Users = User.User; 
 
 const {
     seedEmployeesData,
@@ -85,19 +86,19 @@ describe('Users API resource tests', function () {
     });
 
     it('Should create a new user', function () {
-        let newUser = generateTestUser();
-        return chai.request(app)
-            .post('/user')
-            .send(newUser)
-            .then(function(res) {
-                checkResponse(res, HTTP_STATUS_CODES.CREATED, 'object');
-                checkObjectContent(res, newUserKeys, newUser);
-            });
+         let newUser = generateTestUser();
+         return chai.request(app)
+             .post('/api/user')
+             .send(newUser)
+             .then(function (res) {
+                 checkResponse(res, HTTP_STATUS_CODES.CREATED, 'object');
+                 checkObjectContent(res, newUserKeys, newUser);
+             });
     });
 
     it('Should return all users', function () {
         return chai.request(app)
-            .get('/user')
+            .get('/api/user')
             .set("Authorization", `Bearer ${jwToken}`)
             .then(function (res) {
                 checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
@@ -108,14 +109,14 @@ describe('Users API resource tests', function () {
     it('Should return a user by id', function () {
         let foundUser;
         return chai.request(app)
-            .get('/user')
+            .get('/api/user')
             .set("Authorization", `Bearer ${jwToken}`)
             .then(function (res) {
                 checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
                 checkArrayContent(res, userKeys);
                 foundUser = res.body[0];
                 return chai.request(app)
-                    .get(`/user/${foundUser.id}`)
+                    .get(`/api/user/${foundUser.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
             })
             .then(function (res) {
@@ -129,11 +130,12 @@ describe('Users API resource tests', function () {
         let foundUser;  
         let updateUser = {
             name: "New Name",
-            email: "new@email.com"
+            email: "new@email.com",
+            accessLevel: 10
         } 
         
         return chai.request(app)
-        .get('/user')
+        .get('/api/user')
         .set("Authorization", `Bearer ${jwToken}`)
         .then(function(res) {
             checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
@@ -142,7 +144,7 @@ describe('Users API resource tests', function () {
             updateUser.id = foundUser.id;
            
         return chai.request(app)
-            .put(`/user/${foundUser.id}`)
+            .put(`/api/user/${foundUser.id}`)
             .set("Authorization", `Bearer ${jwToken}`)
             .send(updateUser)
         })
@@ -155,18 +157,20 @@ describe('Users API resource tests', function () {
         });
     });
 
+
+
 it('Should delete user by id', function () {
     let foundUser;
 
     return chai.request(app)
-        .get('/user')
+        .get('/api/user')
         .set("Authorization", `Bearer ${jwToken}`)
         .then(function(res) {
             checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
             checkArrayContent(res, userKeys);
             foundUser = res.body[0];
             return chai.request(app)
-                .delete(`/user/${foundUser.id}`)
+                .delete(`/api/user/${foundUser.id}`)
                 .set("Authorization", `Bearer ${jwToken}`)
         })
         .then(function (res) {
