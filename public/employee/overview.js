@@ -2,6 +2,7 @@ let STATE = {};
 // All these modules are are defined in /public/utilities
 const RENDER = window.RENDER_MODULE;
 const HTTP_EMPLOYEE = window.HTTP_EMPLOYEE_MODULE;
+const HTTP_USER = window.HTTP_USER_MODULE;
 const CACHE = window.CACHE_MODULE;
 
 function handleSearch(event) {
@@ -24,7 +25,7 @@ function handleSearch(event) {
 
 function watchButtons() {
     $('.js-search-form').on('submit', handleSearch);
-    // ADD sign out button
+    $('.js-logout').on('click', RENDER.handleLogOut);
 }
 
 function main() {

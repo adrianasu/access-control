@@ -110,7 +110,7 @@ function userGetById(settings) {
     const { userId, jwToken, onSuccess, onError } = settings;
     $.ajax({
         type: 'GET',
-        url: `/user/${userId}`,
+        url: `api/user/${userId}`,
         contentType: 'application/json',
         dataType: 'json',
         data: undefined,

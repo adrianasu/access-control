@@ -1,7 +1,15 @@
 window.RENDER_EMPLOYEE_MODULE = {
-    renderEmployeeOverview
+    renderEmployeeOverview,
+    handleLogOut
 };
 
+function handleLogOut(event) {
+    const confirmation = confirm('Are you sure you want to logout?');
+    if (confirmation) {
+        CACHE.deleteAuthenticatedUserFromCache();
+        window.open('/auth/login.html', '_self');
+    }
+}
 
 function getEmployeeInfo(employee) {
     let vehicle = (employee.allowVehicle) ? "Yes" : "No";

@@ -3,11 +3,16 @@ const Joi = require('joi');
 
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
-//const { User, UserJoiSchema, UpdateUserJoiSchema } = require('./user.model');
+//const { canChangeAccessLevel } = require('./user.model');
 const User = require('./user.model');
 const Users = User.User;
 
 const userRouter = express.Router();
+
+
+
+
+
 
 // create new user
 userRouter.post('/', (req, res) => {
@@ -59,7 +64,6 @@ userRouter.post('/', (req, res) => {
                 .create(newUser)
                 .then(createdUser => {
                     // success
-                    console.log(createdUser);
                     return res.status(HTTP_STATUS_CODES.CREATED).json(createdUser.serialize());
                 })
                 .catch(error => {
@@ -100,12 +104,12 @@ userRouter.get('/:userId', jwtPassportMiddleware,
         });
 });
 
-// update user name or email by id
+// update user's name, email or accessLevel by id
 userRouter.put('/:userId', jwtPassportMiddleware,
     User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
     // check that id in request body matches id in request path
-    if (req.params.userId !== req.body.user.id) {
+    if (req.params.userId !== req.body.id) {
         const message = `Request path id ${req.params.userId} and request body id ${req.body.id} must match`;
         console.log(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
@@ -133,11 +137,17 @@ userRouter.put('/:userId', jwtPassportMiddleware,
         });
     }
     
-    if ("accessLevel" in toUpdate) {
-        User.hasAccess(User.ACCESS_ADMIN);
-        console.log("CHANGE LEVEL");
+//check if accessLevel is actually going to change
+    if ("accessLevel" in toUpdate &&
+        req.user.accessLevel < req.body.accessLevel ) {
+        
+        const message = `Unauthorized access level`;
+        console.log(message);
+        return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
+            message: message
+        });
     }
-
+ 
     const validation = Joi.validate(toUpdate, User.UpdateUserJoiSchema);
     
     if (validation.error) {

@@ -26,12 +26,12 @@ app.use(express.json()); // required to parse and save JSON data payload into re
 app.use(express.static('./public')); // serve static files inside 'public' folder
 
 // routers setup to redirect calls to the right router
-app.use('/employee', employeeRouter);
-app.use('/user', userRouter);
-app.use('/auth', authRouter); 
-app.use('/employer', employerRouter);
-app.use('/department', departmentRouter);
-app.use('/training', trainingRouter);
+app.use('/api/employee', employeeRouter);
+app.use('/api/user', userRouter);
+app.use('/api/auth', authRouter); 
+app.use('/api/employer', employerRouter);
+app.use('/api/department', departmentRouter);
+app.use('/api/training', trainingRouter);
 
 // handle unexpected HTTP requests
 app.use('*', (req,res) => {

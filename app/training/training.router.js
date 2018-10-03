@@ -5,7 +5,7 @@ const trainingRouter = express.Router();
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
 const { Training } = require('../employee/employee.model');
-const User = require('../user/user.model');
+const User  = require('../user/user.model');
 
 const TrainingJoiSchema = Joi.object().keys({
         _id: Joi.string(),
@@ -20,46 +20,33 @@ trainingRouter.get('/',
     User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
     
-            Training
+            return Training
                 .find()
                 .then(trainings => {
                     console.log(`Getting all trainings`);
-                    let jsonTrainings = [];
-                    trainings.forEach(training => {
-                        jsonTrainings.push(training);
-                    })
-                    return jsonTrainings;
-                })
-                .then(jsonTrainings => {
-                    return res.status(HTTP_STATUS_CODES.OK).json(jsonTrainings)
+                    return res.status(HTTP_STATUS_CODES.OK).json(trainings)
                 })
             
             .catch(err => {
-                
                 return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
             });
 });
 
-
 // get one training by id
 trainingRouter.get('/:trainingId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
     
-            return Training
-                .findOne({trainingId: req.params.trainingId})
+    return Training
+        .findOne({_id: req.params.trainingId})
         
         .then(training => {
-            //console.log(training);
             console.log(`Getting new training with id: ${req.params.trainingId}`);
-            return training;
-        })
-        .then(jsonTraining => {
-            //console.log(jsonTraining);
-            return res.status(HTTP_STATUS_CODES.OK).json(jsonTraining);
+            return res.status(HTTP_STATUS_CODES.OK).json(training);
         })
         .catch(err => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
 });
+
 // create new training
 trainingRouter.post('/', 
     jwtPassportMiddleware, 
@@ -67,82 +54,84 @@ trainingRouter.post('/',
     (req, res) => {
    
     // we can access req.body payload bc we defined express.json() middleware in server.js
-    const newTraining = { TrainingInfo: 
-        {
+    const newTraining = {
         title: req.body.title,
-        expirationTime: req.body.expirationTime,
-        }
+        expirationTime: req.body.expirationTime
     }
    
-    // validate newtraining data using Joi schema
-    const validation = Joi.validate(newtraining, TrainingJoiSchema);
+    // validate newTraining data using Joi schema
+    const validation = Joi.validate(newTraining, TrainingJoiSchema);
     if (validation.error) {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
     }
-            // attempt to create a new training
-            return Training
-            .create(newTraining)
-            
-            .then(createdTraining => {
-                console.log(`Creating new training`);
-                return res.status(HTTP_STATUS_CODES.CREATED).json(createdTraining);
-            })
-            .catch(err => {
-                return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
-            });
-});
-
-// update training by id 
-trainingRouter.put('/:trainingId', 
-    jwtPassportMiddleware, 
-    User.hasAccess(User.ACCESS_ADMIN), 
-    (req, res) => {
-    // check that id in request body matches id in request path
-    if (req.params.trainingId !== req.body.trainingId) {
-        const message = `Request path id ${req.params.trainingId} and request body id ${req.body.trainingId} must match`;
-        console.error(message);
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            message: message
-        });
-    }
-
-    // we only support a subset of fields being updateable
-    // if the user sent over any of them 
-    // we update those values on the database
-    const updateableFields = ["title", "expirationTime"];
-    // check what fields were sent in the request body to update
-    const toUpdate = {};
-    updateableFields.forEach(field => {
-        if (field in req.body) {
-            toUpdate[field] = req.body[field];
-        }
-    });
-    // if request body doesn't contain any updateable field send error message
-    if (toUpdate.length === 0) {
-        const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
-        console.error(message);
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            message: message
-        });
-    }
-
-    const validation = Joi.validate(toUpdate, TrainingJoiSchema);
-    if (validation.error) {
-        console.log(validation.error);
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error});
-    }
-
-    Training
-    // $set operator replaces the value of a field with the specified value
-        .findOneAndUpdate({trainingId: req.params.trainingId}, { $set: toUpdate }, { new: true })
-        .then(updatedTraining => {
-            console.log(`Updating training with id: \`${req.params.trainingId}\``);
-            return res.status(HTTP_STATUS_CODES.OK).json(updatedTraining);
+    // attempt to create a new Training
+     return Training
+        .create(newTraining)
+        .then(createdTraining => {
+            console.log(`Creating new Training`);
+            return res.status(HTTP_STATUS_CODES.CREATED).json(createdTraining);
         })
         .catch(err => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
 });
+
+
+// update training's by id
+trainingRouter.put('/:trainingId', jwtPassportMiddleware,
+    User.hasAccess(User.ACCESS_ADMIN),
+    (req, res) => {
+        // check that id in request body matches id in request path
+        if (req.params.trainingId !== req.body.id) {
+            const message = `Request path id ${req.params.trainingId} and request body id ${req.body.id} must match`;
+            console.log(message);
+            return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                message: message
+            });
+        }
+
+        const updateableFields = ["title", "expirationTime"];
+        // check what fields were sent in the request body to update
+        const toUpdate = {};
+          updateableFields.forEach(field => {
+            if (updateableFields in req.body) {
+                toUpdate[field] = req.body[field];
+            }
+        });
+        // if request body doesn't contain any updateable field send error message
+        if (toUpdate.length === 0) {
+            const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
+            console.log(message);
+            return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                message: message
+            });
+        }
+
+        const validation = Joi.validate(toUpdate, TrainingJoiSchema);
+
+        if (validation.error) {
+            return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                error: validation.error
+            });
+        }
+
+
+       return Training
+            // $set operator replaces the value of a field with the specified value
+            .findByIdAndUpdate(req.params.trainingId, {
+                $set: toUpdate
+            }, {
+                new: true
+            })
+            .then(updatedTraining => {
+                console.log(`Updating training with id: \`${req.params.trainingId}\``);
+                return res.status(HTTP_STATUS_CODES.OK).json(updatedTraining);
+            })
+            .catch(err => {
+                return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+            });
+    });
+
 
 // delete training by id
 trainingRouter.delete('/:trainingId', 

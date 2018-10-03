@@ -133,6 +133,16 @@ function generateEmployees(employerIds, departmentIds, trainingIds) {
     return seedEmployees;
 }
 
+function generateOneEmployer() {
+    return Department.findOne()
+        .then(department => {            
+           return {
+                employerName: faker.company.companyName(),
+                departments: [department._id]
+            }
+        })
+}
+
 function generateOneEmployee() {
     let employer, department, training, user;
         
@@ -189,5 +199,5 @@ function seedEmployeesData() {
 } 
 
 module.exports = { 
-    seedEmployeesData, generateOneEmployee, generateFieldsToUpdate
+    seedEmployeesData, generateOneEmployee, generateFieldsToUpdate, generateOneEmployer
  }

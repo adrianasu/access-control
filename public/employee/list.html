@@ -18,7 +18,6 @@
         <select name="search" id="search-by">
             <option value="all">All Employees</option>
             <option value="employee-id">By Employee Id</option>
-            <option value="employee-name">By Employee Name</option>
             <option value="department">By Department</option>
             <option value="employer">By Employer</option>
         </select>
@@ -28,6 +27,10 @@
     <table class="js-results" aria-live= "assertive" hidden>
     </table>
     
-    <script type="text/javascript" src="appList.js"></script>
+    <script src="../utilities/cache.module.js"></script>
+    <script src="../utilities/render.module.js"></script>
+    <script src="../utilities/http.user.module.js"></script>
+    <script src="../utilities/http.employee.module.js"></script>
+    <script type="text/javascript" src="list.js"></script>
 </body>
 </html>

@@ -10,10 +10,11 @@ function getAuthenticatedUserFromCache() {
     const username = localStorage.getItem('username');
     const name = localStorage.getItem('name');
     const email = localStorage.getItem('email');
+    const accessLevel = localStorage.getItem('accessLevel');
 
     if(jwToken) {
         return {
-            jwToken, userid, username, name, email
+            jwToken, userid, username, name, email, accessLevel
         };
     }
     else {
@@ -27,6 +28,7 @@ function saveAuthenticatedUserIntoCache(user) {
     localStorage.setItem('username', user.username);
     localStorage.setItem('name', user.name);
     localStorage.setItem('email', user.email);
+    localStorage.setItem('accessLevel', user.accessLevel);
 }
 
 function deleteAuthenticatedUserFromCache() {
@@ -35,5 +37,6 @@ function deleteAuthenticatedUserFromCache() {
     localStorage.removeItem('username');
     localStorage.removeItem('name');
     localStorage.removeItem('email');
+    localStorage.removeItem('accessLevel');
 }
 

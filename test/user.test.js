@@ -88,7 +88,7 @@ describe('Users API resource tests', function () {
     it('Should create a new user', function () {
          let newUser = generateTestUser();
          return chai.request(app)
-             .post('/user')
+             .post('/api/user')
              .send(newUser)
              .then(function (res) {
                  checkResponse(res, HTTP_STATUS_CODES.CREATED, 'object');
@@ -98,7 +98,7 @@ describe('Users API resource tests', function () {
 
     it('Should return all users', function () {
         return chai.request(app)
-            .get('/user')
+            .get('/api/user')
             .set("Authorization", `Bearer ${jwToken}`)
             .then(function (res) {
                 checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
@@ -109,14 +109,14 @@ describe('Users API resource tests', function () {
     it('Should return a user by id', function () {
         let foundUser;
         return chai.request(app)
-            .get('/user')
+            .get('/api/user')
             .set("Authorization", `Bearer ${jwToken}`)
             .then(function (res) {
                 checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
                 checkArrayContent(res, userKeys);
                 foundUser = res.body[0];
                 return chai.request(app)
-                    .get(`/user/${foundUser.id}`)
+                    .get(`/api/user/${foundUser.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
             })
             .then(function (res) {
@@ -125,49 +125,52 @@ describe('Users API resource tests', function () {
             });
     });
 
-    // it('Should update a user by id', function () {
+    it('Should update a user by id', function () {
         
-    //     let foundUser;  
-    //     let updateUser = {
-    //         name: "New Name",
-    //         email: "new@email.com"
-    //     } 
+        let foundUser;  
+        let updateUser = {
+            name: "New Name",
+            email: "new@email.com",
+            accessLevel: 10
+        } 
         
-    //     return chai.request(app)
-    //     .get('/user')
-    //     .set("Authorization", `Bearer ${jwToken}`)
-    //     .then(function(res) {
-    //         checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
-    //         checkArrayContent(res, userKeys);
-    //         foundUser = res.body[0];
-    //         updateUser.id = foundUser.id;
+        return chai.request(app)
+        .get('/api/user')
+        .set("Authorization", `Bearer ${jwToken}`)
+        .then(function(res) {
+            checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
+            checkArrayContent(res, userKeys);
+            foundUser = res.body[0];
+            updateUser.id = foundUser.id;
            
-    //     return chai.request(app)
-    //         .put(`/user/${foundUser.id}`)
-    //         .set("Authorization", `Bearer ${jwToken}`)
-    //         .send(updateUser)
-    //     })
-    //     .then(function (res) {
-    //         checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-    //         checkObjectContent(res, Object.keys(updateUser), updateUser);
-    //     })
-    //     .catch(function (err) {
-    //         console.log(err);
-    //     });
-    // });
+        return chai.request(app)
+            .put(`/api/user/${foundUser.id}`)
+            .set("Authorization", `Bearer ${jwToken}`)
+            .send(updateUser)
+        })
+        .then(function (res) {
+            checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
+            checkObjectContent(res, Object.keys(updateUser), updateUser);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+    });
+
+
 
 it('Should delete user by id', function () {
     let foundUser;
 
     return chai.request(app)
-        .get('/user')
+        .get('/api/user')
         .set("Authorization", `Bearer ${jwToken}`)
         .then(function(res) {
             checkResponse(res, HTTP_STATUS_CODES.OK, 'array');
             checkArrayContent(res, userKeys);
             foundUser = res.body[0];
             return chai.request(app)
-                .delete(`/user/${foundUser.id}`)
+                .delete(`/api/user/${foundUser.id}`)
                 .set("Authorization", `Bearer ${jwToken}`)
         })
         .then(function (res) {

@@ -1,6 +1,6 @@
 let STATE = {};
 // modules defined in public/utilities
-const RENDER = window.RENDER_MODULE;
+const RENDER = window.RENDER_EMPLOYEE_MODULE;
 const HTTP_USER = window.HTTP_USER_MODULE;
 const HTTP_EMPLOYEE = window.HTTP_EMPLOYEE_MODULE;
 const CACHE = window.CACHE_MODULE;

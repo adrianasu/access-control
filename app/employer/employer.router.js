@@ -9,10 +9,8 @@ const { User } = require('../user/user.model');
 
 const EmployerJoiSchema = Joi.object().keys({
                 employerName: Joi.string(),
-                departments: Joi.array().items(Joi.object().keys({
-                    departmentName: Joi.string()
-                }))
-});
+                departments: Joi.array().items(Joi.string())
+                });
 
 // get all employers 
 employerRouter.get('/', 
@@ -20,18 +18,20 @@ employerRouter.get('/',
     User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
     
-            Employer
+            return Employer
                 .find()
                 .then(employers => {
                     console.log(`Getting all employers`);
-                    let jsonEmployers = [];
-                    employers.forEach(employer => {
-                        jsonEmployers.push(employer);
-                    })
-                    return jsonEmployers;
+                    // let jsonEmployers = [];
+                    // employers.forEach(employer => {
+                    //     jsonEmployers.push(employer);
+                    // })
+                    // //console.log("EMPLOYER: ", jsonEmployers);
+                    // return jsonEmployers;
+                    return employers;
                 })
                 .then(jsonEmployers => {
-                    return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployers)
+                    return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployers);
                 })
             
             .catch(err => {
@@ -44,8 +44,8 @@ employerRouter.get('/',
 // get one employer by id
 employerRouter.get('/:employerId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
     
-            return Employer
-                .findOne({employerId: req.params.employerId})
+        return Employer
+                .findOne({_id: req.params.employerId})
         
         .then(employer => {
             //console.log(employer);
@@ -53,7 +53,7 @@ employerRouter.get('/:employerId', jwtPassportMiddleware, User.hasAccess(User.AC
             return employer;
         })
         .then(jsonEmployer => {
-            //console.log(jsonEmployer);
+            //console.log("JSON: " ,jsonEmployer);
             return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployer);
         })
         .catch(err => {
@@ -71,13 +71,13 @@ employerRouter.post('/',
         employerName: req.body.employerName,
         departments: req.body.departments,
     }
-   
+   //console.log("NEW ",newEmployer);
     // validate newEmployer data using Joi schema
     const validation = Joi.validate(newEmployer, EmployerJoiSchema);
     if (validation.error) {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
     }
-            // attempt to create a new employee
+            // attempt to create a new employer
             return Employer
             .create(newEmployer)
             
@@ -96,13 +96,13 @@ employerRouter.put('/:employerId',
     User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
     // check that id in request body matches id in request path
-    if (req.params.employerId !== req.body.employerId) {
-        const message = `Request path id ${req.params.employerId} and request body id ${req.body.employerId} must match`;
-        console.error(message);
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            message: message
-        });
-    }
+    // if (req.params.employerId !== req.body.employerId) {
+    //     const message = `Request path id ${req.params.employerId} and request body id ${req.body.employerId} must match`;
+    //     console.error(message);
+    //     return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+    //         message: message
+    //     });
+    // }
 
     // we only support a subset of fields being updateable
     // if the user sent over any of them 
@@ -132,7 +132,7 @@ employerRouter.put('/:employerId',
 
     Employer
     // $set operator replaces the value of a field with the specified value
-        .findOneAndUpdate({employerId: req.params.employerId}, { $set: toUpdate }, { new: true })
+        .findOneAndUpdate({_id: req.params.employerId}, { $set: toUpdate }, { new: true })
         .then(updatedEmployer => {
             console.log(`Updating employer with id: \`${req.params.employerId}\``);
             return res.status(HTTP_STATUS_CODES.OK).json(updatedEmployer);
@@ -148,7 +148,7 @@ employerRouter.delete('/:employerId',
     User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
     return Employer
-        .findOneAndDelete({employerId: req.params.employerId})
+        .findOneAndDelete({_id: req.params.employerId})
         .then(deletedEmployer => {
             console.log(`Deleting employer with id: \`${req.params.employerId}\``);
             res.status(HTTP_STATUS_CODES.OK).json({

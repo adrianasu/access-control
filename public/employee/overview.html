@@ -15,10 +15,8 @@
     <link rel="stylesheet" href="overview.css">
 </head>
 <body>
+    <button role="button" type="button" class="js-logout">Log Out</button>
     
-    <!-- <nav>
-        <a href="/signout.html">Sign out</a>
-    </nav> -->
     <form class="js-search-form">
         <legend>Search</legend>
         <label for="employeeId">Employee Id</label>
@@ -40,8 +38,11 @@
     <table aria-live="assertive">
     </table>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-    crossorigin="anonymous"></script>
+   
+    <script src="../utilities/cache.module.js"></script>
+    <script src="../utilities/render.module.js"></script>
+    <script src="../utilities/http.user.module.js"></script>
+    <script src="../utilities/http.employee.module.js"></script>
     <script type="text/javascript" src="overview.js"></script>
 </body>
 </html>

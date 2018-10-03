@@ -173,39 +173,39 @@ const UpdateEmployeeJoiSchema = Joi.object().keys({
         ),
     })
 
-// const EmployerJoiSchema = Joi.object().keys({
-//     employer: Joi.object().keys({
-//             _id: Joi.string(),
-//             __v: Joi.number(),
-//             employerName: Joi.string(),
-//             departments: Joi.array().items(Joi.object().keys({
-//                 _id: Joi.string(),
-//                 __v: Joi.number(),
-//                 departmentName: Joi.string()
-//             }))
-//         })
-// });
+const EmployerJoiSchema = Joi.object().keys({
+    //employer: Joi.object().keys({
+            _id: Joi.string(),
+            __v: Joi.number(),
+            employerName: Joi.string(),
+            departments: Joi.array().items(Joi.object().keys({
+                _id: Joi.string(),
+                __v: Joi.number(),
+                departmentName: Joi.string()
+            }))
+             // })
+});
 
-// const DepartmentJoiSchema = Joi.object().keys({
-//         department: Joi.object().keys({
-//             _id: Joi.string(),
-//             __v: Joi.number(),
-//             departmentName: Joi.string()
-//         })
-// });
+const DepartmentJoiSchema = Joi.object().keys({
+        department: Joi.object().keys({
+            _id: Joi.string(),
+            __v: Joi.number(),
+            departmentName: Joi.string()
+        })
+});
      
-// const TrainingJoiSchema = Joi.object().keys({
-//     trainings: Joi.array().items(
-//         Joi.object().keys({
-//                 trainingInfo: Joi.object().keys({
-//                     _id: Joi.string(),
-//                     __v: Joi.number(),
-//                     title: Joi.string(),
-//                     expirationTime: Joi.date()
-//                 })
-//         })
-//     )
-// });
+const TrainingJoiSchema = Joi.object().keys({
+    trainings: Joi.array().items(
+        Joi.object().keys({
+                trainingInfo: Joi.object().keys({
+                    _id: Joi.string(),
+                    __v: Joi.number(),
+                    title: Joi.string(),
+                    expirationTime: Joi.date()
+                })
+        })
+    )
+});
     
     employersSchema.pre('find', function (next) {
         this.populate('departments');
@@ -258,6 +258,9 @@ const UpdateEmployeeJoiSchema = Joi.object().keys({
                 Department,
                 Employer,
                 EmployeeJoiSchema,
-                UpdateEmployeeJoiSchema
+                UpdateEmployeeJoiSchema,
+                EmployerJoiSchema,
+                DepartmentJoiSchema,
+                TrainingJoiSchema
             };
             

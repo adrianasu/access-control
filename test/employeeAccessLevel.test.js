@@ -94,7 +94,7 @@ describe('Employees API Resource edge cases tests', function () {
     it('Should not allow to get all employees', function () {
 
         return chai.request(app)
-            .get('/employee')
+            .get('/api/employee')
             .set('Authorization', `Bearer ${jwToken}`)
             .then(function (res) {
              
@@ -111,7 +111,7 @@ describe('Employees API Resource edge cases tests', function () {
             .then(function (_foundEmployee) {
                 foundEmployee = _foundEmployee;
                 return chai.request(app)
-                    .get(`/employee/${foundEmployee.id}`)
+                    .get(`/api/employee/${foundEmployee.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
                 })
                 .then(function(res) {
@@ -128,7 +128,7 @@ describe('Employees API Resource edge cases tests', function () {
             .then(function (_foundEmployee) {
                 foundEmployee = _foundEmployee;
                 return chai.request(app)
-                    .get(`/employee/overview/${foundEmployee.id}`)
+                    .get(`/api/employee/overview/${foundEmployee.id}`)
                     .set("Authorization", `Bearer ${jwToken}`)
             })
             .then(function (res) {
@@ -145,7 +145,7 @@ describe('Employees API Resource edge cases tests', function () {
         return generateOneEmployee()
         .then(function(newEmployee) {            
             return chai.request(app)
-            .post('/employee')
+            .post('/api/employee')
             .set("Authorization", `Bearer ${jwToken}`)
             .send(newEmployee)
           
@@ -170,7 +170,7 @@ describe('Employees API Resource edge cases tests', function () {
     //             foundEmployee = _foundEmployee;
     //             updateEmployee.id = foundEmployee.id;
     //             return chai.request(app)
-    //                 .put(`/employee/${foundEmployee.id}`)
+    //                 .put(`/api/employee/${foundEmployee.id}`)
     //                 .set("Authorization", `Bearer ${jwToken}`)
     //                 .send(updateEmployee)
     //         })
@@ -190,7 +190,7 @@ describe('Employees API Resource edge cases tests', function () {
         .then(function (_foundEmployee) {
             foundEmployee = _foundEmployee;
             return chai.request(app)
-            .delete(`/employee/${foundEmployee.id}`)
+            .delete(`/api/employee/${foundEmployee.id}`)
             .set("Authorization", `Bearer ${jwToken}`)
         })
         .then(function (res) {
