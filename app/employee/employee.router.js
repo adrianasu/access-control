@@ -1,11 +1,66 @@
 const express = require('express');
 const Joi = require('joi');
 const employeeRouter = express.Router();
+// middleware for handling multi-part data
+const multer = require('multer');
+const GridFsStorage = require('multer-gridfs-storage');
+const crypto = require('crypto');
+const path = require('path');
+const mongoose = require('mongoose');
+
 
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
-const { Employee, EmployeeJoiSchema, UpdateEmployeeJoiSchema, Training } = require('./employee.model');
+const { Employee, EmployeeJoiSchema, UpdateEmployeeJoiSchema, Training, Photo } = require('./employee.model');
 const User = require('../user/user.model');
+const mongoUrl  = require('../server');
+
+// // Init gfs
+// let gfs;
+
+// conn.once('open', () => {
+//     // Init stream
+    
+//     gfs.collection('photos');
+// });
+
+// GridFS storage engine for multer to store files to MongoDB
+const storage = new GridFsStorage({
+    url: mongoUrl,
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if(err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'photos'  //match the collection name
+                };
+                resolve(fileInfo);
+            });
+        });
+    }
+});
+
+// to save image only jpeg/png in our storage
+const fileFilter = (req, file, callback) => {
+    if(file.mimetype === 'image/jpeg' ||
+        file.mimetype === 'image/png'){
+        callback(null, true);
+    } 
+    else{
+        callback(null, false);
+    }
+}
+
+const upload = multer({ 
+    storage, 
+    // limits: {fileSize: 1024*1024*5},
+    // fileFilter: fileFilter,
+});
+
 
 function validateEmployeeTrainings(employee, trainings) { 
     let validatedTrainings = [];
@@ -19,11 +74,62 @@ function validateEmployeeTrainings(employee, trainings) {
     } 
 }
 
+// create new employee
+employeeRouter.post('/',
+    jwtPassportMiddleware,
+    User.hasAccess(User.ACCESS_PUBLIC), 
+    //upload.single('photo-file'),
+    (req, res) => {
+         console.log(req.user);
+        console.log(req.body);
+        console.log("User Access Level", req.user.accessLevel);
+        // we can access req.body payload bc we defined express.json() middleware in server.js
+        const newEmployee = {
+            //updatedBy: req.user.id,
+            employeeId: req.body.employeeId,
+            photo: req.file,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            employer: req.body.employer,
+            department: req.body.department,
+            licensePlates: req.body.licensePlates,
+            employmentDate: req.body.employmentDate,
+            allowVehicle: req.body.allowVehicle,
+            trainings: req.body.trainings
+        }
+
+        //validate newEmployee data using Joi schema
+        const validation = Joi.validate(newEmployee, EmployeeJoiSchema);
+        if (validation.error) {
+            console.log(validation.error);
+            return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
+        }
+        let trainings;
+
+        return Training
+            .find()
+            .then(_trainings => {
+                trainings = _trainings
+                // attempt to create a new employee
+                return Employee
+                    .create(newEmployee)
+            })
+            .then(createdEmployee => {
+                console.log(`Creating new employee`);
+                return res.status(HTTP_STATUS_CODES.CREATED).json(createdEmployee.serialize(validateEmployeeTrainings(createdEmployee, trainings)));
+            })
+            .catch(err => {
+                return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+            });
+    });
+
 // get all employees 
 employeeRouter.get('/', 
     jwtPassportMiddleware, 
     User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
+   
+       
     // get trainings to validate employee's trainings status
      Training
          .find()
@@ -101,51 +207,6 @@ employeeRouter.get('/overview/:employeeId',
         });
 });
 
-// create new employee
-employeeRouter.post('/', 
-    jwtPassportMiddleware, 
-    User.hasAccess(User.ACCESS_ADMIN), 
-    (req, res) => {
-    console.log("User Access Level", req.user.accessLevel);
-    // we can access req.body payload bc we defined express.json() middleware in server.js
-    const newEmployee = {
-        //updatedBy: req.user.id,
-        employeeId: req.body.employeeId,
-        //photo: req.body.photo,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        employer: req.body.employer,
-        department: req.body.department,
-        licensePlates: req.body.licensePlates,
-        employmentDate: req.body.employmentDate,
-        allowVehicle: req.body.allowVehicle,
-        trainings: req.body.trainings
-    }
-   
-    // validate newEmployee data using Joi schema
-    const validation = Joi.validate(newEmployee, EmployeeJoiSchema);
-    if (validation.error) {
-        console.log(validation.error);
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
-    }
-    let trainings;
-    
-    return Training
-        .find()
-        .then(_trainings => {
-            trainings = _trainings
-            // attempt to create a new employee
-            return Employee
-            .create(newEmployee)
-            })
-            .then(createdEmployee => {
-                console.log(`Creating new employee`);
-                return res.status(HTTP_STATUS_CODES.CREATED).json(createdEmployee.serialize(validateEmployeeTrainings(createdEmployee, trainings)));
-            })
-            .catch(err => {
-                return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
-            });
-});
 
 // update employee by id 
 employeeRouter.put('/:employeeId', 

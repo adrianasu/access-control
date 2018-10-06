@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const Grid = require('gridfs-stream');
+
 
 const { DATABASE_URL, PORT, HTTP_STATUS_CODES } = require("./config");
 
@@ -12,6 +14,7 @@ const { employerRouter } = require('./employer/employer.router');
 const { departmentRouter } = require('./department/department.router');
 const { trainingRouter } = require('./training/training.router');
 const { localStrategy, jwtStrategy } = require('./auth/auth.strategy');
+const { optionsRouter } = require('./options/options.router');
 
 const app = express(); // initialize express server
 
@@ -20,10 +23,14 @@ passport.use(jwtStrategy); // configure Passport to use our jwtStrategy when rec
 
 mongoose.Promise = global.Promise;
 
+let mongoUrl;
+
+
 // middleware
 app.use(morgan('common')); // allows morgan to intercept and log all HTTP requests
 app.use(express.json()); // required to parse and save JSON data payload into request body
 app.use(express.static('./public')); // serve static files inside 'public' folder
+
 
 // routers setup to redirect calls to the right router
 app.use('/api/employee', employeeRouter);
@@ -32,6 +39,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/employer', employerRouter);
 app.use('/api/department', departmentRouter);
 app.use('/api/training', trainingRouter);
+app.use('/api/options', optionsRouter);
 
 // handle unexpected HTTP requests
 app.use('*', (req,res) => {
@@ -44,15 +52,23 @@ app.all('*', (err, req, res, next) => {
 });
 
 function runServer(databaseUrl, port = PORT) {
+    mongoUrl = databaseUrl;
     return new Promise((resolve, reject) => {
-        mongoose.connect(
+                             
+      mongoose.connect(
             databaseUrl,
             err => {
                 if (err) {
                     return reject(err);
                 }
                 server = app.listen(port, () => {
+                       // gfs = Grid(conn.db, mongoose.mongo);
                         console.log(`Your app is listening on port ${port}`);
+                        //})
+                        const conn = mongoose.createConnection(databaseUrl);
+                        conn.once('open', () => {
+                            gfs = Grid(conn.db, mongoose.mongo);
+                        })
                         resolve();
                     })
                     .on('error', err => {
@@ -60,7 +76,9 @@ function runServer(databaseUrl, port = PORT) {
                         reject(err);
                     });
             });
-    });
+           
+            });
+
 }
 
 function closeServer() {
@@ -81,4 +99,4 @@ if (require.main === module) {
     runServer(DATABASE_URL).catch(err => console.error(err));
 }
 
-module.exports = { app, runServer, closeServer };
+module.exports = { app, runServer, closeServer, mongoUrl };

@@ -1,10 +1,11 @@
 window.HTTP_EMPLOYEE_MODULE = {
-    employeeCreate,
-    employeeUpdate,
-    employeeDelete,
-    employeesGetAll,
-    employeeGetById,
-    employeeOverviewById,
+    createOne,
+    createOneWithFile,
+    updateOne,
+    deleteOne,
+    getAll,
+    getById,
+    overviewById,
     handleError
 };
 
@@ -17,35 +18,83 @@ function handleError(xhr) {
     $('.js-error-message').html(`<p>${message}</p>`).show();
 }
 
-function employeeCreate(settings) {
-    const { jwToken, employeeData, onSuccess, onError } = settings;
+function createOneWithFile(settings) {
+      const {
+          jwToken,
+          formData,
+          endpoint,
+          onSuccess
+      } = settings;
+      $.ajax({
+          type: 'POST',
+          url: `/api/${endpoint}`,
+          contentType: false,
+          processData: false,
+          data: formData,
+          beforeSend: xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`),
+          success: onSuccess,
+          error: err => {
+              console.error(err);
+              handleError(err);
+          }
+      });
+}
+
+
+function getAllOptions(settings) {
+    const {
+        jwToken,
+      
+      
+    } = settings;
     $.ajax({
-        type: 'POST',
-        url: '/employee',
+        type: 'GET',
+        url: `/api/options`,
         contentType: 'application/json',
         dataType: 'json',
-        data: JSON.stringify(employeeData),
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
-            },
-        success: onSuccess,
+        data: undefined,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
+        },
+      
         error: err => {
             console.error(err);
-            if (onError) {
-                onError(err);
-            }
+         
+                handleError(err);
+            
         }
     });
 }
 
-function employeeUpdate(settings) {
-    const { jwToken, employeeId, updatedEmployee, onSuccess, onError } = settings;
+
+
+
+
+function createOne(settings) {
+    const { jwToken, endpoint, sendData, onSuccess } = settings;
     $.ajax({
-        type: 'PUT',
-        url: `/employee/${employeeId}`,
+        type: 'POST',
+        url: `/${endpoint}`,
         contentType: 'application/json',
         dataType: 'json',
-        data: JSON.stringify(updatedEmployee),  
+        data: JSON.stringify(sendData),
+            beforeSend: xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`),
+        success: onSuccess,
+        error: err => {
+                console.error(err);
+                handleError(err);
+        }
+    });
+}
+
+function updateOne(settings) {
+    const { jwToken, endpoint, id, updatedData, onSuccess, onError } = settings;
+    $.ajax({
+        type: 'PUT',
+        url: `/${endpoint}/${id}`,
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(updatedData),  
         beforeSend: function(xhr) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
@@ -53,17 +102,17 @@ function employeeUpdate(settings) {
         error: err => {
             console.error(err);
             if (onError) {
-                onError(err);
+                handleError(err);
             }
         }
     });
 }
 
-function employeeDelete(settings) {
-    const { jwToken, employeeId, onSuccess, onError } = settings;
+function deleteOne(settings) {
+    const { jwToken, id, onSuccess, onError } = settings;
     $.ajax({
         type: 'DELETE',
-        url: `/employee/${employeeId}`,
+        url: `/${endpoint}/${id}`,
         contentType: 'application/json',
         dataType: 'json',
         data: undefined,
@@ -74,17 +123,17 @@ function employeeDelete(settings) {
         error: err => {
             console.error(err);
             if (onError) {
-                onError(err);
+                handleError(err);
             }
         }
     });
 }
 
-function employeesGetAll(settings) {
-    const { jwToken, onSuccess, onError } = settings;
+function getAll(settings) {
+    const { jwToken, endpoint, onSuccess, onError } = settings;
     $.ajax({
         type: 'GET',
-        url: `/employee`,
+        url: `/${endpoint}`,
         contentType: 'application/json',
         dataType: 'json',
         data: undefined,
@@ -95,17 +144,17 @@ function employeesGetAll(settings) {
         error: err => {
             console.error(err);
             if (onError) {
-                onError(err);
+                handleError(err);
             }
         }
     });
 }
 
-function employeeGetById(settings) {
-    const { employeeId, jwToken, onSuccess, onError } = settings;
+function getById(settings) {
+    const { endpoint, id, jwToken, onSuccess, onError } = settings;
     $.ajax({
         type: 'GET',
-        url: `/employee/${employeeId}`,
+        url: `/${endpoint}/${id}`,
         contentType: 'application/json',
         dataType: 'json',
         data: undefined,
@@ -116,14 +165,14 @@ function employeeGetById(settings) {
         error: err => {
             console.error(err);
             if (onError) {
-                onError(err);
+                handleError(err);
             }
         }
     });
 }
 
 function employeeOverviewById(settings) {
-    const { employeeId, jwToken, onSuccess, onError } = settings;
+    const { employeeId, jwToken, onSuccess } = settings;
     $.ajax({
         type: 'GET',
         url: `/employee/overview/${employeeId}`,
@@ -136,9 +185,7 @@ function employeeOverviewById(settings) {
         success: onSuccess,
         error: err => {
             console.error(err);
-            if (onError) {
-                onError(err);
-            }
+            handleError(err);
         }
     });
 }

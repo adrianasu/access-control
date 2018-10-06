@@ -9,11 +9,6 @@ const Users = User.User;
 
 const userRouter = express.Router();
 
-
-
-
-
-
 // create new user
 userRouter.post('/', (req, res) => {
     
@@ -22,7 +17,7 @@ userRouter.post('/', (req, res) => {
         email: req.body.email,
         username: req.body.username,
         password: req.body.password,
-        accessLevel: User.ACCESS_OVERVIEW_ONLY
+        accessLevel: req.body.accessLevel
     };
 
     // validate new user data with Joi

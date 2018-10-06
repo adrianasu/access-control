@@ -7,8 +7,10 @@ window.HTTP_USER_MODULE = {
     userGetById
 };
 
+const HTTP_EMPLOYEE = window.HTTP_EMPLOYEE_MODULE;
+
 function userSignup(settings) {
-    const { userData, onSuccess, onError } = settings;
+    const { userData, onSuccess } = settings;
     $.ajax({
         type: 'POST',
         url: '/user',
@@ -18,9 +20,7 @@ function userSignup(settings) {
             success: onSuccess,
             error: err => {
                 console.error(err);
-                if (onError) {
-                    onError(err);
-                }
+                HTTP_EMPLOYEE.handleError(err);
             }
     });
 }
@@ -36,9 +36,7 @@ function userLogin(settings) {
         success: onSuccess,
         error: err => {
             console.error(err);
-            if (onError) {
-                onError(err);
-            }
+            HTTP_EMPLOYEE.handleError(err);
         }
     });
 }
@@ -57,9 +55,7 @@ function userUpdate(settings) {
         success: onSuccess,
         error: err => {
             console.error(err);
-            if (onError) {
-                onError(err);
-            }
+            HTTP_EMPLOYEE.handleError(err);
         }
     });
 }
@@ -78,9 +74,7 @@ function userDelete(settings) {
         success: onSuccess,
         error: err => {
             console.error(err);
-            if (onError) {
-                onError(err);
-            }
+            HTTP_EMPLOYEE.handleError(err);
         }
     });
 }

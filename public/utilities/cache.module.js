@@ -1,7 +1,10 @@
 window.CACHE_MODULE = {
     getAuthenticatedUserFromCache,
     saveAuthenticatedUserIntoCache,
-    deleteAuthenticatedUserFromCache
+    deleteAuthenticatedUserFromCache,
+    getOptionsFromCache,
+    saveOptionsIntoCache,
+    deleteOptionsFromCache,
 };
 
 function getAuthenticatedUserFromCache() {
@@ -38,5 +41,28 @@ function deleteAuthenticatedUserFromCache() {
     localStorage.removeItem('name');
     localStorage.removeItem('email');
     localStorage.removeItem('accessLevel');
+}
+
+function getOptionsFromCache() {
+    const employers = localStorage.getItem('employers');
+    const departments = localStorage.getItem('departments');
+    const trainings = localStorage.getItem('trainings');
+    if (employers) {
+        return { employers, departments, trainings };
+    } else {
+        return undefined;
+    }
+}
+
+function saveOptionsIntoCache(res) {
+    localStorage.setItem('employers', res.body.employers);
+    localStorage.setItem('departments', res.body.departments);
+    localStorage.setItem('trainings', res.body.trainings); 
+}
+
+function deleteOptionsFromCache() {
+    localStorage.removeItem('employers');
+    localStorage.removeItem('departments');
+    localStorage.removeItem('trainings');
 }
 

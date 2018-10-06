@@ -1,61 +1,3 @@
-let MOCK_DATA = {
-    employers: ["Handy Manny", "Metal Works", "Big Guys", "The Other Guys"],
-    departments: ["Maintenance", "Administration", "Quarry", "Warehouse"],
-    trainingTitles: ["Safety First", "Always Safe", "Take Care"],
-    employeeData : 
-        // {
-        //     "id": 12345,
-        //     "photo": "https://unsplash.com/photos/XRA6DT2_ReY",
-        //     "firstName": "John",
-        //     "lastName": "Smith",
-        //     "employer": "Handy Manny",
-        //     "employmentDate": new Date(2015, 6, 5),
-        //     "department": "Maintenance",
-        //     "allowVehicle": false,
-        //     "licensePlate": "2ABC1234",
-                // "training": [
-                //     {
-                //         "title": "Safety First",
-                //        "date": new Date()
-                //     },
-                //     {
-                //         "title": "Always Safe",
-                //         "date": new Date()
-                //     },
-                //     {
-                //         "title": "Take Care",
-                //         "date": new Date()
-                //     }
-                // ]
-        //     }
-        // },
-        {
-            "id": 23456,
-            "photo": "https://images.pexels.com/photos/683381/pexels-photo-683381.jpeg?cs=srgb&dl=beard-blue-sky-casual-683381.jpg&fm=jpg",
-            "firstName": "Caleb",
-            "lastName": "Kennedy",
-            "employer": "Handy Manny",
-            "employmentDate": new Date(2017, 1, 5),
-            "department": "Quarry",
-            "allowVehicle": true,
-            "licensePlate": "7ZBC1234",
-            "training": [
-                  {
-                      "title": "Safety First",
-                      "trainDate": null
-                  },
-                  {
-                      "title": "Always Safe",
-                      "trainDate": new Date(2017, 1, 5)
-                  },
-                  {
-                      "title": "Take Care",
-                      "trainDate": new Date(2018, 4, 21)
-                  }
-              ]
-        }
-}
-    
 function generateOptions(data) {
     let options = [];
     options.push(`<option value="">Select an option</option>`);
@@ -145,34 +87,6 @@ function fillFormWithEmployeeData({photo, id, firstName, lastName, employmentDat
     $('#license-plate').val(licensePlate);
 }
 
-function resetForm() {
-    console.log('resetForm');
-    $('.js-photo').attr({
-        src: null,
-        alt: ""
-    });
-    $('#employee-id').val("");
-    $('#first-name').val("");
-    $('#last-name').val("");
-    $('#employment-date').datepicker("setDate", "");
-    $('#employer').val("");
-    $('#department').val("");
-    eraseTrainingInfo(MOCK_DATA.trainingTitles);
-    $('#vehicle').attr("checked", false);
-    $('#license-plate').val("");
-}
-
-
-function handleDelete(event) {
-    event.preventDefault();
-    console.log("handleDelete");
-    resetForm();
-    // deleteEmployee(); on db
-}
-
-function handleCancel() {
-    console.log("cancel");
-}
 
 function watchButtons() {
     $('.js-helper-button').on('click', handleCancel);

@@ -1,9 +1,17 @@
-let STATE = {};
-// modules defined in public/utilities
-const RENDER = window.RENDER_EMPLOYEE_MODULE;
-const HTTP_USER = window.HTTP_USER_MODULE;
-const HTTP_EMPLOYEE = window.HTTP_EMPLOYEE_MODULE;
-const CACHE = window.CACHE_MODULE;
+// window.AUTH_MODULE = {
+//     handleSignUp,
+//     handleLogIn,
+//     handleLogOut
+// };
+
+
+// //let STATE = {};
+// // modules defined in public/utilities
+// const RENDER_EMPLOYEE = window.RENDER_EMPLOYEE_MODULE;
+// const RENDER_OTHER = window.RENDER_OTHER_MODULE;
+// const HTTP_USER = window.HTTP_USER_MODULE;
+// const HTTP_EMPLOYEE = window.HTTP_EMPLOYEE_MODULE;
+// const CACHE = window.CACHE_MODULE;
 
 const ACCESS_OVERVIEW = 10;
 
@@ -17,17 +25,14 @@ function handleSignUp(event) {
         username: $('#js-username').val(),
         password: $('#js-password').val()
     };
-    $('#js-username, #js-password, #js-name, #js-email').val("");
-
-    HTTP_USER.userSignup({
+    
+    userSignup({
         userData,
         onSuccess: user => {
+            $('#js-username, #js-password, #js-name, #js-email').val("");
             console.log('Succesful Sign up');
-            $('.js-start-loader').hide();
-            window.open('/login.html', '_self');
-        },
-        onError: err => {
-            HTTP_EMPLOYEE.handleError(err);
+          
+            renderLoginForm();
         }
     })
 }
@@ -40,8 +45,7 @@ function handleLogIn(event) {
         username: $('#js-username').val(),
         password: $('#js-password').val()
     };
-    $('#js-username, #js-password').val("");
-
+    
     HTTP_USER.userLogin({
         userData,
         onSuccess: res => {
@@ -49,29 +53,25 @@ function handleLogIn(event) {
             authenticatedUser.jwToken = res.jwToken;
             CACHE.saveAuthenticatedUserIntoCache(authenticatedUser);
             console.log('Succesful Login');
-            $('.js-start-loader').hide();
+            $('#js-username, #js-password').val("");
+      
             if (authenticatedUser.accessLevel > ACCESS_OVERVIEW) {
-                window.open('/employee/options', '_self');
+                // render search options
+                RENDER_OTHER.renderSearchBar();
             }
             else {
-                window.open('/overview/search', '_self');
+                // render overview search
+                 RENDER_EMPLOYEE.renderEmployeeOverview();
             }
-        },
-        onError: err => {
-            HTTP_EMPLOYEE.handleError(err);
         }
     })
 }
 
-function watchSubmitButtons() {
-    $('.js-login-form').on('submit', handleLogIn);
-    $('.js-signup-form').on('submit', handleSignUp);
+function handleLogOut(event) {
+    const confirmation = confirm('Are you sure you want lo logout?');
+    if (confirmation) {
+        CACHE.deleteAuthenticatedUserFromCache();
+        RENDER_OTHER.renderLoginForm();
+    }
 }
 
-
-function main() {
-   
-    watchSubmitButtons();
-}
-
-$(main);

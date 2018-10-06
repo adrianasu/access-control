@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
-// instantiate mongoose-gridfs
+mongoose.Promise = global.Promise;
+const ObjectId = mongoose.Schema.Types.ObjectId;
+
+// // instantiate mongoose-gridfs
 // const gridfs = require('mongoose-gridfs')({
 //     collection: 'photos',
 //     model: 'Photo'
 // })
-
-mongoose.Promise = global.Promise;
-const ObjectId = mongoose.Schema.Types.ObjectId;
 
 // const photoSchema = gridfs.schema;
 
@@ -45,7 +45,7 @@ const employeesSchema = mongoose.Schema({
         //     ref: "User"
         // }],
         employeeId: String,
-        //photo: { type: ObjectId, ref: "Photo"},
+        photo: {type: String, required: false},
         firstName: String,
         lastName: String,
         employer: {type: ObjectId, ref:"Employer"},
@@ -72,7 +72,7 @@ employeesSchema.methods.serialize = function(ready2work) {
         //updatedBy: this.user.serialize(),
         id: this._id,
         employeeId: this.employeeId,
-        //photo: this.photo,
+        photo: this.photo,
         firstName: this.firstName,
         lastName: this.lastName,
         employer: this.employer,
@@ -88,7 +88,7 @@ employeesSchema.methods.serialize = function(ready2work) {
 employeesSchema.methods.serializeOverview = function(ready2work) {
     return {
         employeeId: this.employeeId,
-        //photo: this.photo,
+        photo: this.photo,
         firstName: this.firstName,
         lastName: this.lastName,
         employer: this.employer,
@@ -104,7 +104,7 @@ employeesSchema.methods.serializeOverview = function(ready2work) {
 const EmployeeJoiSchema = Joi.object().keys({
     // updatedBy: Joi.string().optional(),
     employeeId: Joi.string().required(),
-    //photo: this.photo,
+    photo: Joi.string(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     employer: Joi.object().keys({ 
@@ -121,25 +121,25 @@ const EmployeeJoiSchema = Joi.object().keys({
         _id: Joi.string(),
         __v: Joi.number(),
         departmentName: Joi.string()}),
-        licensePlates: Joi.array().items(Joi.string()),
-        employmentDate: Joi.date(),
-        allowVehicle: Joi.boolean(),
-        trainings: Joi.array().items(
-            Joi.object().keys({
-                trainingInfo: Joi.object().keys({
-                    _id: Joi.string(),
-                    __v: Joi.number(),
-                    title: Joi.string(), 
-                    expirationTime: Joi.date()}), 
-                    trainingDate: Joi.date()
-                })
+    licensePlates: Joi.array().items(Joi.string()),
+    employmentDate: Joi.date(),
+    allowVehicle: Joi.boolean(),
+    trainings: Joi.array().items(
+        Joi.object().keys({
+            trainingInfo: Joi.object().keys({
+                _id: Joi.string(),
+                __v: Joi.number(),
+                title: Joi.string(), 
+                expirationTime: Joi.date()}), 
+            trainingDate: Joi.date()
+            })
                 ), 
             })
             
 const UpdateEmployeeJoiSchema = Joi.object().keys({
     //updatedBy: Joi.string().optional(),
     employeeId: Joi.string(),
-    //photo: this.photo,
+    photo: Joi.string(),
     firstName: Joi.string(),
     lastName: Joi.string(),
     employer: Joi.object().keys({
@@ -174,7 +174,7 @@ const UpdateEmployeeJoiSchema = Joi.object().keys({
     })
 
 const EmployerJoiSchema = Joi.object().keys({
-    //employer: Joi.object().keys({
+
             _id: Joi.string(),
             __v: Joi.number(),
             employerName: Joi.string(),
@@ -183,7 +183,7 @@ const EmployerJoiSchema = Joi.object().keys({
                 __v: Joi.number(),
                 departmentName: Joi.string()
             }))
-             // })
+            
 });
 
 const DepartmentJoiSchema = Joi.object().keys({
@@ -243,16 +243,17 @@ const TrainingJoiSchema = Joi.object().keys({
                 });
                 return valid;
             }
+
+
             
-            // const Photo = gridfs.model;
-            // const Photo = mongoose.model("Photo", photoSchema);
+            //const Photo = mongoose.model("Photo", photoSchema);
             const Employee = mongoose.model("Employee", employeesSchema);
             const Department = mongoose.model("Department", departmentsSchema);
             const Employer = mongoose.model("Employer", employersSchema);
             const Training = mongoose.model("Training", trainingsSchema);
             
             module.exports = {
-                //Photo,
+               // Photo,
                 Employee,
                 Training,
                 Department,
