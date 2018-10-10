@@ -1,21 +1,15 @@
-window.HTTP_EMPLOYEE_MODULE = {
-    createOne,
-    createOneWithFile,
-    updateOne,
-    deleteOne,
-    getAll,
-    getById,
-    overviewById,
-    handleError
-};
+
 
 function handleError(xhr) {
     let message = "Something went wrong, please try again.";
-    if (xhr && xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.description) {
-        message = xhr.responseJSON.error.description;
+   
+    if (xhr && xhr.responseJSON && xhr.responseJSON.err ) {
+        message = JSON.stringify(xhr.responseJSON.err);
     }
     $('.js-loader').hide();
-    $('.js-error-message').html(`<p>${message}</p>`).show();
+    $('.box').removeClass('green red');
+    $('.js-results').hide();
+    $('.js-message').html(`<p>${message}</p>`).show();
 }
 
 function createOneWithFile(settings) {
@@ -40,12 +34,11 @@ function createOneWithFile(settings) {
       });
 }
 
-
+// get employers, trainings and departments
 function getAllOptions(settings) {
     const {
         jwToken,
-      
-      
+
     } = settings;
     $.ajax({
         type: 'GET',
@@ -67,14 +60,11 @@ function getAllOptions(settings) {
 }
 
 
-
-
-
 function createOne(settings) {
     const { jwToken, endpoint, sendData, onSuccess } = settings;
     $.ajax({
         type: 'POST',
-        url: `/${endpoint}`,
+        url: `/api/${endpoint}`,
         contentType: 'application/json',
         dataType: 'json',
         data: JSON.stringify(sendData),
@@ -91,7 +81,7 @@ function updateOne(settings) {
     const { jwToken, endpoint, id, updatedData, onSuccess, onError } = settings;
     $.ajax({
         type: 'PUT',
-        url: `/${endpoint}/${id}`,
+        url: `/api/${endpoint}/${id}`,
         contentType: 'application/json',
         dataType: 'json',
         data: JSON.stringify(updatedData),  
@@ -107,12 +97,11 @@ function updateOne(settings) {
         }
     });
 }
-
 function deleteOne(settings) {
-    const { jwToken, id, onSuccess, onError } = settings;
+    const { endpoint, jwToken, id, onSuccess } = settings;
     $.ajax({
         type: 'DELETE',
-        url: `/${endpoint}/${id}`,
+        url: `/api/${endpoint}/${id}`,
         contentType: 'application/json',
         dataType: 'json',
         data: undefined,
@@ -121,19 +110,17 @@ function deleteOne(settings) {
         },
         success: onSuccess,
         error: err => {
-            console.error(err);
-            if (onError) {
-                handleError(err);
-            }
+            console.log(err);
+            handleError(err);
         }
     });
 }
 
 function getAll(settings) {
-    const { jwToken, endpoint, onSuccess, onError } = settings;
+    const { jwToken, endpoint, onSuccess } = settings;
     $.ajax({
         type: 'GET',
-        url: `/${endpoint}`,
+        url: `/api/${endpoint}`,
         contentType: 'application/json',
         dataType: 'json',
         data: undefined,
@@ -143,18 +130,18 @@ function getAll(settings) {
         success: onSuccess,
         error: err => {
             console.error(err);
-            if (onError) {
+            
                 handleError(err);
-            }
+            
         }
     });
 }
 
 function getById(settings) {
-    const { endpoint, id, jwToken, onSuccess, onError } = settings;
+    const { jwToken, endpoint, onSuccess, id } = settings;
     $.ajax({
         type: 'GET',
-        url: `/${endpoint}/${id}`,
+        url: `/api/${endpoint}/${id}`,
         contentType: 'application/json',
         dataType: 'json',
         data: undefined,
@@ -164,9 +151,7 @@ function getById(settings) {
         success: onSuccess,
         error: err => {
             console.error(err);
-            if (onError) {
-                handleError(err);
-            }
+            handleError(err);
         }
     });
 }
@@ -175,7 +160,7 @@ function employeeOverviewById(settings) {
     const { employeeId, jwToken, onSuccess } = settings;
     $.ajax({
         type: 'GET',
-        url: `/employee/overview/${employeeId}`,
+        url: `/api/employee/overview/${employeeId}`,
         contentType: 'application/json',
         dataType: 'json',
         data: undefined,
@@ -184,7 +169,7 @@ function employeeOverviewById(settings) {
         },
         success: onSuccess,
         error: err => {
-            console.error(err);
+            $('.js-results').hide();
             handleError(err);
         }
     });

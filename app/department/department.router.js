@@ -23,8 +23,17 @@ departmentRouter.get('/',
                 .find()
                 .then(departments => {
                     console.log(`Getting all departments`);
-                    return res.status(HTTP_STATUS_CODES.OK).json(departments)
-                })
+                     let jsonDepartments = [];
+                     departments.forEach(department => {
+                         console.log(department);
+                         jsonDepartments.push(department.serializeDep());
+                     })
+                     return jsonDepartments;
+                     })
+                     .then(jsonDepartments => {
+                         return res.status(HTTP_STATUS_CODES.OK).json(jsonDepartments);
+
+                     })
             
             .catch(err => {
                 return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);

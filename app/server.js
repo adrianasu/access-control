@@ -29,7 +29,7 @@ let mongoUrl;
 // middleware
 app.use(morgan('common')); // allows morgan to intercept and log all HTTP requests
 app.use(express.json()); // required to parse and save JSON data payload into request body
-app.use(express.static('./public')); // serve static files inside 'public' folder
+app.use(express.static('public')); // serve static files inside 'public' folder
 
 
 // routers setup to redirect calls to the right router

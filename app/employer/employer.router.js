@@ -22,8 +22,17 @@ employerRouter.get('/',
                 .find()
                 .then(employers => {
                     console.log(`Getting all employers`);
-                    return res.status(HTTP_STATUS_CODES.OK).json(employers);
-                })
+                    let jsonEmployers = [];
+                    employers.forEach(employer => {
+                    ;
+                        jsonEmployers.push(employer.serializeEmp());
+                    })
+                    return jsonEmployers;
+                    })
+                    .then(jsonEmployers => {
+                        return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployers);
+
+                    })
             
             .catch(err => {
                 

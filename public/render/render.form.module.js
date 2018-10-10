@@ -1,9 +1,4 @@
-let STATE = {};
-// All these modules are are defined in /public/utilities
-const RENDER = window.RENDER_MODULE;
-const HTTP = window.HTTP_MODULE;
-const HTTP_USER = window.HTTP_USER_MODULE;
-const CACHE = window.CACHE_MODULE;
+
 
 function generateOptions(data, name) {
     let options = [];
@@ -100,37 +95,22 @@ function handleSubmit(event) {
     })
 }
 
-function watchSubmitButtons() {
-    $('.js-form').on('submit', '.js-submit-button', handleSubmit);
-    console.log("watchButtons");
-
-}
-
-function watchCalendarsAndPhoto() {
-    $('.js-photo').on('change', previewPhoto);
-    $('#employment-date').datepicker();
-    $('.training').on('focus', 'input', function (e) {
-       e.preventDefault();
-    $('.training input').datepicker();
-   })
-   console.log("watchCalendars");
-}
 
 function generateButtons() {
     $('.js-submit-button').text("Save");
-    $('.js-helper-button').text("Reset").attr("type", "reset");
+    $('.js-helper-button').text("Cancel").attr("type", "button");
 }
 
-function main() {
-   STATE.employeeId = employeeId;
-    STATE.authUser = CACHE.getAuthenticatedUserFromCache();
+function prepareEmployeeForm() {
+    STATE.employeeId = employeeId;
+    STATE.authUser = getAuthenticatedUserFromCache();
 
     HTTP.getAllOptions({
         jwToken: STATE.authUser.jwToken
     })
     .then(data => {
-        CACHE.saveOptionsIntoCache(data);
-        CACHE.getOptionsFromCache();
+        saveOptionsIntoCache(data);
+        getOptionsFromCache();
     })
     .then(options => {
         displayAllOptions(options);
@@ -141,5 +121,46 @@ function main() {
     })
    
 }
-// Do this when the page loads
-$(main);
+
+function getDataFromTable() {
+
+
+
+}
+
+function renderEmployeeForm(data, id) {
+
+    let formString = `<img src="" alt="" class="js-photo">
+        <form enctype="multipart/form-data" method="POST" name="employeeInfo" class="js-employee-form">
+            <input type="file" accept="image/*" id="js-photo-input" name="photo-file" autofocus required>
+            <fieldset name="personal-information">
+                <label for="employee-id">Employee ID</label>
+                <input type="text" id="employee-id" required>
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name" required>
+                <label for="last-name">Last Name</label>
+                <input type="text" id="last-name" required>
+            </fieldset>
+            <fieldset name="employment-information">
+                <label for="employment-date">Employed since</label>
+                <input type="text" id="employment-date" size="30">
+                <label for="employer">Employed by</label>
+                <select id="employer" required></select>
+                <label for="department">Department</label>
+                <select id="department" required></select>
+            </fieldset>
+            <fieldset name="training" class="training">
+            </fieldset>
+            <input type="checkbox" id="vehicle" name="vehicle" value="true" required>
+            <label for="vehicle">Allow vehicle on-site</label>
+            <label for="license-plate">License Plates</label>
+            <input type="text" id="license-plate1" placeholder="License Plate">
+            <input type="text" id="license-plate2" placeholder="License Plate">
+            <button role="button" type="reset" class="js-main-button"></button>
+            <button role="button" type="button" class="js-helper-button"></button>
+        </form>`;
+
+    $('.js-form').html(formString).show();
+    renderSearchBar();
+
+}

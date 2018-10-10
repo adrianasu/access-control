@@ -67,10 +67,10 @@ const employeesSchema = mongoose.Schema({
     }]    
 });
 
-employeesSchema.methods.serialize = function(ready2work) {
+employeesSchema.methods.serialize = function() {
     return {
         //updatedBy: this.user.serialize(),
-        id: this._id,
+        //id: this._id,
         employeeId: this.employeeId,
         photo: this.photo,
         firstName: this.firstName,
@@ -81,7 +81,7 @@ employeesSchema.methods.serialize = function(ready2work) {
         employmentDate: this.employmentDate,
         allowVehicle: this.allowVehicle,
         trainings: this.trainings,
-        ready2work: ready2work
+        //ready2work: ready2work
     };
 };
 
@@ -98,6 +98,29 @@ employeesSchema.methods.serializeOverview = function(ready2work) {
         trainings: this.trainings,
         ready2work: ready2work
     };
+}
+
+trainingsSchema.methods.serializeTr = function() {
+    return {
+        id: this._id,
+        title: this.title,
+        expirationTime: this.expirationTime,
+    }
+}
+
+employersSchema.methods.serializeEmp = function () {
+    return {
+        id: this._id,
+        employerName: this.employerName,
+        departments: this.departments,
+    }
+}
+
+departmentsSchema.methods.serializeDep = function () {
+    return {
+        id: this._id,
+        departmentName: this.departmentName
+    }
 }
 
 // validate data 

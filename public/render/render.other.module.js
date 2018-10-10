@@ -1,18 +1,6 @@
-window.RENDER_OTHER_MODULE = {
-    renderSignUpForm,
-    renderLoginForm,
-    renderList,
-    renderDepartmentForm,
-    renderEmployerForm,
-    renderTrainingForm
-};
-
-const RENDER_EMPLOYEE = window.RENDER_EMPLOYEE_MODULE;
-const HISTORY = window.HISTORY_MODULE;
-
 
 function renderSignUpForm() {
-    HISTORY.changeSiteState("signup");
+    changeSiteState("signup");
     let signUpString = `<form class="js-signup-form">
     <legend>Sign up</legend>
     <label for="name">Name</label>
@@ -31,8 +19,9 @@ function renderSignUpForm() {
 }
 
 
+
 function renderLoginForm() {
-    HISTORY.changeSiteState("login");
+    changeSiteState("login");
     let logInString = `<form class="js-login-form">
     <legend>Log In</legend>
     <label for="username">username</label>
@@ -92,7 +81,7 @@ function generateRows(data) {
 }
 
 function renderList(data) {
-    HISTORY.changeSiteState("list");
+    changeSiteState("list");
     let table = [];
     table.push(generateHeader(data));
     table.push(generateRows(data));
@@ -101,7 +90,7 @@ function renderList(data) {
 }
 
 function renderTrainingForm(data, id) {
-    HISTORY.changeSiteState("trainingForm", id);
+    changeSiteState("trainingForm", id);
     let trainingString = `<form class="js-training-form">
             <label for="training-title">Training Title</label>
             <input type="text" name="training-title" id="training-title" required>
@@ -115,7 +104,7 @@ function renderTrainingForm(data, id) {
 }
 
 function renderEmployerForm(data, id) {
-    HISTORY.changeSiteState("employerForm", id);
+    changeSiteState("employerForm", id);
     let employerString = `<form class="js-employer-form">
             <label for="emp-name">Employer Name</label>
             <input type="text" name="emp-name" id="emp-name" required>
@@ -126,7 +115,7 @@ function renderEmployerForm(data, id) {
 }
 
 function renderDepartmentForm(data, id) {
-    HISTORY.changeSiteState("departmentForm", id);
+    changeSiteState("departmentForm", id);
     let departmentString = `<form class="js-department-form">
         <label for="dep-name">Department Name</label>
         <input type="text" name="dep-name" id="dep-name" required>
@@ -136,3 +125,39 @@ function renderDepartmentForm(data, id) {
     $('.js-form').html(departmentString).show();
 }
 
+
+function renderEmployeeForm(data, id) {
+    changeSiteState("employeeForm", id);
+
+    let formString = `<img src="" alt="" class="js-photo">
+        <form enctype="multipart/form-data" method="POST" name="employeeInfo" class="js-employee-form">
+            <input type="file" accept="image/*" id="js-photo-input" name="photo-file" required>
+            <fieldset name="personal-information">
+                <label for="employee-id">Employee ID</label>
+                <input type="text" id="employee-id" required>
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name" required>
+                <label for="last-name">Last Name</label>
+                <input type="text" id="last-name" required>
+            </fieldset>
+            <fieldset name="employment-information">
+                <label for="employment-date">Employed since</label>
+                <input type="text" id="employment-date" size="30">
+                <label for="employer">Employed by</label>
+                <select id="employer" required></select>
+                <label for="department">Department</label>
+                <select id="department" required></select>
+            </fieldset>
+            <fieldset name="training" class="training">
+            </fieldset>
+            <input type="checkbox" id="vehicle" name="vehicle" value="true" required>
+            <label for="vehicle">Allow vehicle on-site</label>
+            <label for="license-plate">License Plates</label>
+            <input type="text" id="license-plate1" placeholder="License Plate">
+            <input type="text" id="license-plate2" placeholder="License Plate">
+            <button role="button" type="reset" class="js-main-button"></button>
+            <button role="button" type="button" class="js-helper-button"></button>
+        </form>`;
+
+    $('.js-form').html(formString).show();
+}

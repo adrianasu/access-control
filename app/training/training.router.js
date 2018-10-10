@@ -24,7 +24,16 @@ trainingRouter.get('/',
                 .find()
                 .then(trainings => {
                     console.log(`Getting all trainings`);
-                    return res.status(HTTP_STATUS_CODES.OK).json(trainings)
+                    let jsonTrainings = [];
+                    trainings.forEach(training => {
+                        console.log(training);
+                        jsonTrainings.push(training.serializeTr());
+                    })
+                    return jsonTrainings;
+                })
+                .then(jsonTrainings => {
+                    return res.status(HTTP_STATUS_CODES.OK).json(jsonTrainings);
+
                 })
             
             .catch(err => {

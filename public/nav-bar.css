@@ -47,12 +47,16 @@ header::after {
     border-bottom: 1px solid #575766;
 }
 
+a {
+    color: white;
+}
+
 .site-nav li:last-child {
     border-bottom: none;
 }
 
 .site-nav button {
-    color: #EBEBD3;
+    color: white;
     background-color: #2F5373;
     /* display: block; */
     padding: 2em 4em 2em 1.5em;

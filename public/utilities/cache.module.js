@@ -1,11 +1,4 @@
-window.CACHE_MODULE = {
-    getAuthenticatedUserFromCache,
-    saveAuthenticatedUserIntoCache,
-    deleteAuthenticatedUserFromCache,
-    getOptionsFromCache,
-    saveOptionsIntoCache,
-    deleteOptionsFromCache,
-};
+
 
 function getAuthenticatedUserFromCache() {
     const jwToken = localStorage.getItem('jwToken');

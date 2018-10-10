@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
 // mongoose serialize method to define the structure of the 'user' data we're sending in the reponse body
 userSchema.methods.serialize = function () {
     return {
-        id: this.id,
+        id: this._id,
         name: this.name,
         email: this.email,
         username: this.username,
@@ -70,7 +70,7 @@ userSchema.statics.hasAccess = function (accessLevel) {
         } 
         else {
             const err = {
-                message: "Access not allowed",
+                err: "Access not allowed",
                 code: 403
             };
             next(err);
@@ -84,7 +84,7 @@ const UserJoiSchema = Joi.object().keys({
     username: Joi.string().min(4).max(30).trim().required(),
     password: Joi.string().min(7).max(30).trim().required(),
     email: Joi.string().email().trim().required(),
-    accessLevel: Joi.number().required()
+    accessLevel: Joi.number().optional()
 });
 
 const UpdateUserJoiSchema = Joi.object().keys({

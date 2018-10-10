@@ -17,7 +17,7 @@ userRouter.post('/', (req, res) => {
         email: req.body.email,
         username: req.body.username,
         password: req.body.password,
-        accessLevel: req.body.accessLevel
+        //accessLevel: req.body.accessLevel
     };
 
     // validate new user data with Joi

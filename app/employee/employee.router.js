@@ -67,7 +67,8 @@ function validateEmployeeTrainings(employee, trainings) {
     if (trainings) {
         trainings.forEach(training => {
             validatedTrainings.push({
-                [training.title]: employee.isValid(training.title)
+                trainingTitle: training.title,
+                isValid: employee.isValid(training.title)
             });
         })
     return validatedTrainings;
@@ -124,9 +125,7 @@ employeeRouter.post('/',
     });
 
 // get all employees 
-employeeRouter.get('/', 
-    jwtPassportMiddleware, 
-    User.hasAccess(User.ACCESS_PUBLIC), 
+employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
    
        
@@ -140,7 +139,7 @@ employeeRouter.get('/',
                     console.log(`Getting all employees`);
                     let jsonEmployees = [];
                     employees.forEach(employee => {
-                        jsonEmployees.push(employee.serialize(validateEmployeeTrainings(employee, trainings)));
+                        jsonEmployees.push(employee.serialize());
                     })
                     return jsonEmployees;
                 })
@@ -164,25 +163,29 @@ employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
             trainings = _trainings
             return Employee
                 .findOne({employeeId: req.params.employeeId})
-        })
-        .then(employee => {
-            //console.log(employee);
-            console.log(`Getting new employee with id: ${req.params.employeeId}`);
-            return employee.serialize(validateEmployeeTrainings(employee, trainings));
-        })
-        .then(jsonEmployee => {
-            //console.log(jsonEmployee);
-            return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
+                .then(employee => {
+                    //console.log(employee);
+                    console.log(`Getting new employee with id: ${req.params.employeeId}`);
+                    return employee.serialize(validateEmployeeTrainings(employee, trainings));
+                })
+                .then(jsonEmployee => {
+                    //console.log(jsonEmployee);
+                    return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
+                })
+                .catch(err => {
+                    return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+                        err: "Employee not found"});
+                })
         })
         .catch(err => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
-        });
+            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+                err: "Something went wrong. Please try again"
+            });
+        })
 });
 
 // get overview employee by id
-employeeRouter.get('/overview/:employeeId', 
-    jwtPassportMiddleware, 
-    User.hasAccess(User.ACCESS_OVERVIEW_ONLY), 
+employeeRouter.get('/overview/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_OVERVIEW_ONLY), 
     (req, res) => {
 
     let trainings;
@@ -191,27 +194,29 @@ employeeRouter.get('/overview/:employeeId',
         .then(_trainings => {
             trainings = _trainings
             return Employee
-                .findOne({employeeId: req.params.employeeId})
-        })
-        .then(employee => {
-            //console.log(employee);
-            console.log(`Getting new employee with id: ${req.params.employeeId}`);
-            return employee.serializeOverview(validateEmployeeTrainings(employee, trainings));
-        })
-        .then(jsonEmployee => {
-            //console.log(jsonEmployee);
-            return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
+            .findOne({employeeId: req.params.employeeId})
+            .then(employee => {
+                //console.log(employee);
+                console.log(`Getting new employee with id: ${req.params.employeeId}`);
+                return employee.serializeOverview(validateEmployeeTrainings(employee, trainings));
+            })
+            .then(jsonEmployee => {
+                //console.log(jsonEmployee);
+                return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
+            })
+            .catch(err => {
+                return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+                    err: "Employee not found"});
+            })
         })
         .catch(err => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
-        });
+            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({err: "Something went wrong. Please try again"});
+        })
 });
 
 
 // update employee by id 
-employeeRouter.put('/:employeeId', 
-    jwtPassportMiddleware, 
-    User.hasAccess(User.ACCESS_ADMIN), 
+employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
     // check that id in request body matches id in request path
     if (req.params.employeeId !== req.body.employeeId) {
@@ -263,9 +268,7 @@ employeeRouter.put('/:employeeId',
 });
 
 // delete employee by id
-employeeRouter.delete('/:employeeId', 
-    jwtPassportMiddleware, 
-    User.hasAccess(User.ACCESS_ADMIN), 
+employeeRouter.delete('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
     return Employee
         .findOneAndDelete({employeeId: req.params.employeeId})
