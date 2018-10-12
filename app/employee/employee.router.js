@@ -196,12 +196,12 @@ employeeRouter.get('/overview/:employeeId', jwtPassportMiddleware, User.hasAcces
             return Employee
             .findOne({employeeId: req.params.employeeId})
             .then(employee => {
-                //console.log(employee);
+              
                 console.log(`Getting new employee with id: ${req.params.employeeId}`);
                 return employee.serializeOverview(validateEmployeeTrainings(employee, trainings));
             })
             .then(jsonEmployee => {
-                //console.log(jsonEmployee);
+               
                 return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
             })
             .catch(err => {
@@ -255,7 +255,7 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error});
     }
 
-    Employee
+    return Employee
     // $set operator replaces the value of a field with the specified value
         .findOneAndUpdate({employeeId: req.params.employeeId}, { $set: toUpdate }, { new: true })
         .then(updatedEmployee => {
@@ -274,13 +274,13 @@ employeeRouter.delete('/:employeeId', jwtPassportMiddleware, User.hasAccess(User
         .findOneAndDelete({employeeId: req.params.employeeId})
         .then(deletedEmployee => {
             console.log(`Deleting employee with id: \`${req.params.employeeId}\``);
-            res.status(HTTP_STATUS_CODES.OK).json({
+            return res.status(HTTP_STATUS_CODES.OK).json({
                 deleted: `${req.params.employeeId}`,
                 OK: "true"
             });
         })
         .catch(err => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).res(err);
+            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({err: err});
         });
 
 });

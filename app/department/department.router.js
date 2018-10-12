@@ -4,7 +4,7 @@ const departmentRouter = express.Router();
 
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
-const { Department } = require('../employee/employee.model');
+const { Department, Employer, Employee } = require('../employee/employee.model');
 const User  = require('../user/user.model');
 
 const DepartmentJoiSchema = Joi.object().keys({
@@ -19,13 +19,13 @@ departmentRouter.get('/',
     User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
     
-            Department
+            return Department
                 .find()
                 .then(departments => {
                     console.log(`Getting all departments`);
                      let jsonDepartments = [];
                      departments.forEach(department => {
-                         console.log(department);
+                       
                          jsonDepartments.push(department.serializeDep());
                      })
                      return jsonDepartments;
@@ -145,18 +145,34 @@ departmentRouter.delete('/:departmentId',
     jwtPassportMiddleware, 
     User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
-    return Department
-        .findOneAndDelete({departmentId: req.params.departmentId})
-        .then(deletedDepartment => {
-            console.log(`Deleting department with id: \`${req.params.departmentId}\``);
-            res.status(HTTP_STATUS_CODES.OK).json({
-                deleted: `${req.params.departmentId}`,
-                OK: "true"
-            });
+
+    return Employee
+        .updateMany({department: req.params.departmentId}, {$set: {department: null}},
+            {safe: true, multi: true})
+    .then(employee => {
+        console.log(`Deleting department from Employee collection`);
+        return Employer
+        .updateMany({}, {$pull: {departments: req.params.departmentId}},
+            {safe: true, multi: true})
+    }) 
+    .then(employer => {
+        console.log(`Deleting department from Employer collection`);
+        return Department
+        .findOneAndDelete({
+            _id: req.params.departmentId
         })
-        .catch(err => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).res(err);
+    })
+    .then(deletedDepartment => {
+        console.log(`Deleting department with id: \`${req.params.departmentId}\``);
+        return res.status(HTTP_STATUS_CODES.OK).json({
+            deleted: `${req.params.departmentId}`,
+            OK: "true"
         });
+    })
+ 
+    // .catch(err => {
+    //     return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+    // });
 
 });
 

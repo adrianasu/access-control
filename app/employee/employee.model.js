@@ -16,7 +16,8 @@ const departmentsSchema = mongoose.Schema({
     departmentName: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        default: "NA"
     }
 })
 
@@ -35,7 +36,8 @@ const employersSchema = mongoose.Schema({
     }],
     employerName: {
         type: String,
-        required: true
+        required: true,
+        default: "NA"
     }
 })
 
@@ -67,6 +69,7 @@ const employeesSchema = mongoose.Schema({
     }]    
 });
 
+
 employeesSchema.methods.serialize = function() {
     return {
         //updatedBy: this.user.serialize(),
@@ -81,7 +84,7 @@ employeesSchema.methods.serialize = function() {
         employmentDate: this.employmentDate,
         allowVehicle: this.allowVehicle,
         trainings: this.trainings,
-        //ready2work: ready2work
+      
     };
 };
 
@@ -269,22 +272,22 @@ const TrainingJoiSchema = Joi.object().keys({
 
 
             
-            //const Photo = mongoose.model("Photo", photoSchema);
-            const Employee = mongoose.model("Employee", employeesSchema);
-            const Department = mongoose.model("Department", departmentsSchema);
-            const Employer = mongoose.model("Employer", employersSchema);
-            const Training = mongoose.model("Training", trainingsSchema);
-            
-            module.exports = {
-               // Photo,
-                Employee,
-                Training,
-                Department,
-                Employer,
-                EmployeeJoiSchema,
-                UpdateEmployeeJoiSchema,
-                EmployerJoiSchema,
-                DepartmentJoiSchema,
-                TrainingJoiSchema
-            };
-            
+        //const Photo = mongoose.model("Photo", photoSchema);
+        const Employee = mongoose.model("Employee", employeesSchema);
+        const Department = mongoose.model("Department", departmentsSchema);
+        const Employer = mongoose.model("Employer", employersSchema);
+        const Training = mongoose.model("Training", trainingsSchema);
+        
+        module.exports = {
+            // Photo,
+            Employee,
+            Training,
+            Department,
+            Employer,
+            EmployeeJoiSchema,
+            UpdateEmployeeJoiSchema,
+            EmployerJoiSchema,
+            DepartmentJoiSchema,
+            TrainingJoiSchema
+        };
+        

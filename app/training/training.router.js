@@ -4,7 +4,7 @@ const trainingRouter = express.Router();
 
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
-const { Training } = require('../employee/employee.model');
+const { Training, Employee } = require('../employee/employee.model');
 const User  = require('../user/user.model');
 
 const TrainingJoiSchema = Joi.object().keys({
@@ -26,7 +26,7 @@ trainingRouter.get('/',
                     console.log(`Getting all trainings`);
                     let jsonTrainings = [];
                     trainings.forEach(training => {
-                        console.log(training);
+                     
                         jsonTrainings.push(training.serializeTr());
                     })
                     return jsonTrainings;
@@ -147,18 +147,25 @@ trainingRouter.delete('/:trainingId',
     jwtPassportMiddleware, 
     User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
-    return Training
-        .findOneAndDelete({trainingId: req.params.trainingId})
-        .then(deletedTraining => {
-            console.log(`Deleting training with id: \`${req.params.trainingId}\``);
-            res.status(HTTP_STATUS_CODES.OK).json({
-                deleted: `${req.params.trainingId}`,
-                OK: "true"
-            });
-        })
-        .catch(err => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).res(err);
+
+    return Employee
+    .updateMany({}, {$pull: {trainings: {trainingInfo: req.params.trainingId}}},
+            {safe: true, multi: true})
+    .then(employee => {
+        console.log(`Deleting training from Employee collection`);
+        return Training
+        .findOneAndDelete({_id: req.params.trainingId})
+    })
+    .then(deletedTraining => {
+        console.log(`Deleting training with id: \`${req.params.trainingId}\``);
+        return res.status(HTTP_STATUS_CODES.OK).json({
+            deleted: `${req.params.trainingId}`,
+            OK: "true"
         });
+    })
+    .catch(err => {
+        return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+    });
 
 });
 

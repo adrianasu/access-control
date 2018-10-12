@@ -151,7 +151,7 @@ employerRouter.delete('/:employerId',
         .findOneAndDelete({_id: req.params.employerId})
         .then(deletedEmployer => {
             console.log(`Deleting employer with id: \`${req.params.employerId}\``);
-            res.status(HTTP_STATUS_CODES.OK).json({
+            return res.status(HTTP_STATUS_CODES.OK).json({
                 deleted: `${req.params.employerId}`,
                 OK: "true"
             });

@@ -9,42 +9,75 @@ const screens = {
         render: renderSearchBar,
         URL: '/api/search',
     },
-    employeeForm: {
+    employee: {
+        endpoint: "employee",
+        onSuccess: confirmCreation, ///maybe window
+        requestFunction: createOne,
         show: false,
         render: renderEmployeeForm,
         URL: '/api/employee' // if !create add id
     },
-    trainingForm: {
+    training: {
+        endpoint: "training",
+        onSuccess: confirmCreation, ///maybe window
+        requestFunction: createOne,
         show: false,
         render: renderTrainingForm,
         URL: '/api/training' // if !create add id
     },
-    employerForm: {
+    employer: {
         show: false,
+        endpoint: "employer",
+        onSuccess: confirmCreation, ///maybe window
+        requestFunction: createOne,
         render: renderEmployerForm,
         URL: '/api/employer' // if !create add id
     },
-    departmentForm: {
+    department: {
+        endpoint: "department",
+        onSuccess: confirmCreation, ///maybe window
+        requestFunction: createOne,
         show: false,
         render: renderDepartmentForm,
         URL: '/api/department' // if !create add id
     },
     list: {
+        onSuccess: renderList,
+        requestFunction: getAll,
         show: false,
         render: renderList,
-        URL: '/api/' // add what list
+        URL: '/api' // add what list
     },
-    employeeInfo: {
+    employeeById: {   
+        endpoint: "employee", // add employeeId
+        onSuccess: renderSearchEmployeeById,
+        requestFunction: getById,
         show: false,
         render: renderSearchEmployeeById,
         URL: '/api/employee' // add employeeId
+    },
+    deleteAtById: { 
+       
+        onSuccess: renderSearchEmployeeById,
+        requestFunction: deleteOne,
+        show: false,
+        render: renderSearchEmployeeById,
+        URL: '/api' // add option + id
+    },
+    deleteAtList: { 
+
+        onSuccess: getAll,
+        requestFunction: deleteOne,
+        show: false,
+        render: renderList,
+        URL: '/api' // add what list
     },
     login: {
         show: true,
         render: renderLoginForm,
         URL: '/index.html'
     },
-    userForm: {
+    usersForm: {
         show: false,
         render: renderSignUpForm,
         URL: '/api/user' // if !create add id
@@ -90,24 +123,21 @@ function pushSiteState(currentScreen, addToUrl=null) {
     clearScreen();
 }
 
-
+function confirmCreation() {
+    alert(`Created succesfully.`);
+}
 
 function renderSearchBar() {
 
     let navBarString = `<nav class="site-nav">
-        <ul>
-            <li><a href="" data-value="overview">Employee Overview</a></li>
+        <ul><li><a href="" data-value="overview">Employee Overview</a></li>
             <li><a href="" data-value="searchMenu">Search</a></li>
             <li><a href="" data-value="createMenu">Create</a></li>
             <li><a href="" data-value="logout">Log out</a></li>
-        </ul>
-    </nav>
-    <div class="menu-toggle">
-        <div class="hamburguer"></div>
-    </div>`;
+        </ul></nav><div class="menu-toggle">
+        <div class="hamburguer"></div></div>`;
 
     $('.js-nav-bar').html(navBarString).show();
-
 }
 
 function generateOptions(menu, output) {
@@ -117,16 +147,16 @@ function generateOptions(menu, output) {
         
     if (menu ==="search") {
         optionsString.push(`<option data-value="employeeById" selected>Employee</option>
-        <option data-value="employeesList">All Employees</option>`);
+        <option data-value="employee">All Employees</option>
+        <option data-value="user">Users</option>`);
     } else {
         optionsString.push(`<option data-value="employeeForm" selected>Employee</option>`);
     }
-    optionsString.push(`<option data-value="trainings${output}">Trainings</option>
-    <option data-value="departments${output}">Departments</option>
-    <option data-value="employers${output}">Employers</option>
-    <option data-value="users${output}">Users</option></select>
-    <button role="button" name="menu" class="menu">${menu}</button>`);
-        $('.js-form').html(optionsString.join("")).show();
+    optionsString.push(`<option data-value="training">Trainings</option>
+    <option data-value="department">Departments</option>
+    <option data-value="employer">Employers</option></select>
+    <button role="button" type="button" name="menu" class="${menu}-menu">${menu}</button>`);
+    $('.js-form').html(optionsString.join("")).show();
 }
 
 function renderCreateMenu() {
@@ -139,11 +169,9 @@ function renderSearchMenu() {
     renderSearchBar();
 }
 
-
 function generateSearchForm(searchFor) {
     return `<form class="js-${searchFor}Search-form">
-    <legend>Search</legend>
-    <label for="employeeId">Employee Id</label>
+    <legend>Search</legend><label for="employeeId">Employee Id</label>
     <input type="text" name="employeeId" id="employeeId" autofocus>
     <button role="button" type="submit">Search</button>
     </form>`;
@@ -151,7 +179,6 @@ function generateSearchForm(searchFor) {
 
 function displayTrainingData(missingRequirements) {
     if (missingRequirements.length > 0) {
-        console.log(missingRequirements);
         $('.box').addClass('red').removeClass('green');
         $('.js-message').html(`<p>Do Not Enter</p>
         <p>Training required: ${missingRequirements.join(", ")}</p>`).show();
@@ -168,8 +195,7 @@ function checkForMissingRequirements(employee) {
     missing.forEach(training => {
         missingTrainingTitles.push(training.trainingTitle);
     })
-    return missingTrainingTitles;
-    
+    return missingTrainingTitles; 
 }
 
 function generateResultsStrings(employee) {
@@ -209,18 +235,27 @@ function generateResultsByIdStrings(employee) {
     }
     result.push(`</table>
     <button type="button" role="button" class="js-goto-edit" 
-    data-employeeId="${employee.employeeId}" data-origin="byId">Edit</button>
+    data-id="${employee.employeeId}" data-name="employee" data-origin="byId">Edit</button>
     <button type="button" role="button" class="js-delete-btn" 
-    data-employeeId="${employee.employeeId}" data-origin="byId">Delete</button>`);
+    data-id="${employee.employeeId}" data-name="employee" data-origin="byId">Delete</button>`);
     return result.join("");
 }
 
+function convertNullToString (data) {
+    Object.keys(data).forEach(key => {
+        if(data[key] === null) {
+            data[key] = "NA";
+        }
+    })
+    return data;
+}
+
 function renderSearchEmployeeOverview(employee) {
-   
+   let employeeC = convertNullToString(employee);
     if (employee) {
         pushSiteState("overview", employee.employeeId);
-        $('.js-results').html(generateResultsStrings(employee)).show();
-        let missing = checkForMissingRequirements(employee);
+        $('.js-results').html(generateResultsStrings(employeeC)).show();
+        let missing = checkForMissingRequirements(employeeC);
         displayTrainingData(missing);
     } 
     $('.js-form').html(generateSearchForm("overview")).show();
@@ -231,36 +266,56 @@ function renderSearchEmployeeOverview(employee) {
     else{
         $('.js-nav-bar').html(`<button role="button" class="js-logout">Log out</button>`).show();
     }
+    return employee;
 }
 
+
 function renderSearchEmployeeById() {
+    clearScreen();
+    renderSearchBar();
     $('.js-form').html(generateSearchForm("byId")).show();
 }
 
 function renderEmployeeById(employee) {
-    $('.js-results').html(generateResultsByIdStrings(employee)).show();
-    renderSearchBar();
+    let employeeC = convertNullToString(employee); 
     renderSearchEmployeeById();
+    $('.js-results').html(generateResultsByIdStrings(employeeC)).show();
+    return employee;
 }
 
-function renderSignUpForm(event) {
-    event.preventDefault();
-    pushSiteState("userForm");
-    let signUpString = `<form class="js-signup-form">
+function generateUserFormString() {
+    return `<form class="js-signup-form">
     <legend>Sign up</legend>
     <label for="name">Name</label>
     <input type="text" name="name" id="name" autofocus required>
     <label for="email">e-mail</label>
     <input type="email" name="email" id="email" required>
     <label for="username">username</label>
-    <input type="text" name="username" id="username" required>
+    <input type="text" name="username" id="username" min="4" required>
     <label for="password">password</label>
-    <input type="password" name="password" id="password" required>
+    <input type="password" name="password" id="password" min="7" required>
+    <label for="accessLevel">accessLevel</label>
+    <input type="accessLevel" name="accessLevel" id="accessLevel">
     <button role="button" type="submit">Create Account</button>
-    </form>
-    <a href="" class="js-login-link">Already have an account?</a>`;
+    </form>`;
+}
 
-    $('.js-form').html(signUpString).show();
+// not used yet////////////////////
+function userForm() {
+     $('.js-form').html(generateUserFormString()).show();
+
+}
+
+function renderSignUpForm(event) {
+    
+    event.preventDefault();
+    pushSiteState("userForm");
+    
+    let signUpString = [];
+    signUpString.push(generateUserFormString());
+    signUpString.push(`<a href="" class="js-login-link">Already have an account?</a>`);
+
+    $('.js-form').html(signUpString.join("").show());
 }
 
 
@@ -281,9 +336,9 @@ function renderLoginForm() {
 
 }
 
-function generateHeader(data) {
+function generateHeader(data, dataName) {
     let table = [];
-    table.push('<tr>');
+    table.push(`<tr>`);
     Object.keys(data[0]).forEach(item => {
         if (item === 'trainings') {
             let columns = 2 * data[0][item].length;
@@ -312,13 +367,14 @@ function generateTrainingStrings(trainings) {
 }
 
 
-function generateRows(data) {
+function generateRows(data, dataName) {
     let table = [];
     data.forEach(item => {
         table.push('<tr>');
         Object.keys(item).forEach(key => {
-            
-            if (key === 'photo') {
+            if(item[key] === null) {
+                table.push(`<td>NA</td>`);
+            } else if (key === 'photo') {
                 table.push(`<td><img src="${item[key]}" alt=""></td>`)
             } else if (key === 'trainings') {
                 table.push(generateTrainingStrings(item[key]));
@@ -337,21 +393,36 @@ function generateRows(data) {
                 table.push(`<td>${item[key]}</td>`);
             }
         });
+        let id;
+        if(dataName === "employee") {
+            id = item[`${dataName}Id`];
+        }
+        else {
+            id = item.id;
+        }
+   
         table.push(`<td><button type="button" role="button" class="js-goto-edit" 
-        data-employeeId="${item.employeeId}" data-origin="list">Edit</button></td>
+        data-name="${dataName}" data-id="${id}" data-origin="list">Edit</button></td>
         <td><button type="button" role="button" class="js-delete-btn" 
-        data-employeeId="${item.employeeId}" data-origin="list">Delete</button></td></tr>`);
+        data-name="${dataName}" data-id="${id}" data-origin="list">Delete</button></td></tr>`);
     })
     return table.join("");
 }
 
-function renderList(data) {
- 
+function renderList(data, dataName) {
+    if (data.length === 0) {
+        $('.js-results').html(`<h1>${dataName}s</h1><p>No ${dataName}s found.</p>`).show();
+        renderSearchMenu();
+        return data;
+    }
     let table = [];
-    table.push(generateHeader(data));
-    table.push(generateRows(data));
+    table.push(`<h1>${dataName}s</h1>`);
+    table.push(generateHeader(data, dataName));
+    table.push(generateRows(data, dataName));
     table.join("");
     $('.js-results').html(table).show();
+    renderSearchMenu();
+    return data;
 }
 
 function renderTrainingForm(data, id) {
@@ -371,20 +442,26 @@ function renderTrainingForm(data, id) {
 }
 
 function renderEmployerForm(data, id) {
-    //pushSiteState("employerForm", id);
-    let employerString = `<form class="js-employer-form">
+  
+    let employerString = [];
+    employerString.push(`<form class="js-employer-form">
             <label for="emp-name">Employer Name</label>
-            <input type="text" name="emp-name" id="emp-name" autofocus required>
-            <button role="button" type="submit">Submit</button>
-            </form>`;
+            <input type="text" name="emp-name" id="emp-name" autofocus required>`);
+             
+    data.departments.forEach(department => {
+        let name = department.departmentName;
+        employerString.push(`<input type"checkbox" id="${name}" value="${name}"
+                            <label for="${name}">${name}</label>`);
+    });        
+    employerString.push(`<button role="button" type="submit">Submit</button>
+    </form>`);
 
     $('.js-form').html(employerString).show();
     renderSearchBar();
-
 }
 
 function renderDepartmentForm(data, id) {
-    //pushSiteState("departmentForm", id);
+    
     let departmentString = `<form class="js-department-form">
         <label for="dep-name">Department Name</label>
         <input type="text" name="dep-name" id="dep-name" autofocus required>

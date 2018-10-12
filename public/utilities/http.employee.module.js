@@ -10,6 +10,7 @@ function handleError(xhr) {
     $('.box').removeClass('green red');
     $('.js-results').hide();
     $('.js-message').html(`<p>${message}</p>`).show();
+    return message;
 }
 
 function createOneWithFile(settings) {
@@ -19,7 +20,7 @@ function createOneWithFile(settings) {
           endpoint,
           onSuccess
       } = settings;
-      $.ajax({
+      return $.ajax({
           type: 'POST',
           url: `/api/${endpoint}`,
           contentType: false,
@@ -40,7 +41,7 @@ function getAllOptions(settings) {
         jwToken,
 
     } = settings;
-    $.ajax({
+    return $.ajax({
         type: 'GET',
         url: `/api/options`,
         contentType: 'application/json',
@@ -62,7 +63,7 @@ function getAllOptions(settings) {
 
 function createOne(settings) {
     const { jwToken, endpoint, sendData, onSuccess } = settings;
-    $.ajax({
+    return $.ajax({
         type: 'POST',
         url: `/api/${endpoint}`,
         contentType: 'application/json',
@@ -79,7 +80,7 @@ function createOne(settings) {
 
 function updateOne(settings) {
     const { jwToken, endpoint, id, updatedData, onSuccess, onError } = settings;
-    $.ajax({
+    return $.ajax({
         type: 'PUT',
         url: `/api/${endpoint}/${id}`,
         contentType: 'application/json',
@@ -99,7 +100,7 @@ function updateOne(settings) {
 }
 function deleteOne(settings) {
     const { endpoint, jwToken, id, onSuccess } = settings;
-    $.ajax({
+    return $.ajax({
         type: 'DELETE',
         url: `/api/${endpoint}/${id}`,
         contentType: 'application/json',
@@ -110,15 +111,15 @@ function deleteOne(settings) {
         },
         success: onSuccess,
         error: err => {
-            console.log(err);
-            handleError(err);
+            let message = `Couldn't delete ${endpoint} with id ${id}`;
+            alert(message);
         }
     });
 }
 
 function getAll(settings) {
     const { jwToken, endpoint, onSuccess } = settings;
-    $.ajax({
+    return $.ajax({
         type: 'GET',
         url: `/api/${endpoint}`,
         contentType: 'application/json',
@@ -138,8 +139,8 @@ function getAll(settings) {
 }
 
 function getById(settings) {
-    const { jwToken, endpoint, onSuccess, id } = settings;
-    $.ajax({
+    const { jwToken, endpoint, id } = settings;
+    return $.ajax({
         type: 'GET',
         url: `/api/${endpoint}/${id}`,
         contentType: 'application/json',
@@ -148,7 +149,6 @@ function getById(settings) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
-        success: onSuccess,
         error: err => {
             console.error(err);
             handleError(err);
@@ -157,8 +157,8 @@ function getById(settings) {
 }
 
 function employeeOverviewById(settings) {
-    const { employeeId, jwToken, onSuccess } = settings;
-    $.ajax({
+    const { employeeId, jwToken } = settings;
+    return $.ajax({
         type: 'GET',
         url: `/api/employee/overview/${employeeId}`,
         contentType: 'application/json',
@@ -167,7 +167,6 @@ function employeeOverviewById(settings) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
-        success: onSuccess,
         error: err => {
             $('.js-results').hide();
             handleError(err);

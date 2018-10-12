@@ -173,7 +173,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
 userRouter.delete('/:userId', jwtPassportMiddleware, 
     User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
-    Users
+    return Users
     .findByIdAndDelete(req.params.userId)
         .then(deletedUser => {
             console.log(`Deleting user with id: \`${req.params.userId}\``);

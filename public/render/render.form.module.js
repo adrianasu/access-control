@@ -96,31 +96,7 @@ function handleSubmit(event) {
 }
 
 
-function generateButtons() {
-    $('.js-submit-button').text("Save");
-    $('.js-helper-button').text("Cancel").attr("type", "button");
-}
 
-function prepareEmployeeForm() {
-    STATE.employeeId = employeeId;
-    STATE.authUser = getAuthenticatedUserFromCache();
-
-    HTTP.getAllOptions({
-        jwToken: STATE.authUser.jwToken
-    })
-    .then(data => {
-        saveOptionsIntoCache(data);
-        getOptionsFromCache();
-    })
-    .then(options => {
-        displayAllOptions(options);
-        generateButtons();
-        watchCalendarsAndPhoto();
-        watchSubmitButton(); 
-
-    })
-   
-}
 
 function getDataFromTable() {
 
@@ -128,7 +104,7 @@ function getDataFromTable() {
 
 }
 
-function renderEmployeeForm(data, id) {
+function renderEmployeeForm() {
 
     let formString = `<img src="" alt="" class="js-photo">
         <form enctype="multipart/form-data" method="POST" name="employeeInfo" class="js-employee-form">
@@ -164,3 +140,42 @@ function renderEmployeeForm(data, id) {
     renderSearchBar();
 
 }
+
+function generateButtons() {
+    $('.js-submit-button').text("Save");
+    $('.js-helper-button').text("Cancel").attr("type", "button");
+}
+
+function prepareEmployeeFormData(employeeId) {
+    let employeeData, optionsData;
+    STATE.authUser = getAuthenticatedUserFromCache();
+    let jwToken = STATE.authUser.jwToken;
+
+    if (getOptionsFromCache === undefined) {
+        return HTTP.getAllOptions({
+                jwToken
+            })
+            .then(optionsData => {
+                saveOptionsIntoCache(optionsData);
+            })
+    } else {
+        optionsData = getOptionsFromCache();
+    }
+
+    if (STATE.employeeId === employeeId) {
+        employeeData = STATE.employee;
+    } else {
+        let settings = { jwToken, 
+            endpoint: "employee",
+            id: employeeId,
+            onSuccess: res => {
+                STATE.employeeId = res.employeeId;
+                STATE.employee = res;
+            }
+        }
+        return getById(settings);
+    }
+
+}
+
+

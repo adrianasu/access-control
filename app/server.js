@@ -48,7 +48,7 @@ app.use('*', (req,res) => {
 
 // handle unexpected errors
 app.all('*', (err, req, res, next) => {
-    res.status(err.code || 400).json(err);
+    res.status(err.code || 400).json({err: err});
 });
 
 function runServer(databaseUrl, port = PORT) {
