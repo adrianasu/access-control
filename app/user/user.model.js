@@ -7,6 +7,7 @@ const ACCESS_OVERVIEW_ONLY = 10;
 const ACCESS_PUBLIC = 20
 const ACCESS_ADMIN = 30;
 
+const levels = { ACCESS_NO, ACCESS_PUBLIC, ACCESS_OVERVIEW_ONLY, ACCESS_ADMIN };
 
 // mongoose schema to define the structure of our 'user' documents within a collection
 const userSchema = new mongoose.Schema({
@@ -40,7 +41,8 @@ userSchema.methods.serialize = function () {
         name: this.name,
         email: this.email,
         username: this.username,
-        accessLevel: this.accessLevel
+        accessLevel: this.accessLevel,
+        levels
     };
 };
 

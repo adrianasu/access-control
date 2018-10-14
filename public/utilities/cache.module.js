@@ -37,25 +37,38 @@ function deleteAuthenticatedUserFromCache() {
 }
 
 function getOptionsFromCache() {
-    const employers = localStorage.getItem('employers');
-    const departments = localStorage.getItem('departments');
-    const trainings = localStorage.getItem('trainings');
-    if (employers) {
-        return { employers, departments, trainings };
+    const opt = localStorage.getItem('options');
+    if (opt) {
+        return JSON.parse(opt);
     } else {
         return undefined;
-    }
+    }    
 }
 
 function saveOptionsIntoCache(res) {
-    localStorage.setItem('employers', res.body.employers);
-    localStorage.setItem('departments', res.body.departments);
-    localStorage.setItem('trainings', res.body.trainings); 
+    localStorage.setItem('options', JSON.stringify(res));
 }
 
 function deleteOptionsFromCache() {
-    localStorage.removeItem('employers');
-    localStorage.removeItem('departments');
-    localStorage.removeItem('trainings');
+    localStorage.removeItem('options');
+
 }
+
+// function getEmployeeFromCache() {
+//     const employee = localStorage.getItem('employee');
+//     if (employee) {
+//         return JSON.parse(employee);
+//     } else {
+//         return undefined;
+//     }
+// }
+
+// function saveEmployeeIntoCache(res) {
+//     localStorage.setItem('employee', JSON.stringify(res));
+// }
+
+// function deleteEmployeeFromCache() {
+//     localStorage.removeItem('employee');
+
+// }
 

@@ -13,3 +13,77 @@
 .box {
     width: 60%;
 }
+
+img {
+    width: 15%;
+}
+
+.info-window {
+    position: fixed;
+    z-index: 1;
+    left: 1em;
+    top: 1em;
+    width: 60%;
+    height: 70%;
+    overflow: auto;
+    opacity: 0;
+    visibility: hidden;
+    background-color: palegoldenrod;
+    color: black;
+    transform: scale(1.1);
+    transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.show-info-window {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1.0);
+    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.close {
+    color: darkslategray;
+    float: right;
+    font-size: 1.2em;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.loader {
+    margin: .5em auto;
+    border: .42em solid lightgray;
+    border-top: .42em solid #f9f920;
+    border-radius: 50%;
+    width: 2.1em;
+    height: 2.1em;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

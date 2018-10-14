@@ -18,7 +18,6 @@ function createOneWithFile(settings) {
           jwToken,
           formData,
           endpoint,
-          onSuccess
       } = settings;
       return $.ajax({
           type: 'POST',
@@ -26,8 +25,9 @@ function createOneWithFile(settings) {
           contentType: false,
           processData: false,
           data: formData,
-          beforeSend: xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`),
-          success: onSuccess,
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
+          }, 
           error: err => {
               console.error(err);
               handleError(err);
@@ -37,10 +37,7 @@ function createOneWithFile(settings) {
 
 // get employers, trainings and departments
 function getAllOptions(settings) {
-    const {
-        jwToken,
-
-    } = settings;
+    const {jwToken} = settings;
     return $.ajax({
         type: 'GET',
         url: `/api/options`,
@@ -50,27 +47,25 @@ function getAllOptions(settings) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
-      
         error: err => {
             console.error(err);
-         
-                handleError(err);
-            
+            handleError(err); 
         }
     });
 }
 
 
 function createOne(settings) {
-    const { jwToken, endpoint, sendData, onSuccess } = settings;
+    const { jwToken, endpoint, sendData } = settings;
     return $.ajax({
         type: 'POST',
         url: `/api/${endpoint}`,
         contentType: 'application/json',
         dataType: 'json',
         data: JSON.stringify(sendData),
-            beforeSend: xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`),
-        success: onSuccess,
+        beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
+            },
         error: err => {
                 console.error(err);
                 handleError(err);
@@ -79,7 +74,7 @@ function createOne(settings) {
 }
 
 function updateOne(settings) {
-    const { jwToken, endpoint, id, updatedData, onSuccess, onError } = settings;
+    const { jwToken, endpoint, id, updatedData } = settings;
     return $.ajax({
         type: 'PUT',
         url: `/api/${endpoint}/${id}`,
@@ -89,12 +84,9 @@ function updateOne(settings) {
         beforeSend: function(xhr) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
-        success: onSuccess,
         error: err => {
             console.error(err);
-            if (onError) {
-                handleError(err);
-            }
+            handleError(err);
         }
     });
 }

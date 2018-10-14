@@ -42,12 +42,9 @@ const employersSchema = mongoose.Schema({
 })
 
 const employeesSchema = mongoose.Schema({
-    //updatedBy: [{ 
-        //     type: ObjectId,
-        //     ref: "User"
-        // }],
+    
         employeeId: String,
-        photo: {type: String, required: false},
+        //photo: {data: Buffer, contentType: String, required: false},
         firstName: String,
         lastName: String,
         employer: {type: ObjectId, ref:"Employer"},
@@ -72,8 +69,6 @@ const employeesSchema = mongoose.Schema({
 
 employeesSchema.methods.serialize = function() {
     return {
-        //updatedBy: this.user.serialize(),
-        //id: this._id,
         employeeId: this.employeeId,
         photo: this.photo,
         firstName: this.firstName,
@@ -128,7 +123,6 @@ departmentsSchema.methods.serializeDep = function () {
 
 // validate data 
 const EmployeeJoiSchema = Joi.object().keys({
-    // updatedBy: Joi.string().optional(),
     employeeId: Joi.string().required(),
     photo: Joi.string(),
     firstName: Joi.string().required(),
@@ -163,7 +157,6 @@ const EmployeeJoiSchema = Joi.object().keys({
             })
             
 const UpdateEmployeeJoiSchema = Joi.object().keys({
-    //updatedBy: Joi.string().optional(),
     employeeId: Joi.string(),
     photo: Joi.string(),
     firstName: Joi.string(),

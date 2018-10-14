@@ -11,34 +11,42 @@ const screens = {
     },
     employee: {
         endpoint: "employee",
-        onSuccess: confirmCreation, ///maybe window
+        onSuccess: renderList, ///maybe window
         requestFunction: createOne,
         show: false,
         render: renderEmployeeForm,
-        URL: '/api/employee' // if !create add id
+        fill: fillEmployeeForm,
+        getDataFrom: getDataFromEmployeeForm,
+        URL: '/api/employee', // if !create add id
     },
     training: {
         endpoint: "training",
-        onSuccess: confirmCreation, ///maybe window
+        onSuccess: renderList, ///maybe window
         requestFunction: createOne,
         show: false,
         render: renderTrainingForm,
+        fill: fillTrainingForm,
+        getDataFrom: getDataFromTrainingForm,
         URL: '/api/training' // if !create add id
     },
     employer: {
         show: false,
         endpoint: "employer",
-        onSuccess: confirmCreation, ///maybe window
+        onSuccess: renderList, ///maybe window
         requestFunction: createOne,
         render: renderEmployerForm,
+        fill: fillEmployerForm,
+        getDataFrom: getDataFromEmployerForm,
         URL: '/api/employer' // if !create add id
     },
     department: {
         endpoint: "department",
-        onSuccess: confirmCreation, ///maybe window
+        onSuccess: renderList, ///maybe window
         requestFunction: createOne,
         show: false,
         render: renderDepartmentForm,
+        fill: fillDepartmentForm,
+        getDataFrom: getDataFromDepartmentForm,
         URL: '/api/department' // if !create add id
     },
     list: {
@@ -57,7 +65,6 @@ const screens = {
         URL: '/api/employee' // add employeeId
     },
     deleteAtById: { 
-       
         onSuccess: renderSearchEmployeeById,
         requestFunction: deleteOne,
         show: false,
@@ -65,7 +72,6 @@ const screens = {
         URL: '/api' // add option + id
     },
     deleteAtList: { 
-
         onSuccess: getAll,
         requestFunction: deleteOne,
         show: false,
@@ -77,9 +83,11 @@ const screens = {
         render: renderLoginForm,
         URL: '/index.html'
     },
-    usersForm: {
+    user: {
         show: false,
         render: renderSignUpForm,
+        fill: fillUserForm,
+        getDataFrom: getDataFromUserForm,
         URL: '/api/user' // if !create add id
     },
     logout: {
@@ -120,12 +128,11 @@ function pushSiteState(currentScreen, addToUrl=null) {
     }
     console.log(url);
     history.pushState(null, currentScreen, url);
+    //history.pushState(data, event.target.textContent, url);
     clearScreen();
 }
 
-function confirmCreation() {
-    alert(`Created succesfully.`);
-}
+
 
 function renderSearchBar() {
 
@@ -150,7 +157,7 @@ function generateOptions(menu, output) {
         <option data-value="employee">All Employees</option>
         <option data-value="user">Users</option>`);
     } else {
-        optionsString.push(`<option data-value="employeeForm" selected>Employee</option>`);
+        optionsString.push(`<option data-value="employee" selected>Employee</option>`);
     }
     optionsString.push(`<option data-value="training">Trainings</option>
     <option data-value="department">Departments</option>
@@ -251,8 +258,8 @@ function convertNullToString (data) {
 }
 
 function renderSearchEmployeeOverview(employee) {
-   let employeeC = convertNullToString(employee);
     if (employee) {
+        let employeeC = convertNullToString(employee);
         pushSiteState("overview", employee.employeeId);
         $('.js-results').html(generateResultsStrings(employeeC)).show();
         let missing = checkForMissingRequirements(employeeC);
@@ -281,59 +288,6 @@ function renderEmployeeById(employee) {
     renderSearchEmployeeById();
     $('.js-results').html(generateResultsByIdStrings(employeeC)).show();
     return employee;
-}
-
-function generateUserFormString() {
-    return `<form class="js-signup-form">
-    <legend>Sign up</legend>
-    <label for="name">Name</label>
-    <input type="text" name="name" id="name" autofocus required>
-    <label for="email">e-mail</label>
-    <input type="email" name="email" id="email" required>
-    <label for="username">username</label>
-    <input type="text" name="username" id="username" min="4" required>
-    <label for="password">password</label>
-    <input type="password" name="password" id="password" min="7" required>
-    <label for="accessLevel">accessLevel</label>
-    <input type="accessLevel" name="accessLevel" id="accessLevel">
-    <button role="button" type="submit">Create Account</button>
-    </form>`;
-}
-
-// not used yet////////////////////
-function userForm() {
-     $('.js-form').html(generateUserFormString()).show();
-
-}
-
-function renderSignUpForm(event) {
-    
-    event.preventDefault();
-    pushSiteState("userForm");
-    
-    let signUpString = [];
-    signUpString.push(generateUserFormString());
-    signUpString.push(`<a href="" class="js-login-link">Already have an account?</a>`);
-
-    $('.js-form').html(signUpString.join("").show());
-}
-
-
-
-function renderLoginForm() {
-    pushSiteState("login");
-    let logInString = `<form class="js-login-form">
-    <legend>Log In</legend>
-    <label for="username">username</label>
-    <input type="text" name="username" id="username" autofocus>
-    <label for="password">password</label>
-    <input type="password" name="password" id="password">
-    <button role="button" type="submit">Log In</button>
-    </form>
-    <a href="" class="js-signup-link">Create an account</a>`;
-
-    $('.js-form').html(logInString).show();
-
 }
 
 function generateHeader(data, dataName) {
@@ -365,7 +319,6 @@ function generateTrainingStrings(trainings) {
     }
     return table.join("");
 }
-
 
 function generateRows(data, dataName) {
     let table = [];
@@ -425,52 +378,24 @@ function renderList(data, dataName) {
     return data;
 }
 
-function renderTrainingForm(data, id) {
-  
-    let trainingString = `<form class="js-training-form">
-            <label for="training-title">Training Title</label>
-            <input type="text" name="training-title" id="training-title" autofocus required>
-            <label for="expiration-time">Expiration Time (in days)</label>
-            <input type="number" name="expiration-time" id="expiration-time" required>
 
-            <button role="button" type="submit">Submit</button>
-            </form>`;
+//modal window
+function doConfirm(dataName, action) {
+    let windowString =[];
+    windowString.push(`<div class="info">
+        <button role="button" type="button" class="close js-close"
+        aria-label="Close" aria-pressed="false">X</button>
+        <p>${dataName} was ${action}.</p>`);
+    if (action === "delete") {
+        windowString.push(`<button role="button" type="button" class="close js-window-cancel"
+        aria-label="Cancel" aria-pressed="false">Cancel</button><button role="button" type="button" 
+        class="close js-window-delete" aria-label="Delete" aria-pressed="false">Delete</button>`);
+    }
+    windowString.push(`</div>`);
 
-    $('.js-form').html(trainingString).show();
-    renderSearchBar();
-
+    $('.js-info-window').html(windowString.join(""));
+   return dataName;
 }
 
-function renderEmployerForm(data, id) {
-  
-    let employerString = [];
-    employerString.push(`<form class="js-employer-form">
-            <label for="emp-name">Employer Name</label>
-            <input type="text" name="emp-name" id="emp-name" autofocus required>`);
-             
-    data.departments.forEach(department => {
-        let name = department.departmentName;
-        employerString.push(`<input type"checkbox" id="${name}" value="${name}"
-                            <label for="${name}">${name}</label>`);
-    });        
-    employerString.push(`<button role="button" type="submit">Submit</button>
-    </form>`);
-
-    $('.js-form').html(employerString).show();
-    renderSearchBar();
-}
-
-function renderDepartmentForm(data, id) {
-    
-    let departmentString = `<form class="js-department-form">
-        <label for="dep-name">Department Name</label>
-        <input type="text" name="dep-name" id="dep-name" autofocus required>
-        <button role="button" type="submit">Submit</button>
-        </form>`;
-
-    $('.js-form').html(departmentString).show();
-    renderSearchBar();
-
-}
 
 

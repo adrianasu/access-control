@@ -32,11 +32,12 @@ optionsRouter.get('/',
                         .then(trainings => {
                             console.log(`Getting all trainings`);
                             let options = {
-                                departments: departments,
-                                employers: employers,
-                                trainings: trainings
-                            }
-                            return res.status(HTTP_STATUS_CODES.OK).json(options)
+                                departments,
+                                employers,
+                                trainings
+                            };
+                          
+                            return res.status(HTTP_STATUS_CODES.OK).json(options);
                             })
                     })
             })

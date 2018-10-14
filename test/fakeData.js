@@ -48,13 +48,8 @@ function randomFromArray(arr){
 }
 
 function generateEmployeeData(employerIds, departmentIds, trainingIds, userIds) {
-    // let userId = userIds;
-    // if (typeof userIds === 'array') {
-    //     userId = randomFromArray(userIds);
-    // }
-    
+      
     return {
-        //updatedBy: userId,
         employeeId: faker.lorem.words(1),
         //photo: 
         firstName: faker.name.firstName(),

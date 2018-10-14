@@ -1,78 +1,3 @@
-const requestList = {
-    // employeesList: {
-    //     endpoint: "employee",
-    //     onSuccess: renderList,
-    //     requestFunction: getAll,
-    //     screen: "list"
-    // },
-    // departmentsList: {
-    //     endpoint: "department",
-    //     onSuccess: renderList,
-    //     requestFunction: getAll,
-    //     screen: "list"
-    // },
-    // employersList: {
-    //     endpoint: "employer",
-    //     onSuccess: renderList,
-    //     requestFunction: getAll,
-    //     screen: "list"
-    // },
-    // trainingsList: {
-    //     endpoint: "training",
-    //     onSuccess: renderList,
-    //     requestFunction: getAll,
-    //     screen: "list"
-    // },
-    // usersList: {
-    //     endpoint: "user",
-    //     onSuccess: renderList,
-    //     requestFunction: getAll,
-    //     screen: "list"
-    // },
-    // employeeById: {
-    //     endpoint: "employee", // add employeeId
-    //     onSuccess: renderSearchEmployeeById,
-    //     requestFunction: getById,
-    //     screen: "employeeInfo"
-    // },
-    // deleteAtById: {
-    //     endpoint: "employee", // add employeeId
-    //     onSuccess: renderSearchEmployeeById,
-    //     requestFunction: deleteOne,
-    //     screen: "employeeInfo"
-    // },
-    // deleteAtList: {
-    //     endpoint: "employee", //add employeeId
-    //     onSuccess: getAll,
-    //     requestFunction: deleteOne,
-    //     screen: "list"
-    // },
-    // employeeForm: {
-    //     endpoint: "employee",
-    //     onSuccess: confirmCreation, ///maybe window
-    //     requestFunction: createOne,
-    //     screen: "employeeForm"
-    // },
-    // trainingsForm: {
-    //     endpoint: "training",
-    //     onSuccess: confirmCreation, ///maybe window
-    //     requestFunction: createOne,
-    //     screen: "trainingsForm"
-    // },
-    // departmentsForm: {
-    //     endpoint: "department",
-    //     onSuccess: confirmCreation, ///maybe window
-    //     requestFunction: createOne,
-    //     screen: "departmentsForm"
-    // },
-    // employersForm: {
-    //     endpoint: "employer",
-    //     onSuccess: confirmCreation, ///maybe window
-    //     requestFunction: createOne,
-    //     screen: "employersForm"
-    // },  
-}
-
 let STATE = {}; 
 
 function updateAuthenticatedUI() {
@@ -89,7 +14,7 @@ function doHttpRequest(endpoint, screen) {
     return requestFunction(settings);  
 }
 
-function handleSearchMenuOptions(event) {
+function handleSearchMenu(event) {
     event.preventDefault();
     $('.js-results').hide();
     
@@ -111,53 +36,16 @@ function handleSearchMenuOptions(event) {
     }
 }
 
-function requestOptionsData() {
-    let settings = {};
-    updateAuthenticatedUI();
-    settings.jwToken = STATE.authUser.jwToken;
-    return getAllOptions(settings)
-        .then(options=> {
-            saveOptionsIntoCache(options);
-            return getOptionsFromCache();
-        })
-        .catch(err => {
-            console.log('Something went wrong.');
-            $('.js-message').html(`<p>Something went wrong. Please, try again</p>`);
-        })
-
-}
-
-function handleCreateMenuOptions(event) {
+function handleCreateMenu(event) {
     event.preventDefault();
     $('.js-results').hide();
-
     let selectedOption = $('select').find(":selected").attr("data-value");
-    
     updateAuthenticatedUI();
     if (STATE.authUser) {
-       
-        let { endpoint, screen } = requestList[selectedOption];
-        pushSiteState(screen, endpoint);
-
-        if ((selectedOption === "employersForm" ||
-            selectedOption === "employeeForm") &&
-            getOptionsFromCache === undefined) {
-                return requestOptionsData()
-                    .then(options => {
-                        screens[selectedOption].render(options);
-
-                    })
-                    
-        } else if (selectedOption === "employersForm" ||
-                selectedOption === "employeeForm") {
-            let options = getOptionsFromCache();
-            screens[selectedOption].render(options);
-        } else {
-            screens[selectedOption].render();
-        }
+        pushSiteState(selectedOption);
+        return screens[selectedOption].render();
     }
 }
-
 
 function handleSearchBar(event) {
     event.preventDefault();
@@ -223,14 +111,13 @@ function handleLoginLink(event) {
 }
 
 function handleDelete(event) {
-  
     event.preventDefault();
     event.stopImmediatePropagation();
     $('.js-loader').show();
     const dataName = $(this).attr("data-name");
     const dataId = $(this).attr("data-id");
     const origin = $(this).attr("data-origin");
-    // const origin = $('.js-delete-btn').attr("data-origin");
+    ////////////////////////// INSTEAD MODAL
     const confirmation = confirm(`Are you sure you want to delete ${dataName} ${dataId}?`);
     updateAuthenticatedUI();
     
@@ -259,28 +146,88 @@ function handleDelete(event) {
     }
 }
 
-function handleEdit() {
-    console.log("hey");
+function handlePrepareUpdateForm() {
     event.preventDefault();
-
+    event.stopImmediatePropagation();
     $('.js-loader').show();
-    const employeeId = $('.js-goto-edit').attr("data-employeeId");
-    //const origin = $('.js-goto-edit').attr("data-origin");
+    const origin = $(this).attr('data-origin');
+    const id = $(this).attr('data-id');
+    const dataName = $(this).attr('data-name');
     updateAuthenticatedUI();
     const jwToken = STATE.authUser.jwToken;
-    
-   pushSiteState("employeeForm", employeeId);
-   renderEmployeeForm();
-    
-    prepareEmployeeFormData(employeeId)
+    let data;
+    if (origin === "byId") {  
+        data = STATE.employee;
+        renderUpdateForm(data, id, dataName);
+        return screens[dataName].fill(data, dataName);
+    }
+    else { 
+        return getById({
+            jwToken,
+            id,
+            endpoint: dataName,
+        })
+        .then(res => {
+                return renderUpdateForm(res, id, dataName);
+        })
+        .then(data=> {
+              return screens[dataName].fill(data, dataName);
+        })
+    }
+}
 
+function handleUpdate(event) {
+    event.preventDefault();
+    $('.js-loader').show();
+    let endpoint = $(this).attr("data-name");
+    let id = $(this).attr("data-id");
+    updateAuthenticatedUI();
+    let jwToken = STATE.authUser.jwToken;
+    let updatedData = screens[endpoint].getDataFrom(event);
+    updatedData.id = id;
+    let settings = { jwToken, endpoint, updatedData, id };
     
-
-    
+    return updateOne(settings)
+    .then(data=> {
+        toggleInfoWindow();
+            return doConfirm(endpoint, 'updated');
+        })
 
 }
 
-function watchHamburguer() {
+function handleCreate(event) {
+    event.preventDefault();
+    $('.js-loader').show();
+    let endpoint = $(this).attr("data-name");
+   
+    updateAuthenticatedUI();
+    let jwToken = STATE.authUser.jwToken;
+    let sendData = screens[endpoint].getDataFrom(event);
+    let settings = { jwToken, endpoint, sendData };
+    
+    return screens[endpoint].requestFunction(settings)
+    .then(data=> {
+        toggleInfoWindow();
+            return doConfirm(endpoint, 'created');
+        })
+    }
+    
+    function handleCancel() {
+        clearScreen();
+        renderSearchBar();
+    }
+
+    function handleSignUpForm(event) {
+        event.preventDefault();
+        pushSiteState("user");
+        renderSignUpForm();
+    }
+    
+    function toggleInfoWindow() {
+        $('.js-info-window').toggleClass('show-info-window');
+    }
+    
+    function watchHamburguer() {
     $('.menu-toggle').click(function () {
         $('.site-nav').toggleClass('site-nav--open', 500);
         $(this).toggleClass('open');
@@ -289,31 +236,32 @@ function watchHamburguer() {
 
 function watchButtons() {
     $('.js-form').on('submit', '.js-login-form', handleLogIn);
-    $('.js-form').on('click', '.js-signup-link', renderSignUpForm);
+    $('.js-form').on('click', '.js-signup-link', handleSignUpForm);
     $('.js-form').on('submit', '.js-signup-form', handleSignUp);
     $('.js-form').on('click', '.js-login-link', handleLoginLink);
     $('.js-form').on('submit', '.js-overviewSearch-form', handleSearchEmployeeOverview);
     $('.js-nav-bar').on('click', '.js-logout', handleLogOut);
     $('.js-nav-bar').on('click', 'li a', handleSearchBar);
-    $('.js-form').on('click', '.search-menu', handleSearchMenuOptions);
-    $('.js-form').on('click', '.create-menu', handleCreateMenuOptions);
+    $('.js-form').on('click', '.search-menu', handleSearchMenu);
+    $('.js-form').on('click', '.create-menu', handleCreateMenu);
     $('.js-form').on('submit', '.js-byIdSearch-form', handleSearchEmployeeById);
-    $('.js-results').on('click', '.js-goto-edit', handleEdit);
+    $('.js-results').on('click', '.js-goto-edit', handlePrepareUpdateForm);
     $('.js-results').on('click', '.js-delete-btn', handleDelete);
-
-
-   // $('.js-form').on('submit', '.js-submit-button', handleCreate);
-
-
+    $('.js-form').on('click', '.js-cancel-btn', handleCancel);
+    $('.js-form').on('click', '.js-create-btn', handleCreate);
+    $('.js-info-window').on('click', '.js-close', toggleInfoWindow);
+    $('.js-form').on('click', '.js-update-btn', handleUpdate);
 }
 
 function watchCalendarsAndPhoto() {
-    $('.js-photo').on('change', previewPhoto);
-    $('#employment-date').datepicker();
-    $('.training').on('focus', 'input', function (e) {
-        e.preventDefault();
-        $('.training input').datepicker();
-    })
+    $('.js-form').on('change', '#js-photo-input', previewPhoto);
+
+    $('.js-form').on("focus", ('#employment-date, .training-date'),
+            function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $(this).datepicker();
+    });
 
 }
 
@@ -321,9 +269,9 @@ function watchCalendarsAndPhoto() {
 function main() {
     clearScreen();
     renderLoginForm();
-    watchButtons();
-    watchCalendarsAndPhoto();
     watchHamburguer();
+    watchCalendarsAndPhoto();
+    watchButtons();
       
 }
 

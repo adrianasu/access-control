@@ -161,3 +161,34 @@ function renderEmployeeForm(data, id) {
 
     $('.js-form').html(formString).show();
 }
+
+function getFormData() {
+    return new FormData($('.js-employee-form')[0]);
+
+    // const employeeData = {
+    //     photo: $('.js-photo-input').files[0],
+    //     employeeId: $('#employee-id').val(),
+    //     firstName: $('#first-name').val(),
+    //     lastName: $('#last-name').val(),
+    //     employmentDate: $('#employment-date').datepicker('getDate'),
+    //     employer: $('#employer').val(),
+    //     department: $('#department').val(),
+    //     allowVehicle: $('#vehicle').val(),
+    //     licensePlates: [$('#license-plate1').val(), $('#license-plate1').val()]
+    // }
+    // let allTraining = [];
+    // let index = 0;
+    // MOCK_DATA.trainingTitles.forEach(title => {
+    //     index += 1;
+    //     let trainingId = $(`#training${index}`).text();
+    //     if (trainingId) {
+    //         let trainingDate = $(`#training-date${index}`).datepicker('getDate');
+    //         allTraining.push({ trainingDate: trainingDate, 
+    //                             trainingInfo: {id: trainingId}
+    //                         })
+    //     }
+    // });
+    // employeeData.trainings = allTraining;
+    // console.log(employeeData);
+    // return employeeData;
+}

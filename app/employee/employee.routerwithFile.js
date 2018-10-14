@@ -1,6 +1,12 @@
 const express = require('express');
 const Joi = require('joi');
 const employeeRouter = express.Router();
+// middleware for handling multi-part data
+const multer = require('multer');
+const fs = require('fs');
+// const GridFsStorage = require('multer-gridfs-storage');
+// const crypto = require('crypto');
+// const path = require('path');
 const mongoose = require('mongoose');
 
 
@@ -8,6 +14,53 @@ const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
 const { Employee, EmployeeJoiSchema, UpdateEmployeeJoiSchema, Training, Photo } = require('./employee.model');
 const User = require('../user/user.model');
+const mongoUrl  = require('../server');
+
+// // Init gfs
+// let gfs;
+
+// conn.once('open', () => {
+//     // Init stream
+    
+//     gfs.collection('photos');
+// });
+
+// GridFS storage engine for multer to store files to MongoDB
+const storage = new GridFsStorage({
+    url: mongoUrl,
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if(err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'photos'  //match the collection name
+                };
+                resolve(fileInfo);
+            });
+        });
+    }
+});
+
+// to save image only jpeg/png in our storage
+const fileFilter = (req, file, callback) => {
+    if(file.mimetype === 'image/jpeg' ||
+        file.mimetype === 'image/png'){
+        callback(null, true);
+    } 
+    else{
+        callback(null, false);
+    }
+}
+
+const upload = multer({ 
+    storage, 
+    // limits: {fileSize: 1024*1024*5},
+    // fileFilter: fileFilter,
+});
 
 
 function validateEmployeeTrainings(employee, trainings) { 
@@ -23,15 +76,21 @@ function validateEmployeeTrainings(employee, trainings) {
     } 
 }
 
+
+
 // create new employee
 employeeRouter.post('/',
     jwtPassportMiddleware,
     User.hasAccess(User.ACCESS_PUBLIC), 
+    //upload.single('photo'),
     (req, res) => {
-           
+       
+        console.log(req);
+       
         // we can access req.body payload bc we defined express.json() middleware in server.js
         const newEmployee = {
             employeeId: req.body.employeeId,
+            photo: req.file,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             employer: req.body.employer,
