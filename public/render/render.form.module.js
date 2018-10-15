@@ -17,7 +17,7 @@ function generateLevelOptions(data) {
 }
 
 // user's data to get all access levels available
-function generateUserFormString(data, id) {
+function generateUserFormString(data, id, origin) {
     let btnName = 'signup';
     let title = 'Sign Up';
     if (id) {
@@ -45,9 +45,9 @@ function generateUserFormString(data, id) {
         formString.push(generateLevelOptions(data));
         formString.push(`</select>`);
     }
-        formString.push(`<button role="button" type="submit" data-name="user" data-id="${id}" class="js-${btnName}-btn">Submit</button>`);
+        formString.push(`<button role="button" type="submit" data-name="user" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>`);
     if(title === "Update") {
-         formString.push(`<button role="button" type="button" data-name="user" data-origin="${id}" class="js-cancel-btn">Cancel</button></form>`);
+         formString.push(`<button role="button" type="button" data-name="user" data-origin="${origin}" class="js-cancel-btn">Cancel</button></form>`);
     } 
     else {
         formString.push(`<a href="" class="js-login-link">Already have an account?</a></form>`);
@@ -55,13 +55,14 @@ function generateUserFormString(data, id) {
     return formString.join("");
 }
 
-function renderSignUpForm(id, data) {
-    if (id) {
+function renderSignUpForm(id, origin, data) {
+    if (origin === "list") {
         renderSearchBar();
-        $('.js-form').html(generateUserFormString(data.levels, id)).show();
-    }
+        $('.js-form').html(generateUserFormString(data.levels, id, origin)).show();
+    } else {
         $('.js-form').html(generateUserFormString()).show();
-    return data;
+    }
+        return data;
 }
 
 
@@ -105,7 +106,7 @@ function generateTrainingOptions(dataT) {
     return trainings.join("");
 }
 
-function generateEmployeeForm(options, id) {
+function generateEmployeeForm(options, id, origin) {
     let btnName = 'create';
     if (id) {
         btnName = 'update';
@@ -150,8 +151,8 @@ function generateEmployeeForm(options, id) {
         <label for="license-plate1">License Plates</label>
         <input type="text" id="license-plate1" class="license-plate">
         <input type="text" id="license-plate2" class="license-plate">
-        <button role="button" type="submit" data-name="employee" data-id="${id}" class="js-${btnName}-btn">Submit</button>
-        <button role="button" type="button" data-name="employee" data-origin="${id}" class="js-cancel-btn">Cancel</button>
+        <button role="button" type="submit" data-name="employee" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
+        <button role="button" type="button" data-name="employee" data-origin="${origin}" class="js-cancel-btn">Cancel</button>
         </form>`);
         $('.js-form').html(formString.join("")).show();
 
@@ -159,17 +160,17 @@ function generateEmployeeForm(options, id) {
 }
 
 
-function renderEmployeeForm(id, data) {
+function renderEmployeeForm(id, origin, data) {
     renderSearchBar();
     let options = getOptionsFromCache();
     if (options !== undefined) {
-        generateEmployeeForm(options, id);
+        generateEmployeeForm(options, id, origin);
         return data;
     } else {
         return optionsDataHttpRequest()
             .then(options => {
-                return generateEmployeeForm(options, id);
-
+                generateEmployeeForm(options, id, origin);
+                return data;
             })
             .catch(err => {
                 console.log(err);
@@ -178,7 +179,7 @@ function renderEmployeeForm(id, data) {
     }
 }     
 
-function generateEmployerForm(data, id) {
+function generateEmployerForm(data, id, origin) {
      let btnName = 'create';
      if (id) {
          btnName = 'update';
@@ -197,23 +198,23 @@ function generateEmployerForm(data, id) {
                             <label for="${name}">${name}</label>`);
     });
 
-    employerString.push(`<button role="button" type="button" data-name="employer" data-id="${id}" class="js-${btnName}-btn">Submit</button>
-    <button role="button" type="button" data-name="employer" data-origin="${id}" class="js-cancel-btn">Cancel</button></form>`);
+    employerString.push(`<button role="button" type="button" data-name="employer" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
+    <button role="button" type="button" data-name="employer" data-origin="${origin}" class="js-cancel-btn">Cancel</button></form>`);
 
     $('.js-form').html(employerString).show();
     return data;
 }
 
-function renderEmployerForm(id,data) {
+function renderEmployerForm(id, origin, data) {
      
     renderSearchBar();
     let options = getOptionsFromCache();
     if (options !== undefined) {
-        generateEmployerForm(options, id);
+        generateEmployerForm(options, id, origin);
     } else {
         return optionsDataHttpRequest()
             .then(options => {
-                return generateEmployerForm(options, id);
+                return generateEmployerForm(options, id, origin);
             })    
             .catch(err => {
                 console.log(err);
@@ -223,7 +224,7 @@ function renderEmployerForm(id,data) {
     return data;       
 }    
 
-function renderTrainingForm(id, data) {
+function renderTrainingForm(id, origin, data) {
      let btnName = 'create';
      if (id) {
          btnName = 'update';
@@ -236,15 +237,15 @@ function renderTrainingForm(id, data) {
         <label for="expiration-time">Expiration Time (in days)</label>
         <input type="number" name="expiration-time" id="expiration-time" required>
 
-        <button role="button" type="submit" data-name="training" data-id="${id}" class="js-${btnName}-btn">Submit</button>
-        <button role="button" type="button" data-name="training" data-origin="${id}" class="js-cancel-btn">Cancel</button>
+        <button role="button" type="submit" data-name="training" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
+        <button role="button" type="button" data-name="training" data-origin="${origin}" class="js-cancel-btn">Cancel</button>
         </form>`;
     $('.js-form').html(trainingString).show();
     renderSearchBar();
     return data;
 }
 
-function renderDepartmentForm(id, data) {
+function renderDepartmentForm(id, origin, data) {
     let btnName = 'create';
     if (id) {
         btnName = 'update';
@@ -254,8 +255,8 @@ function renderDepartmentForm(id, data) {
     let departmentString = `<form class="js-department-form">
         <label for="departmentName">Department Name</label>
         <input type="text" name="departmentName" id="departmentName" autofocus required>
-        <button role="button" type="submit" data-name="department" data-id="${id}" class="js-${btnName}-btn">Submit</button>
-        <button role="button" type="button" data-name="department" data-origin="${id}" class="js-cancel-btn">Cancel</button>
+        <button role="button" type="submit" data-name="department" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
+        <button role="button" type="button" data-name="department" data-origin="${origin}" class="js-cancel-btn">Cancel</button>
         </form>`;
 
     $('.js-form').html(departmentString).show();

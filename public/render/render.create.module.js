@@ -150,12 +150,12 @@ function fillEmployeeForm(data, dataName) {
     fillTrainingOptions(data, "training");
     fillLicensePlatesValues(data);
     return data;
-}
+} 
 
-function renderUpdateForm(data, id, dataName) {
+function renderUpdateForm(id, dataName, origin, data) {
     pushSiteState(dataName, id);
-    return screens[dataName].render(id, data);
-  
+    screens[dataName].render(id, origin, data);
+    return data;
 }
 
 ///////////////////////////////////////////////////////

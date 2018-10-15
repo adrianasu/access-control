@@ -163,7 +163,7 @@ function handleDelete(event) {
 
 function handlePrepareUpdateForm() {
     event.preventDefault();
-    event.stopImmediatePropagation();
+  
     $('.js-loader').show();
     const origin = $(this).attr('data-origin');
     const id = $(this).attr('data-id');
@@ -173,7 +173,7 @@ function handlePrepareUpdateForm() {
     let data;
     if (origin === "byId") {  
         data = STATE.employee;
-        renderUpdateForm(data, id, dataName);
+        renderUpdateForm(id, dataName, origin, data);
         return screens[dataName].fill(data, dataName);
     }
     else { 
@@ -183,7 +183,7 @@ function handlePrepareUpdateForm() {
             endpoint: dataName,
         })
         .then(res => {
-                return renderUpdateForm(res, id, dataName);
+                return renderUpdateForm(id, dataName, origin, res); 
         })
         .then(data=> {
               return screens[dataName].fill(data, dataName);
@@ -193,9 +193,11 @@ function handlePrepareUpdateForm() {
 
 function handleUpdate(event) {
     event.preventDefault();
+    event.stopImmediatePropagation();
     $('.js-loader').show();
     let endpoint = $(this).attr("data-name");
     let id = $(this).attr("data-id");
+    let origin = $(this).attr("data-origin");
     updateAuthenticatedUI();
     let jwToken = STATE.authUser.jwToken;
     let updatedData = screens[endpoint].getDataFrom(event);
@@ -210,9 +212,22 @@ function handleUpdate(event) {
     return updateOne(settings)
     .then(data=> {
         toggleInfoWindow();
-            return doConfirm(endpoint, 'updated');
-        })
-
+        doConfirm(endpoint, 'updated');
+        if(origin === "list") {
+            return doHttpRequest(endpoint, "list")
+            .then(data => {
+                pushSiteState("list", endpoint);
+                return screens.list.onSuccess(data, endpoint)
+                })
+                .catch(err => console.log(err));
+        }
+        else {
+            pushSiteState("searchMenu");
+            return screens.searchMenu.render();
+        }
+   
+    })
+    
 }
 
 function handleCreate(event) {

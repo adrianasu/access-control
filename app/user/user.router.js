@@ -55,7 +55,7 @@ userRouter.post('/', (req, res) => {
         .then(passwordHash => {
             newUser.password = passwordHash;
             // attemp to create new user
-            Users
+            return Users
                 .create(newUser)
                 .then(createdUser => {
                     // success
@@ -75,7 +75,7 @@ userRouter.post('/', (req, res) => {
 userRouter.get('/', jwtPassportMiddleware, 
     User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
-    Users
+    return Users
         .find()
         .then(_users => {
             return res.status(HTTP_STATUS_CODES.OK).json(_users.map(_user => _user.serialize()));
@@ -89,7 +89,7 @@ userRouter.get('/', jwtPassportMiddleware,
 userRouter.get('/:userId', jwtPassportMiddleware, 
     User.hasAccess(User.ACCESS_PUBLIC),
     (req, res) => {
-    Users
+    return Users
         .findById(req.params.userId)
         .then(user => {
             return res.status(HTTP_STATUS_CODES.OK).json(user.serialize());
@@ -152,7 +152,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
     }
 
 
-    Users
+    return Users
         // $set operator replaces the value of a field with the specified value
         .findByIdAndUpdate(req.params.userId, {
             $set: toUpdate

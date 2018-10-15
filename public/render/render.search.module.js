@@ -294,7 +294,7 @@ function renderEmployeeById(employee) {
 
 function calculateMaxNumber(arr) {
     let max = 0;
-    if (arr.length > 0) {
+    if (arr && arr.length > 0) {
         arr.forEach(item => {
             if (item.departments.length > max) {
                 max = item.departments.length;
