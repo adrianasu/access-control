@@ -110,7 +110,7 @@ function deleteOne(settings) {
 }
 
 function getAll(settings) {
-    const { jwToken, endpoint, onSuccess } = settings;
+    const { jwToken, endpoint } = settings;
     return $.ajax({
         type: 'GET',
         url: `/api/${endpoint}`,
@@ -120,7 +120,6 @@ function getAll(settings) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
-        success: onSuccess,
         error: err => {
             console.error(err);
             

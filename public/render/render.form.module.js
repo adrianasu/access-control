@@ -58,8 +58,9 @@ function generateUserFormString(data, id) {
 function renderSignUpForm(id, data) {
     if (id) {
         renderSearchBar();
+        $('.js-form').html(generateUserFormString(data.levels, id)).show();
     }
-    $('.js-form').html(generateUserFormString(data.levels, id)).show();
+        $('.js-form').html(generateUserFormString()).show();
     return data;
 }
 
@@ -157,23 +158,24 @@ function generateEmployeeForm(options, id) {
         return options;
 }
 
+
 function renderEmployeeForm(id, data) {
     renderSearchBar();
     let options = getOptionsFromCache();
     if (options !== undefined) {
-        generateEmployeeForm(options, id);  
+        generateEmployeeForm(options, id);
         return data;
     } else {
-        return optionsDataHttpRequest()    
-        .then(options => {
-            return generateEmployeeForm(options, id);
-               
-        })
-        .catch(err => {
-            console.log(err);
-            $('.js-message').html(`<p>Something went wrong. Please try again</p>`);
-        })    
-    }    
+        return optionsDataHttpRequest()
+            .then(options => {
+                return generateEmployeeForm(options, id);
+
+            })
+            .catch(err => {
+                console.log(err);
+                $('.js-message').html(`<p>Something went wrong. Please try again</p>`);
+            })
+    }
 }     
 
 function generateEmployerForm(data, id) {

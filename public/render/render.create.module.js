@@ -82,9 +82,14 @@ function getDataFromEmployeeForm() {
     return formData;
 }
 
-
 function fillDepartmentForm(data, dataName) {
      $('#departmentName').val(data[`${dataName}Name`]);
+    return data;
+}
+
+function fillTrainingForm(data, dataName) {
+    $('#training-title').val(data.title);
+    $('#expiration-time').val(new Date(data.expirationTime).getTime()/(1000*60*60*24));
     return data;
 }
 
@@ -113,18 +118,21 @@ function fillEmployerForm(data, dataName) {
     return data;
 }
 
-function fillTrainingForm(data, dataName) {
-    $('#training-title').val(data.title);
-    $('#expiration-time').val(new Date(data.expirationTime).getTime()/(1000*60*60*24));
+function fillLicensePlatesValues(data) {
+    if (data.licensePlates.length > 0) {
+        for (let index=0; index < data.licensePlates.length; index++) {
+            $(`#license-plate${index+1}`).val(data.licensePlates[index]);
+        }
+    }
     return data;
 }
 
-function fillOptions(data, dataName) {
-    if (data[dataName].length > 0) {
+function fillTrainingOptions(data, dataName) {
+    if (data.trainings.length > 0) {
         let index = 1;
-        data[dataName].forEach(item => {
-            let name = item[dataName];
-            $(`#${name}${index}`).val(item);
+        data.trainings.forEach(item => {
+            $(`#training${index}`).val(item.trainingInfo._id);
+            $(`#training-date${index}`).val(new Date(item.trainingDate).toLocaleDateString("en-US"));
             index++;
         });
     }
@@ -135,17 +143,14 @@ function fillEmployeeForm(data, dataName) {
   console.log(data);
     $('#first-name').val(data.firstName);
     $('#last-name').val(data.lastName);
-    $('#employment-date').val(data.employmentDate);
-    $('#employer').val(data.employer.employerName);
-    $('#department').val(data.department.departmentName);
-    $('#vehicle').val(data.allowVehicle);
-    
-    //fillOptions(data, "trainings");
-    //formData.licensePlates = getLicensePlatesValues();
+    $('#vehicle').attr("checked", data.allowVehicle);
+    $('#employer').val(data.employer._id);
+    $('#department').val(data.department._id);
+    $('#employment-date').val(new Date(data.employmentDate).toLocaleDateString("en-US"));
+    fillTrainingOptions(data, "training");
+    fillLicensePlatesValues(data);
     return data;
-
 }
-
 
 function renderUpdateForm(data, id, dataName) {
     pushSiteState(dataName, id);

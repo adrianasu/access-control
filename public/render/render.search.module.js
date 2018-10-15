@@ -11,6 +11,7 @@ const screens = {
     },
     employee: {
         endpoint: "employee",
+        headers: {"Employee Id": "employeeId", "First Name": "firstName", "Last Name": "lastName", "Employer": "employer", "Department": "department", "License Plates": "licensePlates", "Employment Date": "employmentDate","Allow Vehicle": "allowVehicle", "Trainings": "trainings"},
         onSuccess: renderList, ///maybe window
         requestFunction: createOne,
         show: false,
@@ -21,6 +22,7 @@ const screens = {
     },
     training: {
         endpoint: "training",
+        headers: {"Title": "title", "Expiration Time": "expirationTime"},
         onSuccess: renderList, ///maybe window
         requestFunction: createOne,
         show: false,
@@ -32,7 +34,8 @@ const screens = {
     employer: {
         show: false,
         endpoint: "employer",
-        onSuccess: renderList, ///maybe window
+        headers: {"Employer Name": "employerName", "Departments": "departments"},
+        onSuccess: renderList, 
         requestFunction: createOne,
         render: renderEmployerForm,
         fill: fillEmployerForm,
@@ -41,7 +44,8 @@ const screens = {
     },
     department: {
         endpoint: "department",
-        onSuccess: renderList, ///maybe window
+        headers: {"Department Name": "departmentName"},
+        onSuccess: renderList, 
         requestFunction: createOne,
         show: false,
         render: renderDepartmentForm,
@@ -85,6 +89,7 @@ const screens = {
     },
     user: {
         show: false,
+        headers: {"Name": "name", "username": "username", "email": "email", "Access Level": "accessLevel"},
         render: renderSignUpForm,
         fill: fillUserForm,
         getDataFrom: getDataFromUserForm,
@@ -131,8 +136,6 @@ function pushSiteState(currentScreen, addToUrl=null) {
     //history.pushState(data, event.target.textContent, url);
     clearScreen();
 }
-
-
 
 function renderSearchBar() {
 
@@ -276,7 +279,6 @@ function renderSearchEmployeeOverview(employee) {
     return employee;
 }
 
-
 function renderSearchEmployeeById() {
     clearScreen();
     renderSearchBar();
@@ -290,15 +292,27 @@ function renderEmployeeById(employee) {
     return employee;
 }
 
-function generateHeader(data, dataName) {
+function calculateMaxNumber(arr) {
+    let max = 0;
+    if (arr.length > 0) {
+        arr.forEach(item => {
+            if (item.departments.length > max) {
+                max = item.departments.length;
+            }
+        })
+    }
+    return max;
+}
+
+function generateHeader(data, dataName, options) {
     let table = [];
     table.push(`<tr>`);
-    Object.keys(data[0]).forEach(item => {
-        if (item === 'trainings') {
-            let columns = 2 * data[0][item].length;
+    Object.keys(screens[dataName].headers).forEach(item => {
+        if (item === 'Trainings') {
+            let columns = 2 * options.trainings.length;
             table.push(`<th colspan = "${columns}">${item}</th>`);
-        } else if (item === 'departments') {
-            let columns = data[0][item].length;
+        } else if (item === 'Departments') {
+            let columns = calculateMaxNumber(options.employers);
             table.push(`<th colspan = "${columns}">${item}</th>`);
         }
         else {
@@ -315,17 +329,18 @@ function generateTrainingStrings(trainings) {
         if (trainings[i].trainingDate === null) {
             trainings[i].trainingDate = "N/A";
         }
-        table.push(`<td>${trainings[i].trainingInfo.title}</td><td>${trainings[i].trainingDate}</td>`);
+        let expTime = new Date(trainings[i].trainingDate).toLocaleDateString("en-US");
+        table.push(`<td>${trainings[i].trainingInfo.title}</td><td>${expTime}</td>`);
     }
     return table.join("");
 }
 
-function generateRows(data, dataName) {
+function generateRows(data, dataName, options) {
     let table = [];
     data.forEach(item => {
         table.push('<tr>');
         Object.keys(item).forEach(key => {
-            if(item[key] === null) {
+            if (item[key] === null || item[key === ""]) {
                 table.push(`<td>NA</td>`);
             } else if (key === 'photo') {
                 table.push(`<td><img src="${item[key]}" alt=""></td>`)
@@ -333,27 +348,33 @@ function generateRows(data, dataName) {
                 table.push(generateTrainingStrings(item[key]));
             } else if (key === 'employer') {
                 table.push(`<td>${item[key].employerName}</td>`);
+            } else if (key === 'employmentDate') {
+                let eDate = new Date(item[key]).toLocaleDateString("en-US");
+                table.push(`<td>${eDate}</td>`);
+            } else if (key === "expirationTime") {
+                let eDate = new Date(item[key]).getTime() / (1000 * 60 * 60 * 24);
+                table.push(`<td>${eDate}</td>`);
             } else if (key === "department") {
                 table.push(`<td>${item[key].departmentName}</td>`);
             } else if (key === "departments") {
-                for (let x=0; x< item[key].length; x++) {
+                for (let x = 0; x < item[key].length; x++) {
                     table.push(`<td>${item[key][x].departmentName}</td>`);
                 }
             } else if (key === "allowVehicle") {
-                 let allow = (item[key]) ? "Yes" : "No";
-                 table.push(`<td>${allow}</td>`);
-            } else {
+                let allow = (item[key]) ? "Yes" : "No";
+                table.push(`<td>${allow}</td>`);
+            } else if (key === "id" || key === "levels") {}
+            else {
                 table.push(`<td>${item[key]}</td>`);
             }
         });
         let id;
-        if(dataName === "employee") {
+        if (dataName === "employee") {
             id = item[`${dataName}Id`];
-        }
-        else {
+        } else {
             id = item.id;
         }
-   
+
         table.push(`<td><button type="button" role="button" class="js-goto-edit" 
         data-name="${dataName}" data-id="${id}" data-origin="list">Edit</button></td>
         <td><button type="button" role="button" class="js-delete-btn" 
@@ -362,7 +383,27 @@ function generateRows(data, dataName) {
     return table.join("");
 }
 
+function getOptions() {
+    let options = getOptionsFromCache();
+    if (options !== undefined) {
+        return options;
+    } else {
+        return optionsDataHttpRequest()
+            .then(options => {
+                return options;
+            })
+            .catch(err => {
+                console.log(err);
+                $('.js-message').html(`<p>Something went wrong. Please try again</p>`);
+            })
+    }
+}
+
+
 function renderList(data, dataName) {
+    renderSearchBar();
+    let options = getOptions();
+  
     if (data.length === 0) {
         $('.js-results').html(`<h1>${dataName}s</h1><p>No ${dataName}s found.</p>`).show();
         renderSearchMenu();
@@ -370,30 +411,31 @@ function renderList(data, dataName) {
     }
     let table = [];
     table.push(`<h1>${dataName}s</h1>`);
-    table.push(generateHeader(data, dataName));
-    table.push(generateRows(data, dataName));
+    table.push(generateHeader(data, dataName, options));
+    table.push(generateRows(data, dataName, options));
     table.join("");
     $('.js-results').html(table).show();
     renderSearchMenu();
     return data;
-}
-
-
+    }
 //modal window
 function doConfirm(dataName, action) {
     let windowString =[];
-    windowString.push(`<div class="info">
-        <button role="button" type="button" class="close js-close"
-        aria-label="Close" aria-pressed="false">X</button>
-        <p>${dataName} was ${action}.</p>`);
+    windowString.push(`<div class="info">`);
+    if (action !== "delete") {
+        windowString.push(`<button role="button" type="button" class="close js-close"
+            aria-label="Close" aria-pressed="false">X</button>`);
+    }
+    windowString.push(`<p>${dataName} was ${action}.</p>`);
     if (action === "delete") {
-        windowString.push(`<button role="button" type="button" class="close js-window-cancel"
-        aria-label="Cancel" aria-pressed="false">Cancel</button><button role="button" type="button" 
-        class="close js-window-delete" aria-label="Delete" aria-pressed="false">Delete</button>`);
+        windowString.push(`<button role="button" type="button"
+        class="close js-window-cancel" aria-label="Cancel" aria-pressed="false">Cancel</button>
+        <button role="button" type="button" class="close js-window-delete" aria-label="Delete" aria-pressed="false">
+        Delete</button>`);
     }
     windowString.push(`</div>`);
 
-    $('.js-info-window').html(windowString.join(""));
+    $('.js-info-window').html(windowString.join("")).show();
    return dataName;
 }
 

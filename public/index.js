@@ -9,8 +9,8 @@ function updateAuthenticatedUI() {
 
 function doHttpRequest(endpoint, screen) {
     const jwToken = STATE.authUser.jwToken;
-    let { onSuccess, requestFunction } = screens[screen];
-    let settings = {jwToken, endpoint, onSuccess };
+    let { requestFunction } = screens[screen];
+    let settings = {jwToken, endpoint };
     return requestFunction(settings);  
 }
 
@@ -29,8 +29,8 @@ function handleSearchMenu(event) {
             return doHttpRequest(selectedOption, "list")
             .then(data => {
                 pushSiteState("list", selectedOption);
-
-                screens.list.onSuccess(data, selectedOption)})
+                
+                return screens.list.onSuccess(data, selectedOption)})
             .catch(err => console.log(err));
         }
     }
@@ -110,6 +110,20 @@ function handleLoginLink(event) {
     renderLoginForm();
 }
 
+function watchConfirmation() {
+    $('.js-info-window').on('click', '.js-window-delete', function(event) {
+        event.preventDefault();
+        $('js-loader').show();
+        return true;
+    });
+    $('.js-info-window').on('click', '.js-window-cancel', function (event) {
+        event.preventDefault();
+        $('js-loader').show();
+        return false;
+    });
+
+}
+
 function handleDelete(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -117,8 +131,9 @@ function handleDelete(event) {
     const dataName = $(this).attr("data-name");
     const dataId = $(this).attr("data-id");
     const origin = $(this).attr("data-origin");
-    ////////////////////////// INSTEAD MODAL
     const confirmation = confirm(`Are you sure you want to delete ${dataName} ${dataId}?`);
+    //doConfirm(dataName, "delete");
+    //let confirmation = watchConfirmation();
     updateAuthenticatedUI();
     
     if (confirmation && STATE.authUser) {
@@ -184,7 +199,12 @@ function handleUpdate(event) {
     updateAuthenticatedUI();
     let jwToken = STATE.authUser.jwToken;
     let updatedData = screens[endpoint].getDataFrom(event);
-    updatedData.id = id;
+    if (endpoint === "employee") {
+        updatedData.employeeId = id;
+    }
+    else {
+        updatedData.id = id;
+    }
     let settings = { jwToken, endpoint, updatedData, id };
     
     return updateOne(settings)
@@ -251,6 +271,7 @@ function watchButtons() {
     $('.js-form').on('click', '.js-create-btn', handleCreate);
     $('.js-info-window').on('click', '.js-close', toggleInfoWindow);
     $('.js-form').on('click', '.js-update-btn', handleUpdate);
+    
 }
 
 function watchCalendarsAndPhoto() {
