@@ -10,11 +10,11 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 
 
-const { HTTP_STATUS_CODES } = require('../config');
-const { jwtPassportMiddleware } = require('../auth/auth.strategy');
-const { Employee, EmployeeJoiSchema, UpdateEmployeeJoiSchema, Training, Photo } = require('./employee.model');
-const User = require('../user/user.model');
-const mongoUrl  = require('../server');
+const { HTTP_STATUS_CODES } = require('../../app/config');
+const { jwtPassportMiddleware } = require('../../app/auth/auth.strategy');
+const { Employee, EmployeeJoiSchema, UpdateEmployeeJoiSchema, Training, Photo } = require('../../app/employee/employee.model');
+const User = require('../../app/user/user.model');
+const mongoUrl  = require('../../app/server');
 
 // // Init gfs
 // let gfs;

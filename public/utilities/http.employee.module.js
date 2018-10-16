@@ -9,7 +9,7 @@ function handleError(xhr) {
     $('.js-loader').hide();
     $('.box').removeClass('green red');
     $('.js-results').hide();
-    $('.js-message').html(`<p>${message}</p>`).show();
+    $('.js-info-window').html(`<p>${message}</p>`).show();
     return message;
 }
 

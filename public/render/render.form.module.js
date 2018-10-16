@@ -33,7 +33,6 @@ function generateUserFormString(data, id, origin) {
     <input type="text" name="name" id="name" autofocus required>
     <label for="email">e-mail</label>
     <input type="email" name="email" id="email" required>`);
-    //let tipText = "Access No: not allowed, Access Read Only: allowed to search employees' overview, Access Public: read all, create and edit employees, Access Admin: read, create, edit an delete all.";
     if (title === "Sign Up") {
         formString.push(`<label for="username">username</label>
             <input type="text" name="username" id="username" pattern=".{4,}" title="Four or more characters" required>
@@ -41,7 +40,7 @@ function generateUserFormString(data, id, origin) {
             <input type="password" name="password" id="password" pattern=".{7,}" title="Seven or more characters" required>`);
     }
     else {
-        formString.push(`<legend>Access Level<i class="fas fa-question-circle" title="${tipText}"></i></legend>
+        formString.push(`<legend>Access Level<i class="fas fa-question-circle"></i></legend>
             <select id="access-level">`);
         formString.push(generateLevelOptions(data));
         formString.push(`</select>`);

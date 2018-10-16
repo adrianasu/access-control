@@ -24,7 +24,7 @@ userRouter.post('/', (req, res) => {
     const validation = Joi.validate(newUser, User.UserJoiSchema);
     if (validation.error) {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            error: validation.error
+            err: validation.error
         });
     }
     // verify if username or email exists already in our DB.
@@ -61,12 +61,12 @@ userRouter.post('/', (req, res) => {
                     // success
                     return res.status(HTTP_STATUS_CODES.CREATED).json(createdUser.serialize());
                 })
-                .catch(error => {
-                    return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
+                .catch(err => {
+                    return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
                 });
         })
-        .catch(error => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
+        .catch(err => {
+            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
 });
 
@@ -80,8 +80,8 @@ userRouter.get('/', jwtPassportMiddleware,
         .then(_users => {
             return res.status(HTTP_STATUS_CODES.OK).json(_users.map(_user => _user.serialize()));
         })
-        .catch(error => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
+        .catch(err => {
+            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
 });
 
@@ -94,8 +94,8 @@ userRouter.get('/:userId', jwtPassportMiddleware,
         .then(user => {
             return res.status(HTTP_STATUS_CODES.OK).json(user.serialize());
         })
-        .catch(error => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(error);
+        .catch(err => {
+            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
 });
 
@@ -108,7 +108,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
         const message = `Request path id ${req.params.userId} and request body id ${req.body.id} must match`;
         console.log(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            message: message
+            err: message
         });
     }
 
@@ -128,7 +128,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
         const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
         console.log(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            message: message
+            err: message
         });
     }
     
@@ -139,7 +139,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
         const message = `Unauthorized access level`;
         console.log(message);
         return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
-            message: message
+            err: message
         });
     }
  
@@ -147,7 +147,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
     
     if (validation.error) {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            error: validation.error
+            err: validation.error
         });
     }
 

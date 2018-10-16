@@ -2,8 +2,6 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
-const Grid = require('gridfs-stream');
-
 
 const { DATABASE_URL, PORT, HTTP_STATUS_CODES } = require("./config");
 
@@ -23,9 +21,6 @@ passport.use(jwtStrategy); // configure Passport to use our jwtStrategy when rec
 
 mongoose.Promise = global.Promise;
 
-let mongoUrl;
-
-
 // middleware
 app.use(morgan('common')); // allows morgan to intercept and log all HTTP requests
 app.use(express.json()); // required to parse and save JSON data payload into request body
@@ -43,12 +38,12 @@ app.use('/api/options', optionsRouter);
 
 // handle unexpected HTTP requests
 app.use('*', (req,res) => {
-    res.status(HTTP_STATUS_CODES.NOT_FOUND).json({ error: 'Not Found'});
+    return res.status(HTTP_STATUS_CODES.NOT_FOUND).json({ err: 'Not Found'});
 });
 
 // handle unexpected errors
 app.all('*', (err, req, res, next) => {
-    res.status(err.code || 400).json({err: err});
+    return res.status(err.code || 400).json({err: err.err});
 });
 
 function runServer(databaseUrl, port = PORT) {
@@ -61,14 +56,8 @@ function runServer(databaseUrl, port = PORT) {
                 if (err) {
                     return reject(err);
                 }
-                server = app.listen(port, () => {
-                       // gfs = Grid(conn.db, mongoose.mongo);
+                server = app.listen(port, () => {                
                         console.log(`Your app is listening on port ${port}`);
-                        //})
-                        const conn = mongoose.createConnection(databaseUrl);
-                        conn.once('open', () => {
-                            gfs = Grid(conn.db, mongoose.mongo);
-                        })
                         resolve();
                     })
                     .on('error', err => {
@@ -99,4 +88,4 @@ if (require.main === module) {
     runServer(DATABASE_URL).catch(err => console.error(err));
 }
 
-module.exports = { app, runServer, closeServer, mongoUrl };
+module.exports = { app, runServer, closeServer };

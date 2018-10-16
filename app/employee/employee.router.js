@@ -48,6 +48,18 @@ employeeRouter.post('/',
             console.log(validation.error);
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
         }
+
+        // check if employee with that employeeId already exists
+
+        return Employee
+        .findOne({employeeId: req.body.employeeId})
+        .then(employee => {
+            if (employee) {
+                return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                    err: `An employee with id ${req.body.employeeId} already exists.`
+                });
+            }
+        
         let trainings;
 
         return Training
@@ -65,7 +77,8 @@ employeeRouter.post('/',
             .catch(err => {
                 return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
             });
-    });
+        })
+});
 
 // get all employees 
 employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), 
@@ -166,7 +179,7 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
         const message = `Request path id ${req.params.employeeId} and request body id ${req.body.employeeId} must match`;
         console.error(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            message: message
+            err: message
         });
     }
 
@@ -188,14 +201,14 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
         const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
         console.error(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            message: message
+            err: message
         });
     }
 
     const validation = Joi.validate(toUpdate, UpdateEmployeeJoiSchema);
     if (validation.error) {
         console.log(validation.error);
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error});
+        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ err: validation.error});
     } 
 
     return Employee
