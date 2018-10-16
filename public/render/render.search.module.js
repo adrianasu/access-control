@@ -121,21 +121,6 @@ function clearScreen() {
     $('.js-nav-bar').hide();
 }
 
-function pushSiteState(currentScreen, addToUrl=null) {
-    let previousScreen = Object.keys(screens).filter(screen => 
-        (screens[screen].show === true));
-
-    screens[previousScreen[0]].show = false;
-    screens[currentScreen].show = true;
-    let url = screens[currentScreen].URL;
-    if (addToUrl) {
-        url = url + `/${addToUrl}`;
-    }
-    console.log(url);
-    history.pushState(null, currentScreen, url);
-    //history.pushState(data, event.target.textContent, url);
-    clearScreen();
-}
 
 function renderSearchBar() {
 
@@ -211,7 +196,6 @@ function checkForMissingRequirements(employee) {
 function generateResultsStrings(employee) {
     let vehicle = (employee.allowVehicle) ? "Yes" : "No";
     return `<div class="js-results box green" aria-live="assertive" hidden>
-    <img src="${employee.photo}" alt="${employee.firstName} ${employee.lastName}">
     <p></p>
     <p></p>
     </div>
@@ -229,7 +213,6 @@ function generateResultsByIdStrings(employee) {
     let vehicle = (employee.allowVehicle) ? "Yes" : "No";
     let result = [];
     result.push(`<div class="box" aria-live="assertive" hidden>
-    <img src="${employee.photo}" alt="${employee.firstName} ${employee.lastName}">
     </div>
     <table aria-live="assertive">
     <tr><th>${employee.firstName} ${employee.lastName}</th></tr>
@@ -247,7 +230,7 @@ function generateResultsByIdStrings(employee) {
     <button type="button" role="button" class="js-goto-edit" 
     data-id="${employee.employeeId}" data-name="employee" data-origin="byId">Edit</button>
     <button type="button" role="button" class="js-delete-btn" 
-    data-id="${employee.employeeId}" data-name="employee" data-origin="byId">Delete</button>`);
+    data-id="${employee.employeeId}" data-name="employee" data-origin="byId"><i class="fas fa-trash-alt"></i></button>`);
     return result.join("");
 }
 
@@ -263,7 +246,7 @@ function convertNullToString (data) {
 function renderSearchEmployeeOverview(employee) {
     if (employee) {
         let employeeC = convertNullToString(employee);
-        pushSiteState("overview", employee.employeeId);
+        clearScreen();
         $('.js-results').html(generateResultsStrings(employeeC)).show();
         let missing = checkForMissingRequirements(employeeC);
         displayTrainingData(missing);
@@ -342,8 +325,6 @@ function generateRows(data, dataName, options) {
         Object.keys(item).forEach(key => {
             if (item[key] === null || item[key === ""]) {
                 table.push(`<td>NA</td>`);
-            } else if (key === 'photo') {
-                table.push(`<td><img src="${item[key]}" alt=""></td>`)
             } else if (key === 'trainings') {
                 table.push(generateTrainingStrings(item[key]));
             } else if (key === 'employer') {
@@ -378,7 +359,7 @@ function generateRows(data, dataName, options) {
         table.push(`<td><button type="button" role="button" class="js-goto-edit" 
         data-name="${dataName}" data-id="${id}" data-origin="list">Edit</button></td>
         <td><button type="button" role="button" class="js-delete-btn" 
-        data-name="${dataName}" data-id="${id}" data-origin="list">Delete</button></td></tr>`);
+        data-name="${dataName}" data-id="${id}" data-origin="list"><i class="fas fa-trash-alt"></i></button></td></tr>`);
     })
     return table.join("");
 }
@@ -419,23 +400,37 @@ function renderList(data, dataName) {
     return data;
     }
 //modal window
-function doConfirm(dataName, action) {
+function doConfirm(dataName, action, data) {
     let windowString =[];
+    let stringOne = "";
+    
+    if (dataName === "employee" && action !== "delete") {
+        stringOne = `${data.firstName} ${data.lastName}`;
+    } else if (dataName === "department" && action !== "delete") {
+        stringOne = data.departmentName;
+    } else if (dataName === "training" && action !== "delete") {
+        stringOne = data.title;
+    } else if (dataName === "employer" && action !== "delete") {
+        stringOne = data.employerName;
+    } else if (dataName === "user" && action !== "delete") {
+        stringOne = data.name;
+    }
+
     windowString.push(`<div class="info">`);
-    if (action !== "delete") {
-        windowString.push(`<button role="button" type="button" class="close js-close"
+   
+    windowString.push(`<button role="button" type="button" class="close js-close"
             aria-label="Close" aria-pressed="false">X</button>`);
-    }
-    windowString.push(`<p>${dataName} was ${action}.</p>`);
-    if (action === "delete") {
-        windowString.push(`<button role="button" type="button"
-        class="close js-window-cancel" aria-label="Cancel" aria-pressed="false">Cancel</button>
-        <button role="button" type="button" class="close js-window-delete" aria-label="Delete" aria-pressed="false">
-        Delete</button>`);
-    }
+   
+    windowString.push(`<p>${dataName} ${stringOne} was ${action}.</p>`);
+    // if (action === "delete") {
+    //     windowString.push(`<button role="button" type="button"
+    //     class="close js-window-cancel" aria-label="Cancel" aria-pressed="false">Cancel</button>
+    //     <button role="button" type="button" class="close js-window-delete" aria-label="Delete" aria-pressed="false">
+    //     Delete</button>`);
+    // }
     windowString.push(`</div>`);
 
-    $('.js-info-window').html(windowString.join("")).show();
+    $('.js-info-window').html(windowString.join(""));
    return dataName;
 }
 

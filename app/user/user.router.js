@@ -29,7 +29,7 @@ userRouter.post('/', (req, res) => {
     }
     // verify if username or email exists already in our DB.
     // use findOne mongoose function to try to retrieve an existent 'user'
-    Users
+     Users
         .findOne({
             // $or operator performs a logical OR operation on an array of two 
             // or more <expressions> and selects the documents that satisfy at 
@@ -46,7 +46,7 @@ userRouter.post('/', (req, res) => {
             if (user) {
                 return res.status(HTTP_STATUS_CODES.BAD_REQUEST)
                     .json({
-                        error: 'A user with that username and/or email already exists'
+                        err: 'A user with that username and/or email already exists'
                     });
             }
             // username/email non existent so hash password

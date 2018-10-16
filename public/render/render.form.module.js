@@ -18,21 +18,22 @@ function generateLevelOptions(data) {
 
 // user's data to get all access levels available
 function generateUserFormString(data, id, origin) {
+    let formString =[];
     let btnName = 'signup';
     let title = 'Sign Up';
     if (id) {
         btnName = 'update';
-        title = 'Update';
+        title = 'Update'; 
     } else {
         id = 'list';
     }
-    let formString =[];
     formString.push(`<form class="js-signup-form">
     <legend>${title}</legend>
     <label for="name">Name</label>
     <input type="text" name="name" id="name" autofocus required>
     <label for="email">e-mail</label>
     <input type="email" name="email" id="email" required>`);
+    //let tipText = "Access No: not allowed, Access Read Only: allowed to search employees' overview, Access Public: read all, create and edit employees, Access Admin: read, create, edit an delete all.";
     if (title === "Sign Up") {
         formString.push(`<label for="username">username</label>
             <input type="text" name="username" id="username" pattern=".{4,}" title="Four or more characters" required>
@@ -40,7 +41,7 @@ function generateUserFormString(data, id, origin) {
             <input type="password" name="password" id="password" pattern=".{7,}" title="Seven or more characters" required>`);
     }
     else {
-        formString.push(`<legend>Access Level</legend>
+        formString.push(`<legend>Access Level<i class="fas fa-question-circle" title="${tipText}"></i></legend>
             <select id="access-level">`);
         formString.push(generateLevelOptions(data));
         formString.push(`</select>`);
@@ -67,7 +68,7 @@ function renderSignUpForm(id, origin, data) {
 
 
 function renderLoginForm() {
-    pushSiteState("login");
+    clearScreen();
     let logInString = `<form class="js-login-form">
     <legend>Log In</legend>
     <label for="username">username</label>
@@ -118,9 +119,8 @@ function generateEmployeeForm(options, id, origin) {
     let employerOptions = generateEmployeeFormOptions(options.employers, "employerName");
     let departmentOptions = generateEmployeeFormOptions(options.departments, "departmentName");
     let trainingOptions = generateTrainingOptions(options.trainings);
-        //<input type="file" accept="image/*" id="js-photo-input" name="photo-file" autofocus required>
-        formString.push(`<img src="" alt="" class="js-photo">
-        <form enctype="multipart/form-data" method="POST" name="employeeInfo" id="js-employee-form">
+        
+        formString.push(`<form id="js-employee-form">
         <fieldset name="personal-information">`);
         if(btnName === 'create') {
             formString.push(`<label for="employee-id">Employee ID</label>
@@ -146,12 +146,12 @@ function generateEmployeeForm(options, id, origin) {
         formString.push(`</select></fieldset><fieldset name="training" class="training">`);
         formString.push(trainingOptions);
         formString.push(`</fieldset>
-        <input type="checkbox" id="vehicle" name="vehicle" value="true" required>
+        <input type="checkbox" id="vehicle" name="vehicle" value="true">
         <label for="vehicle">Allow vehicle on-site</label>
         <label for="license-plate1">License Plates</label>
         <input type="text" id="license-plate1" class="license-plate">
         <input type="text" id="license-plate2" class="license-plate">
-        <button role="button" type="submit" data-name="employee" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
+        <button role="button" type="button" data-name="employee" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
         <button role="button" type="button" data-name="employee" data-origin="${origin}" class="js-cancel-btn">Cancel</button>
         </form>`);
         $('.js-form').html(formString.join("")).show();
@@ -198,7 +198,7 @@ function generateEmployerForm(data, id, origin) {
                             <label for="${name}">${name}</label>`);
     });
 
-    employerString.push(`<button role="button" type="button" data-name="employer" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
+    employerString.push(`<button role="button" type="submit" data-name="employer" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
     <button role="button" type="button" data-name="employer" data-origin="${origin}" class="js-cancel-btn">Cancel</button></form>`);
 
     $('.js-form').html(employerString).show();

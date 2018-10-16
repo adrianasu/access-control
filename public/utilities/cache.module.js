@@ -54,21 +54,4 @@ function deleteOptionsFromCache() {
 
 }
 
-// function getEmployeeFromCache() {
-//     const employee = localStorage.getItem('employee');
-//     if (employee) {
-//         return JSON.parse(employee);
-//     } else {
-//         return undefined;
-//     }
-// }
-
-// function saveEmployeeIntoCache(res) {
-//     localStorage.setItem('employee', JSON.stringify(res));
-// }
-
-// function deleteEmployeeFromCache() {
-//     localStorage.removeItem('employee');
-
-// }
 

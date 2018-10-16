@@ -96,13 +96,13 @@ employerRouter.put('/:employerId',
     User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
     // check that id in request body matches id in request path
-    // if (req.params.employerId !== req.body.employerId) {
-    //     const message = `Request path id ${req.params.employerId} and request body id ${req.body.employerId} must match`;
-    //     console.error(message);
-    //     return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-    //         message: message
-    //     });
-    // }
+    if (req.params.employerId !== req.body.id) {
+        const message = `Request path id ${req.params.employerId} and request body id ${req.body.employerId} must match`;
+        console.error(message);
+        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+            message: message
+        });
+    }
 
     // we only support a subset of fields being updateable
     // if the user sent over any of them 
@@ -137,7 +137,7 @@ employerRouter.put('/:employerId',
             console.log(`Updating employer with id: \`${req.params.employerId}\``);
             return res.status(HTTP_STATUS_CODES.OK).json(updatedEmployer);
         })
-        .catch(err => {
+        .catch(err => { 
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
 });

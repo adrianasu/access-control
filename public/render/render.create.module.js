@@ -75,7 +75,7 @@ function getDataFromEmployeeForm() {
     formData.employmentDate = $('#employment-date').val();
     formData.employer = {_id: $('#employer').val()};
     formData.department = {_id: $('#department').val()};
-    formData.vehicle = $('#vehicle').val();
+    formData.allowVehicle = $('#vehicle').val();
     formData.licensePlates = getLicensePlatesValues();
     formData.trainings = getTrainingsFromEmployeeForm();
     $('#js-employee-form')[0].reset();
@@ -153,43 +153,9 @@ function fillEmployeeForm(data, dataName) {
 } 
 
 function renderUpdateForm(id, dataName, origin, data) {
-    pushSiteState(dataName, id);
+    clearScreen();
     screens[dataName].render(id, origin, data);
     return data;
-}
-
-///////////////////////////////////////////////////////
-function getDataAndPhotoFromEmployeeForm() {
-
-    let formData = new FormData();
-    formData.append("photo", $('#js-photo-input').files[0]);
-    formData.append("employeeId", $('#employee-id').val());
-    formData.append("firstName", $('#first-name').val());
-    formData.append("lastName", $('#last-name').val());
-    formData.append("employmentDate", $('#employment-date').val());
-    formData.append("employer", $('#employer').val());
-    formData.append("department", $('#department').val());
-    formData.append("vehicle", $('#vehicle').val());
-    formData.append("licensePlates", [$('#license-plate1').val(), $('#license-plate2').val()]);
-    formData.append("trainings", getTrainingsFromEmployeeForm);
-    
-    return formData;
-}
-
-function previewPhoto(event) {
-    var $input = $(this);
-    var inputFiles = this.files;
-    if (inputFiles == undefined || inputFiles.length == 0) return;
-    var inputFile = inputFiles[0];
-
-    var reader = new FileReader();
-    reader.onload = function (event) {
-        $('.js-photo').attr("src", reader.result);
-    };
-    reader.onerror = function (event) {
-        alert("ERROR: " + event.target.error.code);
-    };
-    reader.readAsDataURL(inputFile);
 }
 
 

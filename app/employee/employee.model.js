@@ -24,8 +24,7 @@ const departmentsSchema = mongoose.Schema({
 const trainingsSchema = mongoose.Schema({
     title: String,
     expirationTime: {
-        type: Date,
-        default: null
+        type: Date
     }
 })
 
@@ -44,7 +43,6 @@ const employersSchema = mongoose.Schema({
 const employeesSchema = mongoose.Schema({
     
         employeeId: String,
-        //photo: {data: Buffer, contentType: String, required: false},
         firstName: String,
         lastName: String,
         employer: {type: ObjectId, ref:"Employer"},
@@ -54,7 +52,10 @@ const employeesSchema = mongoose.Schema({
         },
         licensePlates: [String],
         employmentDate: Date,
-        allowVehicle: Boolean,
+        allowVehicle: {
+            type: Boolean,
+            default: false
+        },
         trainings: 
         [{
             trainingInfo: 

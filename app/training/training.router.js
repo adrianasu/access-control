@@ -67,7 +67,7 @@ trainingRouter.post('/',
         title: req.body.title,
         expirationTime: req.body.expirationTime
     }
-   
+   console.log(req.body);
     // validate newTraining data using Joi schema
     const validation = Joi.validate(newTraining, TrainingJoiSchema);
     if (validation.error) {
@@ -93,12 +93,10 @@ trainingRouter.put('/:trainingId', jwtPassportMiddleware,
         // check that id in request body matches id in request path
         if (req.params.trainingId !== req.body.id) {
             const message = `Request path id ${req.params.trainingId} and request body id ${req.body.id} must match`;
-            console.log(message);
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-                message: message
-            });
+                message: message});
         }
-
+        console.log(req.body); /////////////////////////////
         const updateableFields = ["title", "expirationTime"];
         // check what fields were sent in the request body to update
         const toUpdate = {};
@@ -107,12 +105,13 @@ trainingRouter.put('/:trainingId', jwtPassportMiddleware,
                 toUpdate[field] = req.body[field];
             }
         });
+      
         // if request body doesn't contain any updateable field send error message
         if (toUpdate.length === 0) {
             const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
-            console.log(message);
+        
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-                message: message
+                err: message
             });
         }
 
@@ -120,19 +119,16 @@ trainingRouter.put('/:trainingId', jwtPassportMiddleware,
 
         if (validation.error) {
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-                error: validation.error
+                err: validation.error
             });
         }
 
 
        return Training
             // $set operator replaces the value of a field with the specified value
-            .findByIdAndUpdate(req.params.trainingId, {
-                $set: toUpdate
-            }, {
-                new: true
-            })
+            .findOneAndUpdate({_id: req.params.trainingId}, {$set: toUpdate}, {new: true})
             .then(updatedTraining => {
+                console.log(updatedTraining);
                 console.log(`Updating training with id: \`${req.params.trainingId}\``);
                 return res.status(HTTP_STATUS_CODES.OK).json(updatedTraining);
             })

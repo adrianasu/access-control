@@ -22,14 +22,12 @@ function handleSearchMenu(event) {
     updateAuthenticatedUI();
     if (STATE.authUser) {
         if (selectedOption === "employeeById") {
-            pushSiteState(selectedOption, screens[selectedOption].endpoint);
             screens[selectedOption].render();    
         }
         else {
             return doHttpRequest(selectedOption, "list")
             .then(data => {
-                pushSiteState("list", selectedOption);
-                
+                clearScreen();
                 return screens.list.onSuccess(data, selectedOption)})
             .catch(err => console.log(err));
         }
@@ -42,7 +40,7 @@ function handleCreateMenu(event) {
     let selectedOption = $('select').find(":selected").attr("data-value");
     updateAuthenticatedUI();
     if (STATE.authUser) {
-        pushSiteState(selectedOption);
+        clearScreen();
         return screens[selectedOption].render();
     }
 }
@@ -56,7 +54,7 @@ function handleSearchBar(event) {
 
     updateAuthenticatedUI();
     if (STATE.authUser) {
-        pushSiteState(selectedOption);
+        clearScreen();
         screens[selectedOption].render();
     }
 }
@@ -75,14 +73,15 @@ function handleSearchEmployeeOverview(event) {
             jwToken})
             .then(data => {
                 $('#employeeId').val("");
-                return renderSearchEmployeeOverview(data);
+                renderSearchEmployeeOverview(data);
+                return data;
         })
     }
 }
 
 function handleSearchEmployeeById(event) {
     event.preventDefault();
-  
+   
     $('.js-loader').show();
     $('.js-results').hide();
     const employeeId = $('#employeeId').val();
@@ -98,7 +97,6 @@ function handleSearchEmployeeById(event) {
                 STATE.employeeId = data.employeeId;
                 STATE.employee = data;
                 $('#employeeId').val("");
-                pushSiteState("employeeById", employeeId);
                 return renderEmployeeById(data);
             
         })  
@@ -126,14 +124,14 @@ function watchConfirmation() {
 
 function handleDelete(event) {
     event.preventDefault();
-    event.stopImmediatePropagation();
+    //event.stopImmediatePropagation();
     $('.js-loader').show();
     const dataName = $(this).attr("data-name");
     const dataId = $(this).attr("data-id");
     const origin = $(this).attr("data-origin");
     const confirmation = confirm(`Are you sure you want to delete ${dataName} ${dataId}?`);
-    //doConfirm(dataName, "delete");
-    //let confirmation = watchConfirmation();
+    
+    
     updateAuthenticatedUI();
     
     if (confirmation && STATE.authUser) {
@@ -144,17 +142,20 @@ function handleDelete(event) {
             endpoint: dataName
         }
         if (origin === "byId") {
-            settings.onSuccess = screens.deleteAtById.onSuccess();
+            settings.onSuccess = () => {
+                screens.deleteAtById.onSuccess();
+                doConfirm(dataName, "delete");
+            }
         }
         else if (origin === "list") {
             settings.onSuccess = () => { getAll({
                 jwToken,
-                endpoint: dataName,
-                onSuccess: res => {
-                    pushSiteState("list", dataName);
+                endpoint: dataName})
+                .then(res => {
+                    clearScreen();
                     screens.list.onSuccess(res, dataName);
-                    } 
-                })
+                    doConfirm(dataName, "delete", res);
+                }) 
             }
         }
         return deleteOne(settings);
@@ -163,7 +164,7 @@ function handleDelete(event) {
 
 function handlePrepareUpdateForm() {
     event.preventDefault();
-  
+    clearScreen();
     $('.js-loader').show();
     const origin = $(this).attr('data-origin');
     const id = $(this).attr('data-id');
@@ -193,7 +194,6 @@ function handlePrepareUpdateForm() {
 
 function handleUpdate(event) {
     event.preventDefault();
-    event.stopImmediatePropagation();
     $('.js-loader').show();
     let endpoint = $(this).attr("data-name");
     let id = $(this).attr("data-id");
@@ -212,17 +212,17 @@ function handleUpdate(event) {
     return updateOne(settings)
     .then(data=> {
         toggleInfoWindow();
-        doConfirm(endpoint, 'updated');
+        doConfirm(endpoint, 'updated', data);
         if(origin === "list") {
             return doHttpRequest(endpoint, "list")
             .then(data => {
-                pushSiteState("list", endpoint);
+                clearScreen();
                 return screens.list.onSuccess(data, endpoint)
                 })
                 .catch(err => console.log(err));
         }
         else {
-            pushSiteState("searchMenu");
+            clearScreen();
             return screens.searchMenu.render();
         }
    
@@ -243,18 +243,19 @@ function handleCreate(event) {
     return screens[endpoint].requestFunction(settings)
     .then(data=> {
         toggleInfoWindow();
-            return doConfirm(endpoint, 'created');
-        })
-    }
+        return doConfirm(endpoint, 'created', data);
+    })
+}
     
     function handleCancel() {
+        event.preventDefault();
         clearScreen();
         renderSearchBar();
     }
 
     function handleSignUpForm(event) {
         event.preventDefault();
-        pushSiteState("user");
+        clearScreen();
         renderSignUpForm();
     }
     
@@ -263,18 +264,20 @@ function handleCreate(event) {
     }
     
     function watchHamburguer() {
-    $('.menu-toggle').click(function () {
+    $('.menu-toggle').click(function (e) {
+        event.preventDefault();
         $('.site-nav').toggleClass('site-nav--open', 500);
         $(this).toggleClass('open');
     })
 }
 
 function watchButtons() {
+    $('.js-form').on('submit', 'form', e => e.preventDefault());
     $('.js-form').on('submit', '.js-login-form', handleLogIn);
     $('.js-form').on('click', '.js-signup-link', handleSignUpForm);
     $('.js-form').on('submit', '.js-signup-form', handleSignUp);
     $('.js-form').on('click', '.js-login-link', handleLoginLink);
-    $('.js-form').on('submit', '.js-overviewSearch-form', handleSearchEmployeeOverview);
+    $('.js-form').on('submit', '.js-overviewSearch-form', handleSearchEmployeeOverview);//
     $('.js-nav-bar').on('click', '.js-logout', handleLogOut);
     $('.js-nav-bar').on('click', 'li a', handleSearchBar);
     $('.js-form').on('click', '.search-menu', handleSearchMenu);
@@ -286,11 +289,11 @@ function watchButtons() {
     $('.js-form').on('click', '.js-create-btn', handleCreate);
     $('.js-info-window').on('click', '.js-close', toggleInfoWindow);
     $('.js-form').on('click', '.js-update-btn', handleUpdate);
+    //$('.js-form').tooltip();
     
 }
 
-function watchCalendarsAndPhoto() {
-    $('.js-form').on('change', '#js-photo-input', previewPhoto);
+function watchCalendars() {
 
     $('.js-form').on("focus", ('#employment-date, .training-date'),
             function (e) {
@@ -306,9 +309,8 @@ function main() {
     clearScreen();
     renderLoginForm();
     watchHamburguer();
-    watchCalendarsAndPhoto();
-    watchButtons();
-      
+    watchCalendars();
+    watchButtons();   
 }
 
 $(main);

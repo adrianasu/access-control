@@ -107,7 +107,7 @@ employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
             return Employee
                 .findOne({employeeId: req.params.employeeId})
                 .then(employee => {
-                    //console.log(employee);
+                    console.log(employee);
                     console.log(`Getting new employee with id: ${req.params.employeeId}`);
                     return employee.serialize(validateEmployeeTrainings(employee, trainings));
                 })
@@ -196,7 +196,7 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
     if (validation.error) {
         console.log(validation.error);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error});
-    }
+    } 
 
     return Employee
     // $set operator replaces the value of a field with the specified value

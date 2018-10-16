@@ -141,7 +141,6 @@ function getById(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
         error: err => {
-            console.error(err);
             handleError(err);
         }
     });
