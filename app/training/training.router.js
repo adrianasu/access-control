@@ -42,7 +42,10 @@ trainingRouter.get('/',
 });
 
 // get one training by id
-trainingRouter.get('/:trainingId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
+trainingRouter.get('/:trainingId', 
+    jwtPassportMiddleware, 
+    User.hasAccess(User.ACCESS_PUBLIC), 
+    (req, res) => {
     
     return Training
         .findOne({_id: req.params.trainingId})
@@ -71,7 +74,9 @@ trainingRouter.post('/',
     // validate newTraining data using Joi schema
     const validation = Joi.validate(newTraining, TrainingJoiSchema);
     if (validation.error) {
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
+        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+            err: validation.error.details[0].message
+        });
     }
     // attempt to create a new Training
      return Training
@@ -96,20 +101,19 @@ trainingRouter.put('/:trainingId', jwtPassportMiddleware,
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
                 message: message});
         }
-        console.log(req.body); /////////////////////////////
+        
         const updateableFields = ["title", "expirationTime"];
         // check what fields were sent in the request body to update
         const toUpdate = {};
           updateableFields.forEach(field => {
-            if (updateableFields in req.body) {
+            if (field in req.body) {
                 toUpdate[field] = req.body[field];
             }
         });
-      
+   
         // if request body doesn't contain any updateable field send error message
         if (toUpdate.length === 0) {
             const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
-        
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
                 err: message
             });
@@ -119,7 +123,7 @@ trainingRouter.put('/:trainingId', jwtPassportMiddleware,
 
         if (validation.error) {
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-                err: validation.error
+                err: validation.error.details[0].message
             });
         }
 

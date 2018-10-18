@@ -7,6 +7,7 @@ const { jwtPassportMiddleware } = require('../auth/auth.strategy');
 const { Department, Employer, Employee } = require('../employee/employee.model');
 const User  = require('../user/user.model');
 
+// schema to validate department content
 const DepartmentJoiSchema = Joi.object().keys({
         _id: Joi.string(),
         __v: Joi.number(),
@@ -41,7 +42,9 @@ departmentRouter.get('/',
 });
 
 // get one department by id
-departmentRouter.get('/:departmentId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
+departmentRouter.get('/:departmentId', 
+jwtPassportMiddleware, 
+User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
     
     return Department
         .findOne({_id: req.params.departmentId})
@@ -69,7 +72,9 @@ departmentRouter.post('/',
     // validate newdepartment data using Joi schema
     const validation = Joi.validate(newDepartment, DepartmentJoiSchema);
     if (validation.error) {
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
+        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+            err: validation.error.details[0].message
+        });
     }
     // attempt to create a new department
      return Department
@@ -93,7 +98,7 @@ departmentRouter.put('/:departmentId', jwtPassportMiddleware,
             const message = `Request path id ${req.params.departmentId} and request body id ${req.body.id} must match`;
             console.log(message);
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-                message: message
+                err: message
             });
         }
 
@@ -110,7 +115,7 @@ departmentRouter.put('/:departmentId', jwtPassportMiddleware,
             const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
             console.log(message);
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-                message: message
+                err: message
             });
         }
 
@@ -118,7 +123,7 @@ departmentRouter.put('/:departmentId', jwtPassportMiddleware,
 
         if (validation.error) {
             return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-                error: validation.error
+                err: validation.error.details[0].message
             });
         }
 
@@ -170,9 +175,9 @@ departmentRouter.delete('/:departmentId',
         });
     })
  
-    // .catch(err => {
-    //     return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
-    // });
+    .catch(err => {
+        return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+    });
 
 });
 

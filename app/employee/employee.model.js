@@ -4,14 +4,6 @@ const Joi = require('joi');
 mongoose.Promise = global.Promise;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
-// // instantiate mongoose-gridfs
-// const gridfs = require('mongoose-gridfs')({
-//     collection: 'photos',
-//     model: 'Photo'
-// })
-
-// const photoSchema = gridfs.schema;
-
 const departmentsSchema = mongoose.Schema({
     departmentName: {
         type: String,
@@ -84,16 +76,26 @@ employeesSchema.methods.serialize = function() {
     };
 };
 
-employeesSchema.methods.serializeOverview = function(ready2work) {
+employeesSchema.methods.serializeDeskOverview = function(ready2work) {
     return {
         employeeId: this.employeeId,
-        photo: this.photo,
         firstName: this.firstName,
         lastName: this.lastName,
         employer: this.employer,
         department: this.department,
         licensePlates: this.licensePlates,
         allowVehicle: this.allowVehicle,
+        trainings: this.trainings,
+        ready2work: ready2work
+    };
+}
+
+employeesSchema.methods.serializeKioskOverview = function (ready2work) {
+    return {
+        employeeId: this.employeeId,
+        photo: this.photo,
+        firstName: this.firstName,
+        lastName: this.lastName,
         trainings: this.trainings,
         ready2work: ready2work
     };

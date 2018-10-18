@@ -5,12 +5,10 @@ function logInSuccess(user) {
     console.log('Succesful Login');
     $('#username, #password').val("");
     clearScreen();
-    if (user.accessLevel > ACCESS_OVERVIEW) {
-        renderSearchBar();
-    } else {
-        renderSearchEmployeeOverview();
-    }
+    let status = {origin: "login", data: user, render: logInSuccess};
+    saveSiteStatus(status);
     doConfirm(user.name, "welcome");
+    renderSearchMenu(user);
     return user;
 }
 
@@ -27,6 +25,7 @@ function doLogin(userData) {
 function handleSignUp(event) {
     event.preventDefault();
     $('.js-loader').show();
+   
     const userData = {
         name: $('#name').val(),
         email: $('#email').val(),

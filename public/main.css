@@ -1,3 +1,71 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    /* background: #f0ebdf; */
+    background:#EBEBD3;
+    font-family: 'Quicksand', sans-serif;
+    color: #343434;
+    
+}
+
+.form, .box {
+    max-width: 20em;
+    min-width: 150px;
+  
+}
+
+.form, .box {
+    margin: 2em auto;
+}
+
+input {
+    border: none;
+  
+    padding: 0.45em 0.2em;
+    margin: .4em auto;
+    transition: border-bottom 0.15s linear 0.25s;
+}
+
+input:hover, input:focus {
+    border-bottom: 1px solid #343434;
+    outline: none;
+}
+
+label {
+    font-size: 1.2em;
+    margin-left: 2em;
+}
+
+.form a {
+    display: block;
+    text-align: center;
+}
+
+button {
+    background-color: #27253d;
+    border: none;
+    color: #EBEBD3;
+    cursor: pointer;
+
+    margin: 2em 1em;
+    padding: 1em;
+    text-align: center;
+    text-decoration: none;
+    transition: border 0.1s linear 0.2s;
+}
+
+button:hover, button:focus {
+    border: 3px solid white;
+    outline: none;
+    color: white;
+}
+table {
+    margin: auto;
+}
+
+
 .green {
     background-color: green;
 }
@@ -10,9 +78,7 @@
     background-color: red;
 }
 
-.box {
-    width: 60%;
-}
+
 
 img {
     width: 15%;
@@ -28,17 +94,17 @@ img {
     overflow: auto;
     opacity: 0;
     visibility: hidden;
-    background-color: palegoldenrod;
+    background-color: #eae3e3;
     color: black;
     transform: scale(1.1);
-    transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+    transition: visibility 0.15s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
 }
 
 .show-info-window {
     opacity: 1;
     visibility: visible;
     transform: scale(1.0);
-    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+    transition: visibility 0.15s linear 0s, opacity 0.25s 0s, transform 0.25s;
 }
 
 .close {

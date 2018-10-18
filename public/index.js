@@ -1,36 +1,43 @@
 let STATE = {}; 
 
 function updateAuthenticatedUI() {
+   
     const authUser = getAuthenticatedUserFromCache();
+  
     if (authUser) {
         STATE.authUser = authUser;
     } 
+
 }
 
-function doHttpRequest(endpoint, screen) {
-    const jwToken = STATE.authUser.jwToken;
-    let { requestFunction } = screens[screen];
-    let settings = {jwToken, endpoint };
-    return requestFunction(settings);  
+function updateSiteStatus() {
+    const siteStatus = getSiteStatus();
+    if (siteStatus) {
+        STATE.siteStatus = siteStatus;
+    }
+}
+//yes
+function getAllAndRender(settings, selectedOption) {
+    return getAll(settings)
+        .then(data => {
+            clearScreen();
+            screens[selectedOption].onSuccess(data, selectedOption)
+            return data;
+        })
+        .catch(err => console.log(err));
 }
 
-function handleSearchMenu(event) {
+
+//yes
+function handleList(event) {
     event.preventDefault();
     $('.js-results').hide();
-    
-    let selectedOption = $('select').find(":selected").attr("data-value");
+    let selectedOption = $(this).text().slice(0, -1);
     updateAuthenticatedUI();
     if (STATE.authUser) {
-        if (selectedOption === "employeeById") {
-            screens[selectedOption].render();    
-        }
-        else {
-            return doHttpRequest(selectedOption, "list")
-            .then(data => {
-                clearScreen();
-                return screens.list.onSuccess(data, selectedOption)})
-            .catch(err => console.log(err));
-        }
+        const jwToken = STATE.authUser.jwToken;
+
+        return getAllAndRender({jwToken, endpoint: selectedOption}, selectedOption);
     }
 }
 
@@ -44,64 +51,71 @@ function handleCreateMenu(event) {
         return screens[selectedOption].render();
     }
 }
-
+//yes
 function handleSearchBar(event) {
     event.preventDefault();
     $('.js-loader').show();
-    const selectedOption = $(this)
-                            .closest('li a')
-                            .attr('data-value');
-
-    updateAuthenticatedUI();
-    if (STATE.authUser) {
-        clearScreen();
-        screens[selectedOption].render();
+    let selectedOption = $(this)
+                            .closest('li button')
+                            .text().trim().toLowerCase();
+    let endpoint = selectedOption;
+    if(selectedOption === "list employees") {
+        endpoint = "employee/desk";
+        selectedOption = "employee";
+    }                       
+    if(selectedOption.slice(-1) === "s") {
+        selectedOption = selectedOption.slice(0, -1);
+    } 
+                            
+    clearScreen();
+    if (selectedOption === "home") {
+        let userLevel = getUserLevel();  // returns a string
+        return screens[selectedOption][userLevel]();  
+    } else if(selectedOption === "login" 
+            || selectedOption === "logout" 
+            || selectedOption === "signup"){
+                return screens[selectedOption].render();
     }
-}
-
-function handleSearchEmployeeOverview(event) {
-    event.preventDefault();
-  
-    $('.js-loader').show();
-    $('.js-results').hide();
-    const employeeId = $('#employeeId').val();
-    updateAuthenticatedUI();
-    if (employeeId && STATE.authUser) {
-        const jwToken = STATE.authUser.jwToken;
-        return employeeOverviewById({
-            employeeId,
-            jwToken})
-            .then(data => {
-                $('#employeeId').val("");
-                renderSearchEmployeeOverview(data);
-                return data;
-        })
-    }
-}
-
-function handleSearchEmployeeById(event) {
-    event.preventDefault();
-   
-    $('.js-loader').show();
-    $('.js-results').hide();
-    const employeeId = $('#employeeId').val();
-    if (employeeId && STATE.authUser) {
+    else {
         updateAuthenticatedUI();
-        const jwToken = STATE.authUser.jwToken;
-        
-        return getById({
-            id: employeeId,
-            jwToken,
-            endpoint: "employee"})
+        if (STATE.authUser) {
+            const jwToken = STATE.authUser.jwToken;
+            return getAllAndRender({ jwToken, endpoint }, selectedOption);
+        }
+    }
+
+}
+
+//yes
+function handleSearchEmployee(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    $('.js-loader').show();
+    $('.js-results, .js-intro').hide();
+    const employeeId = $('#employeeId').val();
+
+    let userLevel = getUserLevel();
+    console.log(userLevel);
+    let settings = { id: employeeId, endpoint: "employee" };
+    if (STATE.authUser) {
+        settings.jwToken = STATE.authUser.jwToken;
+    }
+
+    if (employeeId) {
+        return screens.employees.request[userLevel](settings)
             .then(data => {
                 STATE.employeeId = data.employeeId;
                 STATE.employee = data;
                 $('#employeeId').val("");
-                return renderEmployeeById(data);
-            
-        })  
+                return screens.employees.render[userLevel](data, userLevel);
+            })
+    }
+    else {
+        $('.js-message').html(`<p>Please, provide a valid employee ID.</p>`);
     }
 }
+
+
 
 function handleLoginLink(event) {
     event.preventDefault();
@@ -124,39 +138,29 @@ function watchConfirmation() {
 
 function handleDelete(event) {
     event.preventDefault();
-    //event.stopImmediatePropagation();
     $('.js-loader').show();
-    const dataName = $(this).attr("data-name");
-    const dataId = $(this).attr("data-id");
+    const endpoint = $(this).attr("data-name");
+    const id = $(this).attr("data-id");
     const origin = $(this).attr("data-origin");
-    const confirmation = confirm(`Are you sure you want to delete ${dataName} ${dataId}?`);
-    
-    
+    const confirmation = confirm(`Are you sure you want to delete ${endpoint} ${id}?`);
     updateAuthenticatedUI();
     
     if (confirmation && STATE.authUser) {
         const jwToken = STATE.authUser.jwToken;
-        let settings = {
-            id: dataId,
-            jwToken,
-            endpoint: dataName
-        }
+        let settings = { id, jwToken, endpoint };
         if (origin === "byId") {
             settings.onSuccess = () => {
                 screens.deleteAtById.onSuccess();
-                doConfirm(dataName, "delete");
+                doConfirm(endpoint, "delete");
             }
         }
         else if (origin === "list") {
-            settings.onSuccess = () => { getAll({
-                jwToken,
-                endpoint: dataName})
+            settings.onSuccess = () => { 
+                return getAllAndRender({jwToken, endpoint}, endpoint)
                 .then(res => {
-                    clearScreen();
-                    screens.list.onSuccess(res, dataName);
-                    doConfirm(dataName, "delete", res);
-                }) 
-            }
+                    doConfirm(endpoint, "delete", res);
+                })
+                }
         }
         return deleteOne(settings);
     }
@@ -214,12 +218,8 @@ function handleUpdate(event) {
         toggleInfoWindow();
         doConfirm(endpoint, 'updated', data);
         if(origin === "list") {
-            return doHttpRequest(endpoint, "list")
-            .then(data => {
-                clearScreen();
-                return screens.list.onSuccess(data, endpoint)
-                })
-                .catch(err => console.log(err));
+            settings = {jwToken, endpoint};
+            return getAllAndRender(settings, endpoint);
         }
         else {
             clearScreen();
@@ -227,14 +227,14 @@ function handleUpdate(event) {
         }
    
     })
-    
 }
+
 
 function handleCreate(event) {
     event.preventDefault();
     $('.js-loader').show();
     let endpoint = $(this).attr("data-name");
-   
+    
     updateAuthenticatedUI();
     let jwToken = STATE.authUser.jwToken;
     let sendData = screens[endpoint].getDataFrom(event);
@@ -246,20 +246,21 @@ function handleCreate(event) {
         return doConfirm(endpoint, 'created', data);
     })
 }
-    
-    function handleCancel() {
-        event.preventDefault();
-        clearScreen();
-        renderSearchBar();
-    }
 
-    function handleSignUpForm(event) {
-        event.preventDefault();
-        clearScreen();
-        renderSignUpForm();
-    }
-    
-    function toggleInfoWindow() {
+function handleCancel() {
+    event.preventDefault();
+    clearScreen();
+    renderSearchBar();
+}
+
+function handleSignUpForm(event) {
+    event.preventDefault();
+    clearScreen();
+    renderUserForm();
+}
+
+
+function toggleInfoWindow() {
         $('.js-info-window').toggleClass('show-info-window');
     }
     
@@ -277,19 +278,18 @@ function watchButtons() {
     $('.js-form').on('click', '.js-signup-link', handleSignUpForm);
     $('.js-form').on('submit', '.js-signup-form', handleSignUp);
     $('.js-form').on('click', '.js-login-link', handleLoginLink);
-    $('.js-form').on('submit', '.js-overviewSearch-form', handleSearchEmployeeOverview);//
+    $('.js-form').on('submit', '.js-search-form', handleSearchEmployee);
     $('.js-nav-bar').on('click', '.js-logout', handleLogOut);
-    $('.js-nav-bar').on('click', 'li a', handleSearchBar);
-    $('.js-form').on('click', '.search-menu', handleSearchMenu);
+    $('.js-nav-bar').on('click', 'li button', handleSearchBar);
+     $('.js-form').on('click', '.js-list', handleList);
     $('.js-form').on('click', '.create-menu', handleCreateMenu);
-    $('.js-form').on('submit', '.js-byIdSearch-form', handleSearchEmployeeById);
     $('.js-results').on('click', '.js-goto-edit', handlePrepareUpdateForm);
     $('.js-results').on('click', '.js-delete-btn', handleDelete);
     $('.js-form').on('click', '.js-cancel-btn', handleCancel);
     $('.js-form').on('click', '.js-create-btn', handleCreate);
     $('.js-info-window').on('click', '.js-close', toggleInfoWindow);
     $('.js-form').on('click', '.js-update-btn', handleUpdate);
-    //$('.js-form').tooltip();
+    $('.js-form').tooltip();
     
 }
 
@@ -306,8 +306,11 @@ function watchCalendars() {
 
 
 function main() {
+    deleteAuthenticatedUserFromCache();
+    //// check if token is valid
+ 
     clearScreen();
-    renderLoginForm();
+    renderWelcome();
     watchHamburguer();
     watchCalendars();
     watchButtons();   

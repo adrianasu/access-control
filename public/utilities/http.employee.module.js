@@ -9,7 +9,7 @@ function handleError(xhr) {
     $('.js-loader').hide();
     $('.box').removeClass('green red');
     $('.js-results').hide();
-    $('.js-info-window').html(`<p>${message}</p>`).show();
+    $('.js-message').html(`<p>${message}</p>`).show();
     return message;
 }
 
@@ -129,6 +129,8 @@ function getAll(settings) {
     });
 }
 
+// id is the mongoose id except for employees (employeeId)
+// and users (username)
 function getById(settings) {
     const { jwToken, endpoint, id } = settings;
     return $.ajax({
@@ -146,17 +148,33 @@ function getById(settings) {
     });
 }
 
-function employeeOverviewById(settings) {
-    const { employeeId, jwToken } = settings;
+function getEmployeeDeskOverview(settings) {
+    const { id, jwToken } = settings;
     return $.ajax({
         type: 'GET',
-        url: `/api/employee/overview/${employeeId}`,
+        url: `/api/employee/desk/${id}`,
         contentType: 'application/json',
         dataType: 'json',
         data: undefined,
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
+        error: err => {
+            $('.js-results').hide();
+            handleError(err);
+        }
+    });
+}
+
+function getEmployeeKioskOverview(settings) {
+    const { id } = settings;
+    
+    return $.ajax({
+        type: 'GET',
+        url: `/api/employee/kiosk/${id}`,
+        contentType: 'application/json',
+        dataType: 'json',
+        data: undefined,
         error: err => {
             $('.js-results').hide();
             handleError(err);

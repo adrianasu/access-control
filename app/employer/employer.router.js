@@ -42,7 +42,10 @@ employerRouter.get('/',
 
 
 // get one employer by id
-employerRouter.get('/:employerId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
+employerRouter.get('/:employerId', 
+jwtPassportMiddleware, 
+User.hasAccess(User.ACCESS_PUBLIC), 
+(req, res) => {
     
         return Employer
                 .findOne({_id: req.params.employerId})
@@ -60,6 +63,7 @@ employerRouter.get('/:employerId', jwtPassportMiddleware, User.hasAccess(User.AC
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
 });
+
 // create new employer
 employerRouter.post('/', 
     jwtPassportMiddleware, 
@@ -75,7 +79,9 @@ employerRouter.post('/',
     // validate newEmployer data using Joi schema
     const validation = Joi.validate(newEmployer, EmployerJoiSchema);
     if (validation.error) {
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
+        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+            err: validation.error.details[0].message
+        });
     }
             // attempt to create a new employer
             return Employer
@@ -100,7 +106,7 @@ employerRouter.put('/:employerId',
         const message = `Request path id ${req.params.employerId} and request body id ${req.body.employerId} must match`;
         console.error(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            message: message
+            err: message
         });
     }
 
@@ -120,14 +126,16 @@ employerRouter.put('/:employerId',
         const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
         console.error(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            message: message
+            err: message
         });
     }
 
     const validation = Joi.validate(toUpdate, EmployerJoiSchema);
     if (validation.error) {
         console.log(validation.error);
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error});
+        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+            err: validation.error.details[0].message
+        });
     }
 
     Employer

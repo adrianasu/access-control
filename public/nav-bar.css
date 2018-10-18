@@ -1,8 +1,3 @@
-body {
-    background: #f0ebdf;
-    font-family: 'Quicksand', sans-serif;
-}
-
 .container {
     width: 95%;
     max-width: 1000px;
@@ -10,7 +5,7 @@ body {
 }
 
 header {
-    background: #2F5373;
+    background: #555151;
     color: #EBEBD3;
     padding: 1em 0;
     position: relative;
@@ -47,8 +42,8 @@ header::after {
     border-bottom: 1px solid #575766;
 }
 
-a {
-    color: black;
+li {
+   display: inline-block;
 }
 
 .site-nav li:last-child {

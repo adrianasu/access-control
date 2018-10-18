@@ -140,7 +140,7 @@ function fillTrainingOptions(data, dataName) {
 }
 
 function fillEmployeeForm(data, dataName) {
-  console.log(data);
+ 
     $('#first-name').val(data.firstName);
     $('#last-name').val(data.lastName);
     $('#vehicle').attr("checked", data.allowVehicle);

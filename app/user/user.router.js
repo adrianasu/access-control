@@ -3,7 +3,7 @@ const Joi = require('joi');
 
 const { HTTP_STATUS_CODES } = require('../config');
 const { jwtPassportMiddleware } = require('../auth/auth.strategy');
-//const { canChangeAccessLevel } = require('./user.model');
+
 const User = require('./user.model');
 const Users = User.User;
 
@@ -16,15 +16,14 @@ userRouter.post('/', (req, res) => {
         name: req.body.name,
         email: req.body.email,
         username: req.body.username,
-        password: req.body.password,
-        //accessLevel: req.body.accessLevel
+        password: req.body.password
     };
 
     // validate new user data with Joi
     const validation = Joi.validate(newUser, User.UserJoiSchema);
     if (validation.error) {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            err: validation.error
+            err: validation.error.details[0].message
         });
     }
     // verify if username or email exists already in our DB.
@@ -71,23 +70,26 @@ userRouter.post('/', (req, res) => {
 });
 
 
-// retrieve all users using mongoose function find
-userRouter.get('/', jwtPassportMiddleware, 
-    User.hasAccess(User.ACCESS_ADMIN), 
-    (req, res) => {
+// retrieve all users' name and access level using mongoose function find
+userRouter.get('/', 
+jwtPassportMiddleware, 
+User.hasAccess(User.ACCESS_PUBLIC), 
+(req, res) => {
     return Users
         .find()
         .then(_users => {
-            return res.status(HTTP_STATUS_CODES.OK).json(_users.map(_user => _user.serialize()));
+            return res.status(HTTP_STATUS_CODES.OK).json(_users.map(_user => _user.serializeOverview()));
         })
         .catch(err => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
 });
 
+
+
 // get one 'user' using mongoose function findById
 userRouter.get('/:userId', jwtPassportMiddleware, 
-    User.hasAccess(User.ACCESS_PUBLIC),
+    User.hasAccess(User.ACCESS_OVERVIEW),
     (req, res) => {
     return Users
         .findById(req.params.userId)
@@ -136,7 +138,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
     if ("accessLevel" in toUpdate &&
         req.user.accessLevel < req.body.accessLevel ) {
         
-        const message = `Unauthorized access level`;
+        const message = `Unauthorized to change access level`;
         console.log(message);
         return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
             err: message
@@ -147,7 +149,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
     
     if (validation.error) {
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
-            err: validation.error
+            err: validation.error.details[0].message
         });
     }
 

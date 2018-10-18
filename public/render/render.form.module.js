@@ -2,9 +2,20 @@ function optionsDataHttpRequest() {
     let jwToken = STATE.authUser.jwToken;
     return getAllOptions({ jwToken })
         .then(data => {
+            console.log("OPTIONSDATAHTTPREQ");
             saveOptionsIntoCache(data);
             return data;
         })   
+}
+
+function renderWelcome() {
+    $('.js-intro').html(`<h1>Welcome!</h1>
+    <p>Enter your employee ID to check if you comply with the requirements to enter these premises.</p>
+    <p>For more information, please contact your supervisor.</p>`).show();
+    $('.js-form').html(generateSearchForm()).show();
+    renderSearchBar();
+    let status = {origin: "home", data: null, render: renderWelcome};
+    saveSiteStatus(status);
 }
 
 function generateLevelOptions(data) {
@@ -20,12 +31,13 @@ function generateLevelOptions(data) {
 function generateUserFormString(data, id, origin) {
     let formString =[];
     let btnName = 'signup';
-    let title = 'Sign Up';
+    let title;
     if (id) {
         btnName = 'update';
         title = 'Update'; 
     } else {
         id = 'list';
+        title = 'Sign Up';
     }
     formString.push(`<form class="js-signup-form">
     <legend>${title}</legend>
@@ -45,7 +57,7 @@ function generateUserFormString(data, id, origin) {
         formString.push(generateLevelOptions(data));
         formString.push(`</select>`);
     }
-        formString.push(`<button role="button" type="submit" data-name="user" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>`);
+        formString.push(`<button role="button" type="submit" data-name="user" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">${title}</button>`);
     if(title === "Update") {
          formString.push(`<button role="button" type="button" data-name="user" data-origin="${origin}" class="js-cancel-btn">Cancel</button></form>`);
     } 
@@ -55,9 +67,9 @@ function generateUserFormString(data, id, origin) {
     return formString.join("");
 }
 
-function renderSignUpForm(id, origin, data) {
+function renderUserForm(id, origin, data) {
+    renderSearchBar();
     if (origin === "list") {
-        renderSearchBar();
         $('.js-form').html(generateUserFormString(data.levels, id, origin)).show();
     } else {
         $('.js-form').html(generateUserFormString()).show();
@@ -68,15 +80,15 @@ function renderSignUpForm(id, origin, data) {
 
 function renderLoginForm() {
     clearScreen();
+    renderSearchBar();
     let logInString = `<form class="js-login-form">
-    <legend>Log In</legend>
     <label for="username">username</label>
     <input type="text" name="username" id="username" autofocus>
     <label for="password">password</label>
     <input type="password" name="password" id="password">
     <button role="button" type="submit">Log In</button>
     </form>
-    <a href="" class="js-signup-link">Create an account</a>`;
+    <a href="" class="js-signup-link">Create one account here.</a>`;
 
     $('.js-form').html(logInString).show();
 

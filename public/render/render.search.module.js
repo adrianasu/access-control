@@ -1,38 +1,42 @@
-const screens = {
-    overview: {
-        show: false,
-        render: renderSearchEmployeeOverview,
-        URL: '/api/employee/overview' 
-    },
-    search: {
-        show: false,
-        render: renderSearchBar,
-        URL: '/api/search',
+ const screens = {
+    employees: {
+        request: {
+            basic: getEmployeeKioskOverview,
+            overview: getEmployeeDeskOverview,
+            public: getById,
+            admin:  getById
+        },
+        render:{
+            basic: renderEmployeeOverview,
+            overview: renderEmployeeOverview,
+            public: renderEmployeeById,
+            admin: renderEmployeeById
+        }
     },
     employee: {
-        endpoint: "employee",
+     
         headers: {"Employee Id": "employeeId", "First Name": "firstName", "Last Name": "lastName", "Employer": "employer", "Department": "department", "License Plates": "licensePlates", "Employment Date": "employmentDate","Allow Vehicle": "allowVehicle", "Trainings": "trainings"},
-        onSuccess: renderList, ///maybe window
+        onSuccess: renderList,
         requestFunction: createOne,
-        show: false,
+    
         render: renderEmployeeForm,
         fill: fillEmployeeForm,
         getDataFrom: getDataFromEmployeeForm,
-        URL: '/api/employee', // if !create add id
+        
     },
     training: {
         endpoint: "training",
         headers: {"Title": "title", "Expiration Time": "expirationTime"},
         onSuccess: renderList, ///maybe window
         requestFunction: createOne,
-        show: false,
+       
         render: renderTrainingForm,
         fill: fillTrainingForm,
         getDataFrom: getDataFromTrainingForm,
-        URL: '/api/training' // if !create add id
+     
     },
     employer: {
-        show: false,
+      
         endpoint: "employer",
         headers: {"Employer Name": "employerName", "Departments": "departments"},
         onSuccess: renderList, 
@@ -40,60 +44,52 @@ const screens = {
         render: renderEmployerForm,
         fill: fillEmployerForm,
         getDataFrom: getDataFromEmployerForm,
-        URL: '/api/employer' // if !create add id
+      
     },
     department: {
         endpoint: "department",
         headers: {"Department Name": "departmentName"},
         onSuccess: renderList, 
         requestFunction: createOne,
-        show: false,
         render: renderDepartmentForm,
         fill: fillDepartmentForm,
         getDataFrom: getDataFromDepartmentForm,
-        URL: '/api/department' // if !create add id
     },
-    list: {
+    "employee/desk" : {
         onSuccess: renderList,
-        requestFunction: getAll,
-        show: false,
-        render: renderList,
-        URL: '/api' // add what list
     },
-    employeeById: {   
-        endpoint: "employee", // add employeeId
-        onSuccess: renderSearchEmployeeById,
-        requestFunction: getById,
-        show: false,
-        render: renderSearchEmployeeById,
-        URL: '/api/employee' // add employeeId
-    },
+   
+    // employeeById: {   
+    //     endpoint: "employee", // add employeeId
+    //     requestFunction: getById,
+       
+    // },
     deleteAtById: { 
-        onSuccess: renderSearchEmployeeById,
         requestFunction: deleteOne,
-        show: false,
-        render: renderSearchEmployeeById,
-        URL: '/api' // add option + id
+      
     },
     deleteAtList: { 
         onSuccess: getAll,
         requestFunction: deleteOne,
-        show: false,
         render: renderList,
-        URL: '/api' // add what list
     },
     login: {
         show: true,
         render: renderLoginForm,
         URL: '/index.html'
     },
+    signup: {
+        show: true,
+        render: renderUserForm,
+        URL: '/index.html'
+    },
     user: {
-        show: false,
-        headers: {"Name": "name", "username": "username", "email": "email", "Access Level": "accessLevel"},
-        render: renderSignUpForm,
+        onSuccess: renderList,
+        headers: {"Name": "name", "Access Level": "accessLevel"},
+        render: renderUserForm,
         fill: fillUserForm,
         getDataFrom: getDataFromUserForm,
-        URL: '/api/user' // if !create add id
+       
     },
     logout: {
         show: false,
@@ -109,31 +105,78 @@ const screens = {
         show: false,
         render: renderSearchMenu,
         URL: '/api/menu'
+    },
+    home:{
+        basic: renderWelcome,
+        overview: renderSearchMenu,
+        public: renderSearchMenu,
+        admin: renderSearchMenu
     }
+    
 
+}
+
+const ACCESS = {
+    BASIC: 0,  // access to kiosk overview only
+    OVERVIEW: 10, // access to kiosk and desk overview, access to employee/id list
+    PUBLIC: 20, // access to all lists, create employees
+    ADMIN: 30  // access to create, delete, update and all lists
+};
+
+function getUserLevel() {
+    updateAuthenticatedUI();
+    let authUser = STATE.authUser;
+
+   if (authUser && authUser.accessLevel === ACCESS.OVERVIEW) {
+        return "overview";
+    } else if (authUser && authUser.accessLevel === ACCESS.PUBLIC) {
+        return "public";
+    } else if (authUser && authUser.accessLevel >= ACCESS.ADMIN) {
+        return "admin";
+    } else {
+        return "basic";
+    }
 }
 
 function clearScreen() {
-    $('.js-results').hide();
-    $('.js-form').hide();
-    $('.js-loader').hide();
-    $('.js-message').hide();
-    $('.js-nav-bar').hide();
+    $('.js-results, .js-intro, .js-form, .js-loader, .js-message, .js-nav-bar').hide();
+
 }
 
 
-function renderSearchBar() {
+// function renderSearchBar() {
+//     let accessLevel = ACCESS.BASIC;
+//     // check if user is logged in to give him/her access to more info
+//     updateAuthenticatedUI();
+//     let authUser = STATE.authUser;
+//     if (authUser) {
+//         accessLevel = authUser.accessLevel;
+//     }
+//     let navBarString = [];
+  
+//     if (accessLevel === ACCESS.BASIC) {
+//         navBarString.push(`<nav class="site-nav"><ul>
+//             <li><a href="" data-value="home">Home</a></li><li>
+//             <a href="" data-value="signup">Sign Up</a></li>
+//             <li><a href="" data-value="login">Log In</a></li></ul></nav>
+//             <div class="menu-toggle"><div class="hamburguer"></div></div>`);
+//     } else if (accessLevel >= ACCESS.PUBLIC) {
+//         navBarString.push(`<nav class="site-nav"><ul>
+//             <li><a href="" data-value="home">Home</a></li>
+//             <li><a href="" data-value="employee">Employees</a></li>
+//             <li><a href="" data-value="training">Trainings</a></li>
+//             <li><a href="" data-value="department">Departments</a></li>
+//             <li><a href="" data-value="employer">Employers</a></li>
+//             <li><a href="" data-value="user">Users</a></li>`);
+//     }
+//     if (accessLevel >= ACCESS.OVERVIEW) {
+//         navBarString.push(`<li><a href="" data-value="back">Back</a></li>
+//             <li><a href="" data-value="logout">Log out</a></li></ul></nav><div class="menu-toggle">
+//         <div class="hamburguer"></div></div>`);
+//     }
 
-    let navBarString = `<nav class="site-nav">
-        <ul><li><a href="" data-value="overview">Employee Overview</a></li>
-            <li><a href="" data-value="searchMenu">Search</a></li>
-            <li><a href="" data-value="createMenu">Create</a></li>
-            <li><a href="" data-value="logout">Log out</a></li>
-        </ul></nav><div class="menu-toggle">
-        <div class="hamburguer"></div></div>`;
-
-    $('.js-nav-bar').html(navBarString).show();
-}
+//     $('.js-nav-bar').html(navBarString).show();
+// }
 
 function generateOptions(menu, output) {
     let optionsString = [];
@@ -158,18 +201,59 @@ function renderCreateMenu() {
     generateOptions("create", "Form");
     renderSearchBar();
 }
+//yes
+function renderSearchBar() {
+    const options = {
+        basic: ["Home", "LogIn", "SignUp"],
+        overview: ["Home", "List Employees", "LogOut"],
+        public: ["Home", "Employees", "Trainings", "Departments", "Employers", "Users", "LogOut"],
+        admin: ["Home", "Employees", "Trainings", "Departments", "Employers", "Users", "LogOut"]
+    }
+    
+    // check if user is logged in and his accessLevel to give him/her access to more info
+    let userLevel = getUserLevel(); // returns a string
+    let navBarString = [];
+    navBarString.push(`<nav class="site-nav"><ul>`);
+    
+    options[userLevel].forEach(option => {
+        navBarString.push(`<li><button role="button" type="button" class="js-list">
+        ${option}</button></li>`);
+    })
 
-function renderSearchMenu() {
-    generateOptions("search", "List");
-    renderSearchBar();
+    navBarString.push(`</ul></nav><div class="menu-toggle">
+    <div class="hamburguer"></div></div>`);
+    
+    $('.js-nav-bar').html(navBarString).show();
 }
 
-function generateSearchForm(searchFor) {
-    return `<form class="js-${searchFor}Search-form">
-    <legend>Search</legend><label for="employeeId">Employee Id</label>
+
+///yes
+function generateSearchForm() {
+    return `<form class="js-search-form"><label for="employeeId">Employee Id</label>
     <input type="text" name="employeeId" id="employeeId" autofocus>
-    <button role="button" type="submit">Search</button>
-    </form>`;
+    <button role="button" type="submit">Search</button></form>`;
+}
+//yes
+function generateSearchMenu() { 
+    let searchString = []; 
+
+    searchString.push(generateSearchForm());
+    // searchString.push(`<p>For a list of all employees click here:</p><button role="button" type="button" class="js-list">
+    // List Employees</button>`);
+        
+    return  searchString;
+}
+//yes
+function renderSearchMenu() {
+     let status = {origin: "searchMenu", data: null , render: renderSearchMenu};
+     saveSiteStatus(status);
+     updateAuthenticatedUI();
+     let accessLevel = STATE.authUser.accessLevel;
+     $('.js-intro').html(`<p>Enter an employee ID to verify if that person
+        complies with the requirements to enter the work premises.</p><p>To get a 
+        list of all employees click on the "List Employees" button above.</p>`).show();
+    $('.js-form').html(generateSearchMenu(accessLevel)).show();
+    renderSearchBar();
 }
 
 function displayTrainingData(missingRequirements) {
@@ -193,20 +277,24 @@ function checkForMissingRequirements(employee) {
     return missingTrainingTitles; 
 }
 
-function generateResultsStrings(employee) {
-    let vehicle = (employee.allowVehicle) ? "Yes" : "No";
-    return `<div class="js-results box green" aria-live="assertive" hidden>
+function generateResultsStrings(employee, userLevel) {
+    let resultString = [];
+    resultString.push(`<div class="js-results box green" aria-live="assertive" hidden>
     <p></p>
     <p></p>
     </div>
     <table aria-live="assertive">
-    <tr><th>${employee.firstName} ${employee.lastName}</th></tr>
-    <tr><td>Allow Vehicle</td><td>${vehicle}</td></tr>
-    <tr><td>License Plates</td><td>${employee.licensePlates}</td></tr>
     <tr><td>Employee ID</td><td>${employee.employeeId}</td></tr>
-    <tr><td>Employer</td><td>${employee.employer.employerName}</td></tr>
-    <tr><td>Department</td><td>${employee.department.departmentName}</td></tr>
-    </table >`;
+    <tr><th>${employee.firstName} ${employee.lastName}</th></tr></table>`);
+    if (userLevel === "overview") {
+        let vehicle = (employee.allowVehicle) ? "Yes" : "No";
+        resultString.push(`<tr><td>Employer</td><td>${employee.employer.employerName}</td></tr>
+        <tr><td>Department</td><td>${employee.department.departmentName}</td></tr>
+        <tr><td>Allow Vehicle</td><td>${vehicle}</td></tr>
+        <tr><td>License Plates</td><td>${employee.licensePlates}</td></tr></table>`);
+     }
+ 
+    return resultString;
 }
 
 function generateResultsByIdStrings(employee) {
@@ -242,35 +330,40 @@ function convertNullToString (data) {
     })
     return data;
 }
-
-function renderSearchEmployeeOverview(employee) {
+///yes
+function renderEmployeeOverview(employee, userLevel) {
+    updateSiteStatus();
+    
+    clearScreen();
+    // render the search form at the top to keep searching
+    $('.js-form').html(generateSearchForm()).show();
+    
+    
+    // render results
     if (employee) {
         let employeeC = convertNullToString(employee);
-        clearScreen();
-        $('.js-results').html(generateResultsStrings(employeeC)).show();
+        $('.js-results').html(generateResultsStrings(employeeC, userLevel)).show();
         let missing = checkForMissingRequirements(employeeC);
-        displayTrainingData(missing);
+        displayTrainingData(missing);  
     } 
-    $('.js-form').html(generateSearchForm("overview")).show();
-    let authUser = getAuthenticatedUserFromCache();
-    if (authUser.accessLevel > ACCESS_OVERVIEW) {
-        renderSearchBar();
-    }
-    else{
-        $('.js-nav-bar').html(`<button role="button" class="js-logout">Log out</button>`).show();
-    }
+    let status = {origin: "home", data: employee, render: renderWelcome};
+    saveSiteStatus(status);
+    renderSearchBar();
     return employee;
 }
 
-function renderSearchEmployeeById() {
-    clearScreen();
-    renderSearchBar();
-    $('.js-form').html(generateSearchForm("byId")).show();
-}
+// function renderSearchEmployeeById() {
+//     clearScreen();
+//     renderSearchBar();
+//     $('.js-form').html(generateSearchForm()).show();
+// }
 
 function renderEmployeeById(employee) {
     let employeeC = convertNullToString(employee); 
-    renderSearchEmployeeById();
+    clearScreen();
+    renderSearchBar();
+    $('.js-form').html(generateSearchForm()).show();
+    ///renderSearchEmployeeById();
     $('.js-results').html(generateResultsByIdStrings(employeeC)).show();
     return employee;
 }
@@ -288,9 +381,12 @@ function calculateMaxNumber(arr) {
 }
 
 function generateHeader(data, dataName, options) {
+    let userLevel = getUserLevel();
+  
     let table = [];
     table.push(`<tr>`);
     Object.keys(screens[dataName].headers).forEach(item => {
+       
         if (item === 'Trainings') {
             let columns = 2 * options.trainings.length;
             table.push(`<th colspan = "${columns}">${item}</th>`);
@@ -366,6 +462,7 @@ function generateRows(data, dataName, options) {
 
 function getOptions() {
     let options = getOptionsFromCache();
+   
     if (options !== undefined) {
         return options;
     } else {
@@ -380,7 +477,7 @@ function getOptions() {
     }
 }
 
-
+// yes
 function renderList(data, dataName) {
     renderSearchBar();
     let options = getOptions();
@@ -396,9 +493,18 @@ function renderList(data, dataName) {
     table.push(generateRows(data, dataName, options));
     table.join("");
     $('.js-results').html(table).show();
-    renderSearchMenu();
     return data;
     }
+
+
+
+
+
+
+
+
+
+
 //modal window
 function doConfirm(dataName, action, data) {
     let windowString =[];
@@ -422,12 +528,7 @@ function doConfirm(dataName, action, data) {
             aria-label="Close" aria-pressed="false">X</button>`);
    
     windowString.push(`<p>${dataName} ${stringOne} was ${action}.</p>`);
-    // if (action === "delete") {
-    //     windowString.push(`<button role="button" type="button"
-    //     class="close js-window-cancel" aria-label="Cancel" aria-pressed="false">Cancel</button>
-    //     <button role="button" type="button" class="close js-window-delete" aria-label="Delete" aria-pressed="false">
-    //     Delete</button>`);
-    // }
+  
     windowString.push(`</div>`);
 
     $('.js-info-window').html(windowString.join(""));

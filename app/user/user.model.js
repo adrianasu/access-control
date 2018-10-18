@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 const Joi = require('joi');  // allows to create schemas for JS objects to ensure validation of data
 const bcrypt = require('bcryptjs'); // password hashing function that incorporates salt
 
-const ACCESS_NO = 0;
-const ACCESS_OVERVIEW_ONLY = 10;
+const ACCESS_BASIC = 0;
+const ACCESS_OVERVIEW = 10;
 const ACCESS_PUBLIC = 20
 const ACCESS_ADMIN = 30;
 
-const levels = { ACCESS_NO, ACCESS_PUBLIC, ACCESS_OVERVIEW_ONLY, ACCESS_ADMIN };
+const levels = { ACCESS_BASIC, ACCESS_PUBLIC, ACCESS_OVERVIEW, ACCESS_ADMIN };
 
 // mongoose schema to define the structure of our 'user' documents within a collection
 const userSchema = new mongoose.Schema({
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     accessLevel: {
         type: Number,
         required: true,
-        default: ACCESS_OVERVIEW_ONLY
+        default: ACCESS_OVERVIEW,
     }
 });
 
@@ -46,6 +46,15 @@ userSchema.methods.serialize = function () {
     };
 };
 
+userSchema.methods.serializeOverview = function () {
+    return {
+        id: this._id,
+        name: this.name,
+        accessLevel: this.accessLevel,
+        levels
+    };
+};
+
 // method to hash a password before storing it
 userSchema.statics.hashPassword = function (password) {
     return bcrypt.hash(password, 10);
@@ -56,8 +65,8 @@ userSchema.methods.validatePassword = function (password) {
     return bcrypt.compare(password, this.password);
 };
 
-userSchema.statics.ACCESS_NO = ACCESS_NO;
-userSchema.statics.ACCESS_OVERVIEW_ONLY = ACCESS_OVERVIEW_ONLY;
+userSchema.statics.ACCESS_BASIC = ACCESS_BASIC;
+userSchema.statics.ACCESS_OVERVIEW = ACCESS_OVERVIEW;
 userSchema.statics.ACCESS_PUBLIC = ACCESS_PUBLIC;
 userSchema.statics.ACCESS_ADMIN = ACCESS_ADMIN;
 
@@ -67,14 +76,12 @@ userSchema.statics.hasAccess = function (accessLevel) {
     // express expects a function with req, res, next as parameters
     return function (req, res, next) {
         console.log(`checking if ${req.user.username} is allowed`);
-        if (req.user.accessLevel >= accessLevel) {
+        if (req.user && req.user.accessLevel >= accessLevel) {
             next();
         } 
         else {
-            const err = {
-                err: "Access not allowed",
-                code: 403
-            };
+            const err = new Error("Access not allowed");
+            err.code = 403;
             next(err);
         }
     }
@@ -101,8 +108,8 @@ module.exports = { User,
     UserJoiSchema, 
     UpdateUserJoiSchema, 
     hasAccess: userSchema.statics.hasAccess,
-    ACCESS_NO,
-    ACCESS_OVERVIEW_ONLY,
+    ACCESS_BASIC,
+    ACCESS_OVERVIEW,
     ACCESS_PUBLIC,
     ACCESS_ADMIN
 };

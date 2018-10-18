@@ -1,12 +1,11 @@
 
-
 function getAuthenticatedUserFromCache() {
     const jwToken = localStorage.getItem('jwToken');
     const userid = localStorage.getItem('userid');
     const username = localStorage.getItem('username');
     const name = localStorage.getItem('name');
     const email = localStorage.getItem('email');
-    const accessLevel = localStorage.getItem('accessLevel');
+    const accessLevel = parseInt(localStorage.getItem('accessLevel'), 10);
 
     if(jwToken) {
         return {
@@ -35,6 +34,37 @@ function deleteAuthenticatedUserFromCache() {
     localStorage.removeItem('email');
     localStorage.removeItem('accessLevel');
 }
+
+// endpoint refers to the name of the data (employee, departmemt, employer, training or user)
+// data is the information available at that moment
+// screen is the one renderd
+function getSiteStatus() {
+    const origin = localStorage.getItem('origin');
+    const data = localStorage.getItem('data');
+    const render = localStorage.getItem('render');
+    if(origin) {
+        return {
+            origin, data, render
+        };
+    }
+    else {
+        return undefined;
+    }
+}
+
+function saveSiteStatus(status) {
+    localStorage.setItem('origin', status.origin);
+    localStorage.setItem('data', status.data);
+    localStorage.setItem('render', status.render);
+
+}
+
+function deleteSiteStatus() {
+    localStorage.removeItem('origin');
+    localStorage.removeItem('data');
+    localStorage.removeItem('render');
+}
+
 
 function getOptionsFromCache() {
     const opt = localStorage.getItem('options');

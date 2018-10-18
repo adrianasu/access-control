@@ -46,7 +46,9 @@ employeeRouter.post('/',
         const validation = Joi.validate(newEmployee, EmployeeJoiSchema);
         if (validation.error) {
             console.log(validation.error);
-            return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: validation.error });
+            return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                err: validation.error.details[0].message
+            });
         }
 
         // check if employee with that employeeId already exists
@@ -81,7 +83,9 @@ employeeRouter.post('/',
 });
 
 // get all employees 
-employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), 
+employeeRouter.get('/', 
+jwtPassportMiddleware, 
+User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
    
        
@@ -109,9 +113,74 @@ employeeRouter.get('/', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC
             });
 });
 
+// get all employees' desk overviews 
+employeeRouter.get('/desk',
+    jwtPassportMiddleware,
+    User.hasAccess(User.ACCESS_OVERVIEW),
+    (req, res) => {
+
+
+        // get trainings to validate employee's trainings status
+        Training
+            .find()
+            .then(trainings => {
+                Employee
+                    .find()
+                    .then(employees => {
+                        console.log(`Getting all employees`);
+                        let jsonEmployees = [];
+                        employees.forEach(employee => {
+                            jsonEmployees.push(employee.serializeDeskOverview());
+                        })
+                        return jsonEmployees;
+                    })
+                    .then(jsonEmployees => {
+                        return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployees)
+                    })
+            })
+            .catch(err => {
+
+                return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+            });
+    });
+
+// get all employees' kiosk overviews 
+employeeRouter.get('/kiosk',
+    jwtPassportMiddleware,
+    User.hasAccess(User.ACCESS_OVERVIEW),
+    (req, res) => {
+
+
+        // get trainings to validate employee's trainings status
+        Training
+            .find()
+            .then(trainings => {
+                Employee
+                    .find()
+                    .then(employees => {
+                        console.log(`Getting all employees`);
+                        let jsonEmployees = [];
+                        employees.forEach(employee => {
+                            jsonEmployees.push(employee.serializeKioskOverview());
+                        })
+                        return jsonEmployees;
+                    })
+                    .then(jsonEmployees => {
+                        return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployees)
+                    })
+            })
+            .catch(err => {
+
+                return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+            });
+    });
+
 
 // get one employee by id
-employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_PUBLIC), (req, res) => {
+employeeRouter.get('/:employeeId', 
+jwtPassportMiddleware, 
+User.hasAccess(User.ACCESS_PUBLIC), 
+(req, res) => {
     let trainings; 
     return Training
         .find()
@@ -140,8 +209,10 @@ employeeRouter.get('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
         })
 });
 
-// get overview employee by id
-employeeRouter.get('/overview/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_OVERVIEW_ONLY), 
+// get overview employee by id reception desk version
+employeeRouter.get('/desk/:employeeId', 
+jwtPassportMiddleware, 
+User.hasAccess(User.ACCESS_OVERVIEW), 
     (req, res) => {
 
     let trainings;
@@ -154,7 +225,7 @@ employeeRouter.get('/overview/:employeeId', jwtPassportMiddleware, User.hasAcces
             .then(employee => {
               
                 console.log(`Getting new employee with id: ${req.params.employeeId}`);
-                return employee.serializeOverview(validateEmployeeTrainings(employee, trainings));
+                return employee.serializeDeskOverview(validateEmployeeTrainings(employee, trainings));
             })
             .then(jsonEmployee => {
                
@@ -170,9 +241,45 @@ employeeRouter.get('/overview/:employeeId', jwtPassportMiddleware, User.hasAcces
         })
 });
 
+// get overview employee by id kiosk version (no authorization required)
+employeeRouter.get('/kiosk/:employeeId', 
+    (req, res) => {
+
+        let trainings;
+        return Training
+            .find()
+            .then(_trainings => {
+                trainings = _trainings
+                return Employee
+                    .findOne({
+                        employeeId: req.params.employeeId
+                    })
+                    .then(employee => {
+
+                        console.log(`Getting new employee with id: ${req.params.employeeId}`);
+                        return employee.serializeKioskOverview(validateEmployeeTrainings(employee, trainings));
+                    })
+                    .then(jsonEmployee => {
+
+                        return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
+                    })
+                    .catch(err => {
+                        return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+                            err: "Employee not found"
+                        });
+                    })
+            })
+            .catch(err => {
+                return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+                    err: "Something went wrong. Please try again"
+                });
+            })
+    });
 
 // update employee by id 
-employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), 
+employeeRouter.put('/:employeeId', 
+jwtPassportMiddleware, 
+User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
     // check that id in request body matches id in request path
     if (req.params.employeeId !== req.body.employeeId) {
@@ -207,8 +314,10 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
 
     const validation = Joi.validate(toUpdate, UpdateEmployeeJoiSchema);
     if (validation.error) {
-        console.log(validation.error);
-        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ err: validation.error});
+  
+        return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+            err: validation.error.details[0].message
+        });
     } 
 
     return Employee
@@ -224,7 +333,9 @@ employeeRouter.put('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.AC
 });
 
 // delete employee by id
-employeeRouter.delete('/:employeeId', jwtPassportMiddleware, User.hasAccess(User.ACCESS_ADMIN), 
+employeeRouter.delete('/:employeeId', 
+jwtPassportMiddleware, 
+User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
     return Employee
         .findOneAndDelete({employeeId: req.params.employeeId})

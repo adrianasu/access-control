@@ -17,13 +17,13 @@ const User = require('../../app/user/user.model');
 const mongoUrl  = require('../../app/server');
 
 // // Init gfs
-// let gfs;
+let gfs;
 
-// conn.once('open', () => {
-//     // Init stream
+conn.once('open', () => {
+    // Init stream
     
-//     gfs.collection('photos');
-// });
+    gfs.collection('photos');
+});
 
 // GridFS storage engine for multer to store files to MongoDB
 const storage = new GridFsStorage({

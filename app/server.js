@@ -42,8 +42,9 @@ app.use('*', (req,res) => {
 });
 
 // handle unexpected errors
-app.all('*', (err, req, res, next) => {
-    return res.status(err.code || 400).json({err: err.err});
+app.use('*', (err, req, res, next) => {
+    console.log("HANDLING UNEXPECTED ERR END SERVER JS", JSON.stringify(err));
+    return res.status(err.code || 400).json({err: err.message});
 });
 
 function runServer(databaseUrl, port = PORT) {
