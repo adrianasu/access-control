@@ -50,6 +50,7 @@ userSchema.methods.serializeOverview = function () {
     return {
         id: this._id,
         name: this.name,
+        email: this.email,
         accessLevel: this.accessLevel,
         levels
     };
@@ -80,7 +81,7 @@ userSchema.statics.hasAccess = function (accessLevel) {
             next();
         } 
         else {
-            const err = new Error("Access not allowed");
+            const err = new Error("Access not allowed. To increase your access level contact an admin.");
             err.code = 403;
             next(err);
         }

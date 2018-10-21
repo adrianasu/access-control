@@ -43,7 +43,6 @@ app.use('*', (req,res) => {
 
 // handle unexpected errors
 app.use('*', (err, req, res, next) => {
-    console.log("HANDLING UNEXPECTED ERR END SERVER JS", JSON.stringify(err));
     return res.status(err.code || 400).json({err: err.message});
 });
 

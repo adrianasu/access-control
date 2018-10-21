@@ -73,10 +73,10 @@ userRouter.post('/', (req, res) => {
 // retrieve all users' name and access level using mongoose function find
 userRouter.get('/', 
 jwtPassportMiddleware, 
-User.hasAccess(User.ACCESS_PUBLIC), 
+User.hasAccess(User.ACCESS_OVERVIEW), 
 (req, res) => {
     return Users
-        .find()
+        .find({}, null, {sort: {accessLevel: -1}})  // sort by access level in descendent order
         .then(_users => {
             return res.status(HTTP_STATUS_CODES.OK).json(_users.map(_user => _user.serializeOverview()));
         })
@@ -103,7 +103,7 @@ userRouter.get('/:userId', jwtPassportMiddleware,
 
 // update user's name, email or accessLevel by id
 userRouter.put('/:userId', jwtPassportMiddleware,
-    User.hasAccess(User.ACCESS_PUBLIC), 
+    User.hasAccess(User.ACCESS_OVERVIEW), 
     (req, res) => {
     // check that id in request body matches id in request path
     if (req.params.userId !== req.body.id) {
@@ -128,23 +128,41 @@ userRouter.put('/:userId', jwtPassportMiddleware,
     // if request body doesn't contain any updateable field send error message
     if (toUpdate.length === 0) {
         const message = `Missing \`${updateableFields.join('or ')}\` in request body`;
-        console.log(message);
         return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
             err: message
         });
     }
+
+    Users
+    .findById(req.params.userId)
+    .then(user => {
+        // if user is attempting to change "accessLevel" check if
+        // user's level is greater than the one to update and greater 
+        // than or equal to the new value
+        if (user.accessLevel > req.user.accessLevel 
+            || req.user.accessLevel < req.body.accessLevel){
+                const message = `Unauthorized to change access level`;
+                return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
+                    err: message
+                });
+            }
+        // users with accessLevel equal to Overview or Public are 
+        // allowed to update their own name and email only.
+        if (req.user.accessLevel <= User.ACCESS_PUBLIC 
+            && req.user.id !== req.params.userId
+            && (req.body.name !== user.name || req.body.email !== user.email)) {
+                    const message = `Unauthorized to change that information`;
+                    return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
+                        err: message
+                    });
+        }
+
+       })
+       .catch(err => {
+           console.error(err);
+       })
+
     
-//check if accessLevel is actually going to change
-    if ("accessLevel" in toUpdate &&
-        req.user.accessLevel < req.body.accessLevel ) {
-        
-        const message = `Unauthorized to change access level`;
-        console.log(message);
-        return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
-            err: message
-        });
-    }
- 
     const validation = Joi.validate(toUpdate, User.UpdateUserJoiSchema);
     
     if (validation.error) {
@@ -152,7 +170,6 @@ userRouter.put('/:userId', jwtPassportMiddleware,
             err: validation.error.details[0].message
         });
     }
-
 
     return Users
         // $set operator replaces the value of a field with the specified value

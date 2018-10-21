@@ -21,7 +21,7 @@ trainingRouter.get('/',
     (req, res) => {
     
             return Training
-                .find()
+                .find({}, null, {sort: {title: 1}})  // sort alphabetically by department name
                 .then(trainings => {
                     console.log(`Getting all trainings`);
                     let jsonTrainings = [];

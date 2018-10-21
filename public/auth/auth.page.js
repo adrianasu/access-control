@@ -5,9 +5,6 @@ function logInSuccess(user) {
     console.log('Succesful Login');
     $('#username, #password').val("");
     clearScreen();
-    let status = {origin: "login", data: user, render: logInSuccess};
-    saveSiteStatus(status);
-    doConfirm(user.name, "welcome");
     renderSearchMenu(user);
     return user;
 }
@@ -47,16 +44,10 @@ function handleLogIn(event) {
         username: $('#username').val(),
         password: $('#password').val()
     };
-    doLogin(userData);
+    return doLogin(userData);
 }
 
-
-
 function handleLogOut() {
-    const confirmation = confirm('Are you sure you want to logout?');
-    if (confirmation) {
-        deleteAuthenticatedUserFromCache();
-        renderLoginForm();
-    }
+        reset();
 }
 

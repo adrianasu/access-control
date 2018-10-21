@@ -1,8 +1,7 @@
-function optionsDataHttpRequest() {
+function requestAndSaveOptions() {
     let jwToken = STATE.authUser.jwToken;
     return getAllOptions({ jwToken })
         .then(data => {
-            console.log("OPTIONSDATAHTTPREQ");
             saveOptionsIntoCache(data);
             return data;
         })   
@@ -14,8 +13,7 @@ function renderWelcome() {
     <p>For more information, please contact your supervisor.</p>`).show();
     $('.js-form').html(generateSearchForm()).show();
     renderSearchBar();
-    let status = {origin: "home", data: null, render: renderWelcome};
-    saveSiteStatus(status);
+    renderFooter();
 }
 
 function generateLevelOptions(data) {
@@ -27,11 +25,10 @@ function generateLevelOptions(data) {
     return options;
 }
 
-// user's data to get all access levels available
 function generateUserFormString(data, id, origin) {
     let formString =[];
-    let btnName = 'signup';
     let title;
+    let btnName = 'signup';
     if (id) {
         btnName = 'update';
         title = 'Update'; 
@@ -42,9 +39,13 @@ function generateUserFormString(data, id, origin) {
     formString.push(`<form class="js-signup-form">
     <legend>${title}</legend>
     <label for="name">Name</label>
-    <input type="text" name="name" id="name" autofocus required>
-    <label for="email">e-mail</label>
-    <input type="email" name="email" id="email" required>`);
+    <input type="text" name="name" id="name" autofocus required>`);
+    // show user's own email only
+    let user = getAuthenticatedUserFromCache();
+    if (user && id === user.userid) {
+        formString.push(`<label for="email">e-mail</label>
+        <input type="email" name="email" id="email" required>`);
+    }
     if (title === "Sign Up") {
         formString.push(`<label for="username">username</label>
             <input type="text" name="username" id="username" pattern=".{4,}" title="Four or more characters" required>
@@ -57,11 +58,12 @@ function generateUserFormString(data, id, origin) {
         formString.push(generateLevelOptions(data));
         formString.push(`</select>`);
     }
-        formString.push(`<button role="button" type="submit" data-name="user" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">${title}</button>`);
     if(title === "Update") {
+        formString.push(`<button role="button" type="button" data-name="user" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">${title}</button>`);
          formString.push(`<button role="button" type="button" data-name="user" data-origin="${origin}" class="js-cancel-btn">Cancel</button></form>`);
     } 
     else {
+        formString.push(`<button role="button" type="submit" data-name="user" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">${title}</button>`);
         formString.push(`<a href="" class="js-login-link">Already have an account?</a></form>`);
     }
     return formString.join("");
@@ -178,7 +180,7 @@ function renderEmployeeForm(id, origin, data) {
         generateEmployeeForm(options, id, origin);
         return data;
     } else {
-        return optionsDataHttpRequest()
+        return requestAndSaveOptions()
             .then(options => {
                 generateEmployeeForm(options, id, origin);
                 return data;
@@ -223,7 +225,7 @@ function renderEmployerForm(id, origin, data) {
     if (options !== undefined) {
         generateEmployerForm(options, id, origin);
     } else {
-        return optionsDataHttpRequest()
+        return requestAndSaveOptions()
             .then(options => {
                 return generateEmployerForm(options, id, origin);
             })    

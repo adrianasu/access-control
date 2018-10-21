@@ -21,7 +21,7 @@ departmentRouter.get('/',
     (req, res) => {
     
             return Department
-                .find()
+                .find({}, null, {sort: {departmentName: 1}})  // sort alphabetically by department name
                 .then(departments => {
                     console.log(`Getting all departments`);
                      let jsonDepartments = [];

@@ -19,7 +19,7 @@ employerRouter.get('/',
     (req, res) => {
     
             return Employer
-                .find()
+                .find({}, null, {sort: {employerName: 1}})  // sort alphabetically by employer name
                 .then(employers => {
                     console.log(`Getting all employers`);
                     let jsonEmployers = [];

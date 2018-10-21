@@ -8,8 +8,8 @@ function handleError(xhr) {
     }
     $('.js-loader').hide();
     $('.box').removeClass('green red');
-    $('.js-results').hide();
-    $('.js-message').html(`<p>${message}</p>`).show();
+    doConfirm("error", "", message)
+    toggleInfoWindow();
     return message;
 }
 
@@ -29,7 +29,6 @@ function createOneWithFile(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
           }, 
           error: err => {
-              console.error(err);
               handleError(err);
           }
       });
@@ -48,7 +47,6 @@ function getAllOptions(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
         error: err => {
-            console.error(err);
             handleError(err); 
         }
     });
@@ -56,18 +54,17 @@ function getAllOptions(settings) {
 
 
 function createOne(settings) {
-    const { jwToken, endpoint, sendData } = settings;
+    const { jwToken, endpoint, newData } = settings;
     return $.ajax({
         type: 'POST',
         url: `/api/${endpoint}`,
         contentType: 'application/json',
         dataType: 'json',
-        data: JSON.stringify(sendData),
+        data: JSON.stringify(newData),
         beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
             },
         error: err => {
-                console.error(err);
                 handleError(err);
         }
     });
@@ -85,13 +82,12 @@ function updateOne(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
         error: err => {
-            console.error(err);
             handleError(err);
         }
     });
 }
 function deleteOne(settings) {
-    const { endpoint, jwToken, id, onSuccess } = settings;
+    const { endpoint, jwToken, id } = settings;
     return $.ajax({
         type: 'DELETE',
         url: `/api/${endpoint}/${id}`,
@@ -101,10 +97,8 @@ function deleteOne(settings) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
-        success: onSuccess,
         error: err => {
-            let message = `Couldn't delete ${endpoint} with id ${id}`;
-            alert(message);
+              handleError(err);
         }
     });
 }
@@ -121,10 +115,7 @@ function getAll(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
         error: err => {
-            console.error(err);
-            
-                handleError(err);
-            
+                handleError(err);   
         }
     });
 }

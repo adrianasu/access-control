@@ -28,7 +28,7 @@ employeeRouter.post('/',
     jwtPassportMiddleware,
     User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
-           
+          
         // we can access req.body payload bc we defined express.json() middleware in server.js
         const newEmployee = {
             employeeId: req.body.employeeId,
@@ -94,12 +94,12 @@ User.hasAccess(User.ACCESS_PUBLIC),
          .find()
          .then(trainings => {
             Employee
-                .find()
+                .find({}, null, {sort: {lastName: 1}})  // sort alphabetically by last name
                 .then(employees => {
                     console.log(`Getting all employees`);
                     let jsonEmployees = [];
                     employees.forEach(employee => {
-                        jsonEmployees.push(employee.serialize());
+                        jsonEmployees.push(employee.serialize(validateEmployeeTrainings(employee, trainings)));
                     })
                     return jsonEmployees;
                 })
@@ -125,12 +125,12 @@ employeeRouter.get('/desk',
             .find()
             .then(trainings => {
                 Employee
-                    .find()
+                    .find({}, null, {sort: {lastName: 1}})
                     .then(employees => {
                         console.log(`Getting all employees`);
                         let jsonEmployees = [];
                         employees.forEach(employee => {
-                            jsonEmployees.push(employee.serializeDeskOverview());
+                            jsonEmployees.push(employee.serializeDeskOverview(validateEmployeeTrainings(employee, trainings)));
                         })
                         return jsonEmployees;
                     })
@@ -156,12 +156,12 @@ employeeRouter.get('/kiosk',
             .find()
             .then(trainings => {
                 Employee
-                    .find()
+                    .find({}, null, {sort: {lastName: 1}})
                     .then(employees => {
                         console.log(`Getting all employees`);
                         let jsonEmployees = [];
                         employees.forEach(employee => {
-                            jsonEmployees.push(employee.serializeKioskOverview());
+                            jsonEmployees.push(employee.serializeKioskOverview(validateEmployeeTrainings(employee, trainings)));
                         })
                         return jsonEmployees;
                     })
@@ -279,7 +279,7 @@ employeeRouter.get('/kiosk/:employeeId',
 // update employee by id 
 employeeRouter.put('/:employeeId', 
 jwtPassportMiddleware, 
-User.hasAccess(User.ACCESS_ADMIN), 
+User.hasAccess(User.ACCESS_PUBLIC), 
     (req, res) => {
     // check that id in request body matches id in request path
     if (req.params.employeeId !== req.body.employeeId) {

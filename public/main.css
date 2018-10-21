@@ -1,3 +1,4 @@
+
 * {
     box-sizing: border-box;
 }
@@ -5,9 +6,13 @@
 body {
     /* background: #f0ebdf; */
     background:#EBEBD3;
-    font-family: 'Quicksand', sans-serif;
+   
     color: #343434;
-    
+    font-family: 'Poppins', sans-serif;
+}
+
+header {
+    font-family: 'Quicksand', sans-serif;
 }
 
 .form, .box {
@@ -63,22 +68,45 @@ button:hover, button:focus {
 }
 table {
     margin: auto;
+    
 }
 
-
+.results {
+    display: inline-block;
+    margin: auto;
+}
 .green {
-    background-color: green;
-}
-
-.blue {
-    background-color: blue;
+    border: 2px solid green;
 }
 
 .red {
-    background-color: red;
+    border: 2px solid #00fff0;
+}
+.grid-container {
+    display: grid;
+    grid-gap: 1em;
+    grid-template-columns: auto auto;
+    padding: .5em;
+    font-family: 'Rubik', sans-serif;
+}
+
+.grid-item {
+    padding: .2em;
+    text-align: center;
+    border-radius: 10px;
+    background-color: white;
 }
 
 
+.grid-item li {
+    display: block;
+    text-decoration: none;
+
+}
+
+h1 {
+    text-transform: capitalize;
+}
 
 img {
     width: 15%;
@@ -152,4 +180,32 @@ img {
     100% {
         transform: rotate(360deg);
     }
+}
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+    /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    font-family: 'Quicksand', sans-serif;
+
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }

@@ -17,7 +17,7 @@
      
         headers: {"Employee Id": "employeeId", "First Name": "firstName", "Last Name": "lastName", "Employer": "employer", "Department": "department", "License Plates": "licensePlates", "Employment Date": "employmentDate","Allow Vehicle": "allowVehicle", "Trainings": "trainings"},
         onSuccess: renderList,
-        requestFunction: createOne,
+     
     
         render: renderEmployeeForm,
         fill: fillEmployeeForm,
@@ -28,7 +28,7 @@
         endpoint: "training",
         headers: {"Title": "title", "Expiration Time": "expirationTime"},
         onSuccess: renderList, ///maybe window
-        requestFunction: createOne,
+    
        
         render: renderTrainingForm,
         fill: fillTrainingForm,
@@ -40,48 +40,29 @@
         endpoint: "employer",
         headers: {"Employer Name": "employerName", "Departments": "departments"},
         onSuccess: renderList, 
-        requestFunction: createOne,
+      
         render: renderEmployerForm,
         fill: fillEmployerForm,
         getDataFrom: getDataFromEmployerForm,
-      
     },
     department: {
         endpoint: "department",
         headers: {"Department Name": "departmentName"},
         onSuccess: renderList, 
-        requestFunction: createOne,
+      
         render: renderDepartmentForm,
         fill: fillDepartmentForm,
         getDataFrom: getDataFromDepartmentForm,
     },
-    "employee/desk" : {
-        onSuccess: renderList,
-    },
+    login: {
    
-    // employeeById: {   
-    //     endpoint: "employee", // add employeeId
-    //     requestFunction: getById,
-       
-    // },
-    deleteAtById: { 
-        requestFunction: deleteOne,
+        render: renderLoginForm,
       
     },
-    deleteAtList: { 
-        onSuccess: getAll,
-        requestFunction: deleteOne,
-        render: renderList,
-    },
-    login: {
-        show: true,
-        render: renderLoginForm,
-        URL: '/index.html'
-    },
     signup: {
-        show: true,
+   
         render: renderUserForm,
-        URL: '/index.html'
+    
     },
     user: {
         onSuccess: renderList,
@@ -92,20 +73,11 @@
        
     },
     logout: {
-        show: false,
+     
         render: handleLogOut,
-        URL: '/api/logout'
+        
     },
-    createMenu: {
-        show: false,
-        render: renderCreateMenu,
-        URL: '/api/menu'
-    },
-    searchMenu: {
-        show: false,
-        render: renderSearchMenu,
-        URL: '/api/menu'
-    },
+  
     home:{
         basic: renderWelcome,
         overview: renderSearchMenu,
@@ -139,44 +111,9 @@ function getUserLevel() {
 }
 
 function clearScreen() {
-    $('.js-results, .js-intro, .js-form, .js-loader, .js-message, .js-nav-bar').hide();
+    $('.js-results, .js-intro, .js-form, .js-loader, .js-message, .js-nav-bar, .js-footer').hide();
 
 }
-
-
-// function renderSearchBar() {
-//     let accessLevel = ACCESS.BASIC;
-//     // check if user is logged in to give him/her access to more info
-//     updateAuthenticatedUI();
-//     let authUser = STATE.authUser;
-//     if (authUser) {
-//         accessLevel = authUser.accessLevel;
-//     }
-//     let navBarString = [];
-  
-//     if (accessLevel === ACCESS.BASIC) {
-//         navBarString.push(`<nav class="site-nav"><ul>
-//             <li><a href="" data-value="home">Home</a></li><li>
-//             <a href="" data-value="signup">Sign Up</a></li>
-//             <li><a href="" data-value="login">Log In</a></li></ul></nav>
-//             <div class="menu-toggle"><div class="hamburguer"></div></div>`);
-//     } else if (accessLevel >= ACCESS.PUBLIC) {
-//         navBarString.push(`<nav class="site-nav"><ul>
-//             <li><a href="" data-value="home">Home</a></li>
-//             <li><a href="" data-value="employee">Employees</a></li>
-//             <li><a href="" data-value="training">Trainings</a></li>
-//             <li><a href="" data-value="department">Departments</a></li>
-//             <li><a href="" data-value="employer">Employers</a></li>
-//             <li><a href="" data-value="user">Users</a></li>`);
-//     }
-//     if (accessLevel >= ACCESS.OVERVIEW) {
-//         navBarString.push(`<li><a href="" data-value="back">Back</a></li>
-//             <li><a href="" data-value="logout">Log out</a></li></ul></nav><div class="menu-toggle">
-//         <div class="hamburguer"></div></div>`);
-//     }
-
-//     $('.js-nav-bar').html(navBarString).show();
-// }
 
 function generateOptions(menu, output) {
     let optionsString = [];
@@ -209,9 +146,10 @@ function renderSearchBar() {
         public: ["Home", "Employees", "Trainings", "Departments", "Employers", "Users", "LogOut"],
         admin: ["Home", "Employees", "Trainings", "Departments", "Employers", "Users", "LogOut"]
     }
-    
+  
     // check if user is logged in and his accessLevel to give him/her access to more info
     let userLevel = getUserLevel(); // returns a string
+   
     let navBarString = [];
     navBarString.push(`<nav class="site-nav"><ul>`);
     
@@ -223,48 +161,39 @@ function renderSearchBar() {
     navBarString.push(`</ul></nav><div class="menu-toggle">
     <div class="hamburguer"></div></div>`);
     
-    $('.js-nav-bar').html(navBarString).show();
+    return $('.js-nav-bar').html(navBarString).show();
 }
 
 
 ///yes
 function generateSearchForm() {
-    return `<form class="js-search-form"><label for="employeeId">Employee Id</label>
+    return `<form class="js-search-form"><label for="employeeId" title="Enter an employee ID to verify if that person
+        complies with the requirements to access the work premises.">Employee Id</label>
     <input type="text" name="employeeId" id="employeeId" autofocus>
     <button role="button" type="submit">Search</button></form>`;
 }
 //yes
 function generateSearchMenu() { 
     let searchString = []; 
-
     searchString.push(generateSearchForm());
-    // searchString.push(`<p>For a list of all employees click here:</p><button role="button" type="button" class="js-list">
-    // List Employees</button>`);
-        
     return  searchString;
 }
+
+function renderFooter() {
+    $('.js-footer').html(`<p>To enable
+    features to create, update or get more detailed information, please
+    contact <a href="" class="js-user-list"> an admin </a>or your supervisor.</p>`).show();
+}
+
 //yes
 function renderSearchMenu() {
-     let status = {origin: "searchMenu", data: null , render: renderSearchMenu};
-     saveSiteStatus(status);
      updateAuthenticatedUI();
      let accessLevel = STATE.authUser.accessLevel;
-     $('.js-intro').html(`<p>Enter an employee ID to verify if that person
-        complies with the requirements to enter the work premises.</p><p>To get a 
-        list of all employees click on the "List Employees" button above.</p>`).show();
     $('.js-form').html(generateSearchMenu(accessLevel)).show();
+    renderFooter();
     renderSearchBar();
 }
 
-function displayTrainingData(missingRequirements) {
-    if (missingRequirements.length > 0) {
-        $('.box').addClass('red').removeClass('green');
-        $('.js-message').html(`<p>Do Not Enter</p>
-        <p>Training required: ${missingRequirements.join(", ")}</p>`).show();
-    } else {
-        $('.box').addClass('green').removeClass('red');
-    }
-}
 
 // in this case our requirements are trainings and
 // its validation is included in the ready2work property
@@ -274,51 +203,72 @@ function checkForMissingRequirements(employee) {
     missing.forEach(training => {
         missingTrainingTitles.push(training.trainingTitle);
     })
-    return missingTrainingTitles; 
+    return missingTrainingTitles;
 }
+
+function generateMissingRequirementsString(employee) {
+    let missingRequirements = checkForMissingRequirements(employee);
+    if (missingRequirements.length > 0) {
+        $('.box').addClass('red').removeClass('green');
+        let message = [];
+        message.push(`<p>Do Not Enter</p><p>Training required:</p><ul>`);
+        missingRequirements.forEach(requirement => {
+            message.push(`<li>${requirement}</li>`);
+        })
+         message.push(`</ul>`);
+         return message.join("");
+    } else {
+        $('.box').addClass('green').removeClass('red');
+        return [];
+    }
+}
+
 
 function generateResultsStrings(employee, userLevel) {
     let resultString = [];
-    resultString.push(`<div class="js-results box green" aria-live="assertive" hidden>
-    <p></p>
-    <p></p>
-    </div>
+    resultString.push(`
+    <button type="button" role="button" class="js-clear-btn"><i class="far fa-times-circle"></i></button>
     <table aria-live="assertive">
     <tr><td>Employee ID</td><td>${employee.employeeId}</td></tr>
-    <tr><th>${employee.firstName} ${employee.lastName}</th></tr></table>`);
+    <tr><th>${employee.firstName} ${employee.lastName}</th></tr>`);
     if (userLevel === "overview") {
         let vehicle = (employee.allowVehicle) ? "Yes" : "No";
         resultString.push(`<tr><td>Employer</td><td>${employee.employer.employerName}</td></tr>
         <tr><td>Department</td><td>${employee.department.departmentName}</td></tr>
         <tr><td>Allow Vehicle</td><td>${vehicle}</td></tr>
-        <tr><td>License Plates</td><td>${employee.licensePlates}</td></tr></table>`);
-     }
- 
-    return resultString;
+        <tr><td>License Plates</td><td>${employee.licensePlates}</td></tr>`);
+    }
+    resultString.push(`</table>`);
+    resultString.push(generateMissingRequirementsString(employee));
+    
+    return resultString.join("");
 }
-
+//yes
 function generateResultsByIdStrings(employee) {
     let vehicle = (employee.allowVehicle) ? "Yes" : "No";
     let result = [];
-    result.push(`<div class="box" aria-live="assertive" hidden>
-    </div>
+    result.push(`<button role="button" type="button" class="close js-close"
+    aria-label="Close" aria-pressed="false"><i class="far fa-times-circle">
+    </i></button>
+    <div class="box" aria-live="assertive" hidden></div>
     <table aria-live="assertive">
-    <tr><th>${employee.firstName} ${employee.lastName}</th></tr>
+    <tr colspan="2"><th>${employee.firstName} ${employee.lastName}</th></tr>
     <tr><td>Employee ID</td><td>${employee.employeeId}</td></tr>
     <tr><td>Employer</td><td>${employee.employer.employerName}</td></tr>
     <tr><td>Department</td><td>${employee.department.departmentName}</td></tr>
     <tr><td>Allow Vehicle</td><td>${vehicle}</td></tr>
     <tr><td>License Plates</td><td>${employee.licensePlates}</td></tr>
-    <tr><td>Trainings</td></tr>`);
+    <tr colspan="2"><td>Trainings</td></tr>`);
     for(let x=0; x < employee.trainings.length; x++) {
+        let trainDate = new Date(employee.trainings[x].trainingDate).toLocaleDateString("en-US")
         result.push(`<tr><td>${employee.trainings[x].trainingInfo.title}</td>
-            <td>${employee.trainings[x].trainingDate}</td></tr>`);
+            <td>${trainDate}</td></tr>`);
     }
     result.push(`</table>
     <button type="button" role="button" class="js-goto-edit" 
-    data-id="${employee.employeeId}" data-name="employee" data-origin="byId">Edit</button>
+    data-id="${employee.employeeId}" data-name="employee" data-origin="thumbnail">Edit</button>
     <button type="button" role="button" class="js-delete-btn" 
-    data-id="${employee.employeeId}" data-name="employee" data-origin="byId"><i class="fas fa-trash-alt"></i></button>`);
+    data-id="${employee.employeeId}" data-name="employee" data-origin="thumbnail"><i class="fas fa-trash-alt"></i></button>`);
     return result.join("");
 }
 
@@ -332,67 +282,55 @@ function convertNullToString (data) {
 }
 ///yes
 function renderEmployeeOverview(employee, userLevel) {
-    updateSiteStatus();
-    
     clearScreen();
-    // render the search form at the top to keep searching
+    // render search form at the top to keep searching
     $('.js-form').html(generateSearchForm()).show();
-    
-    
     // render results
     if (employee) {
         let employeeC = convertNullToString(employee);
-        $('.js-results').html(generateResultsStrings(employeeC, userLevel)).show();
-        let missing = checkForMissingRequirements(employeeC);
-        displayTrainingData(missing);  
+        $('.js-results').html(generateResultsStrings(employeeC, userLevel)).show();  
     } 
-    let status = {origin: "home", data: employee, render: renderWelcome};
-    saveSiteStatus(status);
     renderSearchBar();
     return employee;
 }
-
-// function renderSearchEmployeeById() {
-//     clearScreen();
-//     renderSearchBar();
-//     $('.js-form').html(generateSearchForm()).show();
-// }
-
+//yes
 function renderEmployeeById(employee) {
     let employeeC = convertNullToString(employee); 
-    clearScreen();
-    renderSearchBar();
-    $('.js-form').html(generateSearchForm()).show();
-    ///renderSearchEmployeeById();
-    $('.js-results').html(generateResultsByIdStrings(employeeC)).show();
+    $('.js-info-window').html(generateResultsByIdStrings(employeeC));
+    toggleInfoWindow();
     return employee;
 }
 
-function calculateMaxNumber(arr) {
+function calculateMaxNumber(arr, key) {
     let max = 0;
     if (arr && arr.length > 0) {
         arr.forEach(item => {
-            if (item.departments.length > max) {
-                max = item.departments.length;
+            if (item[key].length > max) {
+                max = item[key].length;
             }
         })
     }
     return max;
 }
 
-function generateHeader(data, dataName, options) {
+function generateHeader(dataName, options) {
     let userLevel = getUserLevel();
   
     let table = [];
     table.push(`<tr>`);
     Object.keys(screens[dataName].headers).forEach(item => {
        
-        if (item === 'Trainings') {
+        if (item === "Trainings") {
             let columns = 2 * options.trainings.length;
             table.push(`<th colspan = "${columns}">${item}</th>`);
-        } else if (item === 'Departments') {
-            let columns = calculateMaxNumber(options.employers);
+        } else if (item === "Departments") {
+            let columns = calculateMaxNumber(options.employers, "departments");
             table.push(`<th colspan = "${columns}">${item}</th>`);
+        } else if (item === "Access Level") {
+            table.push(`<th class="tooltip">${item}<i class="fas fa-question-circle">
+            <span class="tooltiptext"><ul><li>Admin: creates, updates, reads and deletes</li>
+            <li>Public: creates employees, updates, reads complete info</li>
+            <li>Overview: reads employees' overview</li></ul></span></i></th>`);
         }
         else {
             table.push(`<th>${item}</th>`);
@@ -414,8 +352,12 @@ function generateTrainingStrings(trainings) {
     return table.join("");
 }
 
-function generateRows(data, dataName, options) {
+function generateRows(data, dataName) {
     let table = [];
+    let maxNumOfDepInOneEmployer;
+    if (dataName === "employer") {
+        maxNumOfDepInOneEmployer = calculateMaxNumber(data, "departments");
+    }    
     data.forEach(item => {
         table.push('<tr>');
         Object.keys(item).forEach(key => {
@@ -434,13 +376,29 @@ function generateRows(data, dataName, options) {
             } else if (key === "department") {
                 table.push(`<td>${item[key].departmentName}</td>`);
             } else if (key === "departments") {
-                for (let x = 0; x < item[key].length; x++) {
-                    table.push(`<td>${item[key][x].departmentName}</td>`);
+                for (let x = 0; x < maxNumOfDepInOneEmployer; x++) {
+                    if (item[key][x]) {
+                        table.push(`<td>${item[key][x].departmentName}</td>`);
+                    }
+                    else {
+                        table.push(`<td></td>`);
+                    }
                 }
             } else if (key === "allowVehicle") {
                 let allow = (item[key]) ? "Yes" : "No";
                 table.push(`<td>${allow}</td>`);
-            } else if (key === "id" || key === "levels") {}
+            } else if (key === "accessLevel") {
+                let levelString;
+                Object.keys(ACCESS).forEach(level => {
+                    if (ACCESS[level] === item[key]) {
+                        levelString = level;
+                    }
+                    
+                })
+                
+                table.push(`<td>${levelString}</td>`);
+            
+            } else if (key === "id" || key === "levels" || key === "email") {}
             else {
                 table.push(`<td>${item[key]}</td>`);
             }
@@ -466,7 +424,7 @@ function getOptions() {
     if (options !== undefined) {
         return options;
     } else {
-        return optionsDataHttpRequest()
+        return requestAndSaveOptions()
             .then(options => {
                 return options;
             })
@@ -477,32 +435,66 @@ function getOptions() {
     }
 }
 
+
+// thumbnails that include employeeId, full name and missing trainings
+function generateEmployeeThumbnails(employees) {
+    let thumbnails = [];
+    thumbnails.push(`<div class="grid-container">`)
+    employees.forEach(employee => { 
+        let missingRequirements = checkForMissingRequirements(employee);
+        if (missingRequirements.length > 0) {
+            thumbnails.push(`<div class="grid-item red js-thumbnail" 
+            data-value="${employee.employeeId}"><table>
+            <tr><td>ID: ${employee.employeeId}</td></tr>
+            <tr><td>${employee.firstName} ${employee.lastName}</td></tr>
+            <tr><td>Missing training:<ul>`);
+            missingRequirements.forEach(requirement => {
+                thumbnails.push(`<li>${requirement}</li>`);
+            })
+            thumbnails.push(`</ul></td></tr></table></div>`);
+        } else {
+            thumbnails.push(`<div class="grid-item js-thumbnail" 
+            data-value="${employee.employeeId}"><table><tr><td>ID: ${employee.employeeId}</td></tr>
+            <tr><td>${employee.firstName} ${employee.lastName}</td></tr><tr><td>Trainings up to date.</td></tr></table></div>`);
+        }
+    })
+    return thumbnails.join("");
+}
+
+
 // yes
 function renderList(data, dataName) {
     renderSearchBar();
-    let options = getOptions();
-  
+    let options;
+    if (dataName !== "employee" || dataName !== "user") {
+        options = getOptions();
+    }
     if (data.length === 0) {
-        $('.js-results').html(`<h1>${dataName}s</h1><p>No ${dataName}s found.</p>`).show();
+        $('.js-results').html(`<h1>${dataName}s</h1><button role="button" 
+        type="button" class="js-goto-create" data-value="${dataName}">Create
+        <i class="fas fa-plus"></i></button><p>No ${dataName}s found.</p>`).show();
         renderSearchMenu();
         return data;
     }
-    let table = [];
-    table.push(`<h1>${dataName}s</h1>`);
-    table.push(generateHeader(data, dataName, options));
-    table.push(generateRows(data, dataName, options));
-    table.join("");
-    $('.js-results').html(table).show();
-    return data;
+    let listString = [];
+    if (dataName === "user") {
+        listString.push(`<h1>${dataName}s</h1>`);
+    } else {
+    listString.push(`<h1>${dataName}s</h1><button role="button" 
+        type="button" class="js-goto-create" data-value="${dataName}">
+        Create<i class="fas fa-plus"></i></button>`);
     }
-
-
-
-
-
-
-
-
+    if(dataName === "employee") {
+        listString.push(generateEmployeeThumbnails(data));
+    } else {
+        listString.push(generateHeader(dataName, options));
+        listString.push(generateRows(data, dataName));
+    }
+  
+    listString.join("");
+    $('.js-results').html(listString).show();
+    return data;
+}
 
 
 //modal window
@@ -510,25 +502,38 @@ function doConfirm(dataName, action, data) {
     let windowString =[];
     let stringOne = "";
     
-    if (dataName === "employee" && action !== "delete") {
-        stringOne = `${data.firstName} ${data.lastName}`;
-    } else if (dataName === "department" && action !== "delete") {
-        stringOne = data.departmentName;
-    } else if (dataName === "training" && action !== "delete") {
-        stringOne = data.title;
-    } else if (dataName === "employer" && action !== "delete") {
-        stringOne = data.employerName;
-    } else if (dataName === "user" && action !== "delete") {
-        stringOne = data.name;
-    }
+if (data && action === "delete") {
+    windowString.push(`<div class="info"><p>Confirm delete.</p>
+        <button type="button" role="button" data-name="${data.name}"
+        data-id="${data.id}" data-origin="thumbnail" 
+        class="js-confirm-btn"><i class="fas fa-trash-alt"></i>
+        </button><button type="button" role="button" class="js-close">
+        Cancel</button></div>`);
+        $('.js-info-window').html(windowString.join(""));
+        return dataName;
 
+} else if (action === "deleted") {
+    stringOne = ""; 
+} else if (action === "unchanged") {
+    stringOne = "";
+}
+    else if (dataName === "employee") {
+        stringOne = `${data.firstName} ${data.lastName}`;
+    } else if (dataName === "department") {
+        stringOne = data.departmentName;
+    } else if (dataName === "training") {
+        stringOne = data.title;
+    } else if (dataName === "employer") {
+        stringOne = data.employerName;
+    } 
     windowString.push(`<div class="info">`);
-   
     windowString.push(`<button role="button" type="button" class="close js-close"
-            aria-label="Close" aria-pressed="false">X</button>`);
-   
-    windowString.push(`<p>${dataName} ${stringOne} was ${action}.</p>`);
-  
+            aria-label="Close" aria-pressed="false"><i class="far fa-times-circle"></i></button>`);
+    if (dataName === "error") {
+        windowString.push(`<p>${data}.</p>`);
+    } else {
+        windowString.push(`<p>${dataName} ${stringOne} was ${action}.</p>`);
+    }
     windowString.push(`</div>`);
 
     $('.js-info-window').html(windowString.join(""));

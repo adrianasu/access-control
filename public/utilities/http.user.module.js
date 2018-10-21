@@ -25,7 +25,8 @@ function userLogin(settings) {
         data: JSON.stringify(userData),
         error: err => {
             let message = 'Incorrect username or password. Please try again.';
-            $('.js-message').html(`<p>${message}</p>`).show();
+            doConfirm("error", "", message)  
+            toggleInfoWindow();
         }
     });
 }

@@ -60,7 +60,7 @@ const employeesSchema = mongoose.Schema({
 });
 
 
-employeesSchema.methods.serialize = function() {
+employeesSchema.methods.serialize = function(ready2work) {
     return {
         employeeId: this.employeeId,
         photo: this.photo,
@@ -72,7 +72,7 @@ employeesSchema.methods.serialize = function() {
         employmentDate: this.employmentDate,
         allowVehicle: this.allowVehicle,
         trainings: this.trainings,
-      
+        ready2work: ready2work,
     };
 };
 
