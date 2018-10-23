@@ -51,7 +51,6 @@ function generateEmployeeData(employerIds, departmentIds, trainingIds, userIds) 
       
     return {
         employeeId: faker.lorem.words(1),
-        //photo: 
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         employer: randomFromArray(employerIds),
@@ -76,7 +75,6 @@ function generateEmployeeData(employerIds, departmentIds, trainingIds, userIds) 
 
 function createUpdatedFields(employer, department) {
     return {
-        //photo: 
         lastName: "NewLastName",
         employer: employer,
         department: department,
@@ -167,13 +165,11 @@ function seedEmployeesData() {
     let employerName = generateEmployerNames();
     let trainings = generateTrainingList();
 
-    let employerIds, departmentIds, userIds;
-    // return generateUserIds()
-    //     .then(_userIds => {
-    //         userIds = _userIds;
+    let employerIds, departmentIds;
+ 
             console.log('Generating new departments');
             return Department.insertMany(departments)
-       // })
+
         .then(_departmentIds => {
             departmentIds = _departmentIds;
             console.log('Generating new employers');
@@ -187,8 +183,7 @@ function seedEmployeesData() {
         .then(trainingIds => {
             console.log("Generating new employee data");
             return Employee
-                .insertMany(
-                generateEmployees(employerIds, departmentIds, trainingIds, userIds));
+                .insertMany(generateEmployees(employerIds, departmentIds, trainingIds));
             })   
         .catch(err => console.log("error", err));
 } 

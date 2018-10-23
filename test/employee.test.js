@@ -33,7 +33,7 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 let testUser, jwToken;
-const employeeProperties = ["id", "employeeId", "firstName", "lastName", "employer", "department",
+const employeeProperties = ["employeeId", "firstName", "lastName", "employer", "department",
     "licensePlates", "employmentDate", "allowVehicle", "trainings", "ready2work"
 ];
 const employeeOverviewProperties = ["employeeId", "firstName", "lastName", "employer", "department",

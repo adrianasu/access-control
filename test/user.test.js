@@ -34,7 +34,7 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 let testUser, jwToken;
-const userKeys = ['id', 'name', 'username', 'email', 'accessLevel'];
+const userKeys = ['id', 'name', 'email', 'accessLevel', 'levels'];
 const newUserKeys = ['name', 'email', 'username'];
 
 
@@ -95,6 +95,7 @@ describe('Users API resource tests', function () {
                  checkObjectContent(res, newUserKeys, newUser);
              });
     });
+
 
     it('Should return all users', function () {
         return chai.request(app)

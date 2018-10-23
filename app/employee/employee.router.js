@@ -194,7 +194,7 @@ User.hasAccess(User.ACCESS_PUBLIC),
                     return employee.serialize(validateEmployeeTrainings(employee, trainings));
                 })
                 .then(jsonEmployee => {
-                    //console.log(jsonEmployee);
+                  
                     return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
                 })
                 .catch(err => {

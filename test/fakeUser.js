@@ -7,13 +7,13 @@ const { JWT_SECRET, JWT_EXPIRY } = require('../app/config');
 
 const {
     User,
-    ACCESS_NO,
-    ACCESS_OVERVIEW_ONLY,
+    ACCESS_BASIC,
+    ACCESS_OVERVIEW,
     ACCESS_PUBLIC,
     ACCESS_ADMIN
 } = require('../app/user/user.model');
 
-const accessLevel = [ACCESS_NO, ACCESS_OVERVIEW_ONLY, ACCESS_PUBLIC, ACCESS_ADMIN];
+const accessLevel = [ACCESS_BASIC, ACCESS_OVERVIEW, ACCESS_PUBLIC, ACCESS_ADMIN];
 
 function generateTestUser(userAccessLevel = ACCESS_ADMIN) {
     return {

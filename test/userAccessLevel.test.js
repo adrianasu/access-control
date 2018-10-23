@@ -69,9 +69,9 @@ describe('Users API resource edge cases tests', function () {
     });
 
     beforeEach(function () {
-        // set access level high enough to GET one user or UPDATE name and 
-        // email but low enough to fail when trying to UPDATE accessLevel,
-        // DELETE an user or GET all users.
+        // set access level high enough to GET users list 
+        // but low enough to fail when trying to UPDATE accessLevel or
+        // DELETE an user.
         let accessLevel = User.ACCESS_PUBLIC;
         testUser = generateTestUser(accessLevel);
         return generateToken(testUser)
@@ -88,12 +88,12 @@ describe('Users API resource edge cases tests', function () {
         return closeServer();
     });
 
-    it('Should not return all users', function () {
+    it('Should return all users', function () {
         return chai.request(app)
             .get('/api/user')
             .set("Authorization", `Bearer ${jwToken}`)
             .then(function (res) {
-            expect(res).to.have.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);                
+            expect(res).to.have.status(HTTP_STATUS_CODES.OK);                
             });
     });
 
@@ -151,7 +151,7 @@ describe('Users API resource edge cases tests', function () {
                     .set("Authorization", `Bearer ${jwToken}`)
             })
             .then(function (res) {
-                expect(res).to.have.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+                expect(res).to.have.status(403);
             })
             .catch(function (err) {
                 console.log(err);

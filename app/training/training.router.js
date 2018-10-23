@@ -70,7 +70,7 @@ trainingRouter.post('/',
         title: req.body.title,
         expirationTime: req.body.expirationTime
     }
-   console.log(req.body);
+
     // validate newTraining data using Joi schema
     const validation = Joi.validate(newTraining, TrainingJoiSchema);
     if (validation.error) {
@@ -145,7 +145,7 @@ trainingRouter.put('/:trainingId', jwtPassportMiddleware,
             // $set operator replaces the value of a field with the specified value
             .findOneAndUpdate({_id: req.params.trainingId}, {$set: toUpdate}, {new: true})
             .then(updatedTraining => {
-                console.log(updatedTraining);
+             
                 console.log(`Updating training with id: \`${req.params.trainingId}\``);
                 return res.status(HTTP_STATUS_CODES.OK).json(updatedTraining);
             })
