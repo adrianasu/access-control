@@ -44,7 +44,7 @@ header::after {
 }
 
 .site-nav button {
-    border-bottom: 1px solid #f9f9f9;
+
     width: 11em;
     background-color: #262525;
     color: #f9f9f9;
@@ -124,13 +124,18 @@ header::after {
         border: none;
     }
 
+
     .site-nav button {
         padding: 0;
+        padding-top: 1.5em;
         margin-left: 3em;
+      
+        background-color: black;
      }
 
     .site-nav button:hover,
     .site-nav button:focus {
+        border-bottom: 1px solid #f9f9f9;
         background: transparent;
     }
 
