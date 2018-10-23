@@ -105,6 +105,7 @@ userRouter.get('/:userId', jwtPassportMiddleware,
 userRouter.put('/:userId', jwtPassportMiddleware,
     User.hasAccess(User.ACCESS_OVERVIEW), 
     (req, res) => {
+      
     // check that id in request body matches id in request path
     if (req.params.userId !== req.body.id) {
         const message = `Request path id ${req.params.userId} and request body id ${req.body.id} must match`;
@@ -141,7 +142,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
         // than or equal to the new value
         if (user.accessLevel > req.user.accessLevel 
             || req.user.accessLevel < req.body.accessLevel){
-                const message = `Unauthorized to change access level`;
+                const message = `Unauthorized to change that information`;
                 return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
                     err: message
                 });
@@ -149,18 +150,15 @@ userRouter.put('/:userId', jwtPassportMiddleware,
         // users with accessLevel equal to Overview or Public are 
         // allowed to update their own name and email only.
         if (req.user.accessLevel <= User.ACCESS_PUBLIC 
-            && req.user.id !== req.params.userId
-            && (req.body.name !== user.name || req.body.email !== user.email)) {
-                    const message = `Unauthorized to change that information`;
+            && (req.user.name !== user.name || req.user.email !== user.email)) {
+                    const message = `Unauthorized. You're only allowed to edit your name and/or email.`;
                     return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
                         err: message
                     });
         }
 
-       })
-       .catch(err => {
-           console.error(err);
-       })
+       
+    
 
     
     const validation = Joi.validate(toUpdate, User.UpdateUserJoiSchema);
@@ -182,9 +180,10 @@ userRouter.put('/:userId', jwtPassportMiddleware,
             console.log(`Updating user with id: \`${req.params.userId}\``);
             return res.status(HTTP_STATUS_CODES.OK).json(updatedUser.serialize());
         })
-        .catch(err => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
-        });
+    })
+    .catch(err => {
+        return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
+    });
 });
 
 

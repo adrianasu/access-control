@@ -4,84 +4,306 @@
 }
 
 body {
-    /* background: #f0ebdf; */
-    background:#EBEBD3;
-   
-    color: #343434;
-    font-family: 'Poppins', sans-serif;
+    color: black;
+    background-image: url("https://www.traka.com/presets/small/Other/trakacom/Images/Article4.jpg");
+    background-position: center;
+    background-repeat: repeat;
+    background-size: cover;
+    font-family: 'Rubik', sans-serif;
+    overflow: auto;
 }
 
 header {
-    font-family: 'Quicksand', sans-serif;
+    min-width: 320px;
+    /* font-family: 'Quicksand', sans-serif; */
+    /* font-family: 'Prosto One', cursive; */
+    /* font-family: 'Viga', sans-serif; */
+    font-family: 'Krona One', sans-serif;
+    background-color:black;
+
 }
 
-.form, .box {
-    max-width: 20em;
+main {
+    max-width: 700px;
+    margin: auto;
+}
+
+h1 {
+    text-transform: capitalize;
+    margin: 0;
+    font-size: 1.5em;
+        font-family: 'Poppins', sans-serif;
+}
+
+.intro, footer, form {
     min-width: 150px;
+    width: 80%;
   
+    background-color: white;
+    opacity: .9;
+    border-radius: 2px;
+    
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.form, .box {
-    margin: 2em auto;
+.search-form {  
+    margin-top: 5em;
+    padding: .8em 1em;
+    text-align: center;
+}
+.search-form label {
+    text-align: left;
+    margin-left: .9em;
 }
 
-input {
+
+.welcome-form {
+    margin-top: 1em;
+}
+
+.intro {
+    padding: .5em 1em;
+    margin-top: 5em;
+    position: relative;
+}
+
+footer {
+    position: fixed;
+    bottom: 5%;
+    left: 10%;
+    text-align: center;
+    padding: 0 .6em;
+}
+
+form label {
+    color: black;
+    font-size: 1.1em;
+    display: block;
+    font-weight: bold;
+}
+
+
+form input {
     border: none;
-  
     padding: 0.45em 0.2em;
-    margin: .4em auto;
+    width: 45%;
+    color: black;
+    border-bottom: 2px solid black;
     transition: border-bottom 0.15s linear 0.25s;
 }
 
 input:hover, input:focus {
-    border-bottom: 1px solid #343434;
+    border-bottom: 4px solid black;
     outline: none;
 }
 
-label {
-    font-size: 1.2em;
-    margin-left: 2em;
+#name, #email, #employerName {
+    width: 90%;
 }
 
-.form a {
+#employerName {
+    margin-bottom: 2em;
+}
+
+form a {
     display: block;
     text-align: center;
+    margin-top: 1.5em;
 }
+
+legend {
+    text-align: right;
+    font-size: 2em;
+}
+
+.signup-form, .login-form {
+    
+    font-size: 1.2em;
+    padding: 1em;
+}
+
+.signup-form {
+    margin-top: 5.5em;
+}
+
+.login-form {
+    margin-top: 6em;
+}
+
+.create-form {
+    margin-top: 5em;
+    padding-bottom: 1em;
+    border: 2px solid black;
+}
+
+.employee-form legend {
+    text-align: left;
+    font-size: 1.2em;
+}
+
+.employee-form label {
+    display: inline-block;
+}
+
+.employee-form input {
+    width: 35%;
+}
+
+#vehicle {
+    width: 15%;
+}
+
+.employee-form button {
+    margin-top: 2em;
+}
+
+.employee-form .update-btn {
+    float: left;
+    margin-left: 20%;
+}
+
+.employee-form .cancel-btn {
+    float: right;
+    margin-right: 20%;
+}
+
+.update-form {
+    margin-top: 5em;
+    padding: 7%;
+}
+
+.signup-form button,
+.login-form button {
+    margin-left: auto;
+    display: block;
+    margin-top: 1.5em;
+
+}
+
+.buttons {
+    margin-top: 2em;
+}
+
+.buttons button {
+    padding: .7em;
+    margin: 1em;
+}
+ 
+fieldset {
+    border: 0;
+}
+
 
 button {
-    background-color: #27253d;
     border: none;
-    color: #EBEBD3;
     cursor: pointer;
-
-    margin: 2em 1em;
-    padding: 1em;
     text-align: center;
     text-decoration: none;
-    transition: border 0.1s linear 0.2s;
 }
 
-button:hover, button:focus {
+form button{
+    transition: border 0.1s linear 0.2s, border-radius 0.1s linear 0.2s;
+}
+
+form button {
+    background-color: black;
+    color: white;
+    margin-left: 1.4em;
+    padding: 1em;
+    border-radius: 4px;
+}
+
+form button:hover, form button:focus {
     border: 3px solid white;
+    border-radius: 10px;
     outline: none;
+  
+}
+
+
+.below {
+      margin: 4em auto;
+}
+
+.results .delete-btn,
+.results .goto-edit,
+.info-window .confirm-btn,
+.info-window .close-btn {
+    margin-top: 1.5em;
+    padding: .4em .6em;
+    background: white;
+    border-radius: 3px;
+}
+
+.results .delete-btn,
+.info-window .confirm-btn {
+    float: right;
+    margin-right: 15%;
+
+}
+
+.results .goto-edit,
+.info-window .close-btn {
+    float: left;
+    margin-left: 15%;
+    overflow: auto;
+}
+
+.list {
+    /* margin: 5em .5em; */
+    margin: 5em auto;
+}
+
+.list {
+    width: 90%;
+}
+
+.list .goto-edit,
+.list .delete-btn {
+    background-color: white;
+    border-radius: 3px;
+    padding: .3em;
+}
+
+.list h1 {
+    text-shadow: 2px 3px black;
+    color: white;
+    display: inline-block;
+    font-size: 1.9em;
+    margin: .5em;
+}
+
+.blackBack {
+    background-color: black;
     color: white;
 }
-table {
-    margin: auto;
+
+.onTop {
+    position: fixed;
+    top: 15%;
+    right: 15%;
+}
+
+.whiteBack {
+    background-color: white;
+    color: black;
+}
+
+.goto-create {
+    float: right;
+    margin: .5em;
+    background-color: white;
+    padding: .5em;
+    border-radius: 2px;
     
 }
 
-.results {
-    display: inline-block;
-    margin: auto;
-}
-.green {
-    border: 2px solid green;
-}
 
-.red {
-    border: 2px solid #00fff0;
-}
+
+
+
+
 .grid-container {
     display: grid;
     grid-gap: 1em;
@@ -93,55 +315,121 @@ table {
 .grid-item {
     padding: .2em;
     text-align: center;
-    border-radius: 10px;
-    background-color: white;
+    border-radius: 4px;
+    background-color:black;
+    color: #FFF8D8;
+    transition: border-radius .2ms ease-in-out,
+    background-color .2ms ease-in-out,
+    color .2ms ease-in-out;
 }
 
+.grid-item:focus, 
+.grid-item:hover {
+    transform: scaleY(1);
+    border-radius: 10px;
+    background-color: #FFF8D8;
+    color: black;
+}
+
+
+.grid-item ul {
+   margin: 0;
+}
 
 .grid-item li {
-    display: block;
-    text-decoration: none;
-
+    text-align: left;
 }
 
-h1 {
-    text-transform: capitalize;
+/* .info-window {
+  background-color: black;
+  color: #f7f7f7;
+} */
+
+.results {
+  background-color: black;
+  color: #f7f7f7;
 }
 
-img {
-    width: 15%;
+td {
+    width: 100%;
+    border-bottom: 1px solid white;
+    padding: .24em;
+}
+table {
+    margin-top: 1em;
 }
 
-.info-window {
+table tr:last-child {
+    border-bottom: none;
+} 
+
+.info-window, .results{
     position: fixed;
     z-index: 1;
-    left: 1em;
-    top: 1em;
-    width: 60%;
-    height: 70%;
+    left: 5%;
+    top: 9em;   /*employeeId result after list */
+    width: 90%;
+    font-family: 'Rubik',sans-serif;
+    max-height: 100%;
+    padding: 2em 1.5em 1em;
     overflow: auto;
+    font-size: 1.1em;
     opacity: 0;
+    border-radius: 3px;
     visibility: hidden;
-    background-color: #eae3e3;
-    color: black;
+    border: 3px solid black;
     transform: scale(1.1);
-    transition: visibility 0.15s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+    transition: visibility 0.3s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
 }
 
-.show-info-window {
+.show-info-window, .results {
     opacity: 1;
     visibility: visible;
     transform: scale(1.0);
-    transition: visibility 0.15s linear 0s, opacity 0.25s 0s, transform 0.25s;
+    transition: visibility 0.3s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
 }
 
-.close {
-    color: darkslategray;
+
+.results {
+    padding: 2em 1.5em;
+    top: 5em;
+    background-color: black;
+    color: #f7f7f7;
+    /* display: inline-block; */
+}
+
+.info-window h1,
+.info-window p {
+    text-align: left;
+}
+
+.red {
+    box-shadow: 6px 8px #E81D2E;
+}
+
+.warn {
+    border: 2px solid #E81D2E;
+    background-color: #E81D2E;
+    text-align: center;
+}
+
+.enter {
+    border: 2px solid #12BF28;
+    background-color: #12BF28;
+    text-align: center;
+}
+
+.close, .clear {
     float: right;
     font-size: 1.2em;
     text-decoration: none;
     cursor: pointer;
     border: none;
+}
+
+.clear {
+    color: white;
+    background: black; 
 }
 
 .close:hover,
@@ -184,28 +472,23 @@ img {
 .tooltip {
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black;
-    /* If you want dots under the hoverable text */
+  
 }
 
-/* Tooltip text */
 .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    font-family: 'Quicksand', sans-serif;
-
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1;
+        visibility: hidden;
+        width: 200px;
+        background-color: white;
+        color: black;
+        text-align: center;
+        padding: .5em;
+        border: 1px solid black;
+        border-radius: 4px;
+        position: absolute;
+        left: -80%;
+        z-index: 1;
 }
 
-/* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
     visibility: visible;
 }

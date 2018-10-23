@@ -120,12 +120,12 @@ function handleSearchEmployee(event) {
     
     // get id from search input
     let employeeId = $('#employeeId').val();
-    console.log(employeeId);
     // get id from thumbnails
     if(!employeeId) {
         employeeId = $(this).attr('data-value');
     } else {
         $('.js-results, .js-intro').hide();
+        $('.js-search-form').removeClass('welcome-form');
     }
 
     let userLevel = getUserLevel();
@@ -161,9 +161,7 @@ function handlePrepareDelete(event) {
     console.log(name);
     const id = $(this).attr("data-id");
     const origin = $(this).attr("data-origin");
-    if (origin === "thumbnail"){
-    toggleInfoWindow();
-    }
+   
     doConfirm(name, "delete", {name, id, origin});
     toggleInfoWindow();
 }
@@ -206,9 +204,7 @@ function handlePrepareUpdateForm(event) {
     const dataName = $(this).attr('data-name');
     updateAuthenticatedUI();
     const jwToken = STATE.authUser.jwToken;
-    if (origin === "thumbnail") {
-        toggleInfoWindow();
-    }
+ 
 
     if (dataName === "employee") {
         let data = getDataFromCache();
@@ -230,39 +226,6 @@ function handlePrepareUpdateForm(event) {
     }
 }
 
-function compareData(updatedData) {
-    let updated = {};
-    let previousData = getDataFromCache();
-    Object.keys(updatedData).forEach(item => {
-        // let deps = [];
-        // if (item === "departments" && item.length > 0) {
-        //     for(let i= 0; i < item.length; i++){
-             
-        //         previousData.departments.forEach(dep2 => {
-        //        console.log(item, dep2);
-        //             if (item[i] !== dep2) {
-        //                 deps.push(dep2);
-        //             }
-        //         })
-        //     }
-            
-        //     if (deps.length > 0) {
-        //         updated[item] = updatedData[item];
-        //     }
-        // } else if (item === "departments"  && item.length === 0) {
-        //     if (previousData.departments.length > 0) {
-        //         updated[item] = [];
-        //     }
-        // }
-        
-        if(updatedData[item] !== previousData[item]) {
-            updated[item] = updatedData[item];
-        }
-    })
-    console.log(updated);
-    return updated;
-}
-
 function handleUpdate(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -274,14 +237,7 @@ function handleUpdate(event) {
     
     updateAuthenticatedUI();
     let jwToken = getAuthenticatedUserFromCache().jwToken; 
-    let formData = screens[endpoint].getDataFrom(event);
-    let updatedData = compareData(formData);
-
-    if(jQuery.isEmptyObject(updatedData)) {
-        doConfirm(endpoint, "unchanged");
-        toggleInfoWindow();
-        return updatedData;
-    }
+    let updatedData = screens[endpoint].getDataFrom(event);
 
     if (endpoint === "employee") {
         updatedData.employeeId = id;
@@ -295,6 +251,10 @@ function handleUpdate(event) {
     .then(data=> {
         if (endpoint === "employee") {
             saveDataIntoCache(data);
+        } else if (endpoint === "user") {
+            // save updated user's info into cache
+            data.jwToken = getAuthenticatedUserFromCache().jwToken;
+            saveAuthenticatedUserIntoCache(data);
         }
         doConfirm(endpoint, 'updated', data);
         toggleInfoWindow();
@@ -347,16 +307,29 @@ function toggleInfoWindow(event) {
 }
     
 function watchHamburguer() {
-    $('.menu-toggle').click(function (e) {
-    event.preventDefault();
-    $('.site-nav').toggleClass('site-nav--open', 500);
-    $(this).toggleClass('open');
-})
+
+     $('.menu-toggle').on('click', function (event) {
+         event.preventDefault();
+        $('.js-site-nav').toggleClass('site-nav--open', 500);
+        $(this).toggleClass('open');
+     })
+
+    // $('main').on('click', function (event) {
+    //     event.preventDefault();
+    //     event.stopImmediatePropagation();
+    //     let _opened = $('.js-site-nav').hasClass('site-nav--open');
+    //     if (_opened === true) {
+    //         $('.js-site-nav').toggleClass('site-nav--open');
+    //         $('.menu-toggle').toggleClass('open');
+    //     }
+    // });
+
+
 }
 
 function watchButtons() {
-    $('.js-nav-bar').on('click', '.js-logout', handleLogOut);
-    $('.js-nav-bar').on('click', 'li button', handleSearchBar);
+    // $('.js-site-nav').on('click', '.js-logout', handleLogOut);
+    $('.js-site-nav').on('click', 'li button', handleSearchBar);
     $('.js-form').on('submit', 'form', e => e.preventDefault());
     $('.js-form').on('submit', '.js-login-form', handleLogIn);
     $('.js-form').on('click', '.js-signup-link', handleSignUpForm);
@@ -369,14 +342,16 @@ function watchButtons() {
     $('.js-form').on('click', '.js-update-btn', handleUpdate);
     $('.js-results').on('click', '.js-goto-edit', handlePrepareUpdateForm);
     $('.js-results').on('click', '.js-delete-btn', handlePrepareDelete);
-    $('.js-results').on('click', '.js-clear-btn', handleClear);
     $('.js-results').on('click', '.js-goto-create', handlePrepareCreate);
     $('.js-results').on('click', '.js-thumbnail', handleSearchEmployee);
-    $('.js-info-window').on('click', '.js-goto-edit', handlePrepareUpdateForm);
+    $('.js-results').on('click', '.js-clear', handleClear);
+    //$('.js-info-window').on('click', '.js-goto-edit', handlePrepareUpdateForm);
     $('.js-info-window').on('click', '.js-delete-btn', handlePrepareDelete);
     $('.js-info-window').on('click', '.js-confirm-btn', handleDelete);
     $('.js-info-window').on('click', '.js-close', toggleInfoWindow);
     $('.js-footer').on('click', '.js-user-list', handleAdminLink);
+    $('.js-footer').on('click', '.js-signup-link', handleSignUpForm);
+
     $('.js-form').tooltip();
 }
 

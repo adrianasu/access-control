@@ -7,7 +7,7 @@ const ACCESS_OVERVIEW = 10;
 const ACCESS_PUBLIC = 20
 const ACCESS_ADMIN = 30;
 
-const levels = { ACCESS_BASIC, ACCESS_PUBLIC, ACCESS_OVERVIEW, ACCESS_ADMIN };
+const levels = { ACCESS_BASIC, ACCESS_OVERVIEW, ACCESS_PUBLIC, ACCESS_ADMIN };
 
 // mongoose schema to define the structure of our 'user' documents within a collection
 const userSchema = new mongoose.Schema({

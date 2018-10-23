@@ -1,0 +1,141 @@
+header {
+    text-align: center;
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+}
+
+.container {
+    margin: 0 auto;
+}
+
+header::after {
+    content: '';
+    clear: both;
+    display: block;
+}
+
+.logo {
+    float: left;
+    margin: .6em;
+    color: white;
+    font-size: 1.5em;
+    font-family: 'Krona One', sans-serif;
+}
+.site-nav {
+    position: absolute;
+    top: 100%;
+    right: 0%;
+    background: #464655;
+    clip-path: circle(0px at top right);
+    transition: clip-path ease-in-out 500ms;
+ 
+}
+
+.site-nav--open {
+    clip-path: circle(250% at top right);
+}
+
+.site-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-nav button {
+    border-bottom: 1px solid #f9f9f9;
+    width: 11em;
+    background-color: #262525;
+    color: #f9f9f9;
+    display: block;
+    padding: 1.3em;
+    text-decoration: none;
+
+}
+
+.site-nav li:last-child {
+    border-bottom: none;
+}
+
+.site-nav button:hover,
+.site-nav button:focus {
+    background-color: #f9f9f9;
+    color: #262525;
+}
+
+
+.menu-toggle {
+    padding: 1em;
+    position: absolute;
+    top: .5em;
+    right: .5em;
+    cursor: pointer;
+}
+
+.hamburger,
+.hamburger::before,
+.hamburger::after {
+    content: '';
+    display: block;
+    background: #EBEBD3;
+    height: 3px;
+    width: 1.75em;
+    border-radius: 3px;
+    transition: all ease-in-out 500ms;
+}
+
+.hamburger::before {
+    transform: translateY(-6px);
+}
+
+.hamburger::after {
+    transform: translateY(3px);
+}
+
+.open .hamburger {
+    transform: rotate(45deg);
+}
+
+.open .hamburger::before {
+    opacity: 0;
+}
+
+.open .hamburger::after {
+    transform: translateY(-3px) rotate(-90deg);
+}
+
+@media (min-width: 700px) {
+
+    .menu-toggle {
+        display: none;
+    }
+
+    .site-nav {
+        height: auto;
+        position: relative;
+        background: transparent;
+        float: right;
+        clip-path: initial;
+    }
+
+    .site-nav li {
+        display: inline-block;
+        border: none;
+    }
+
+    .site-nav button {
+        padding: 0;
+        margin-left: 3em;
+     }
+
+    .site-nav button:hover,
+    .site-nav button:focus {
+        background: transparent;
+    }
+
+    .site-nav--icon {
+        display: none;
+    }
+
+}

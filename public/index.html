@@ -9,38 +9,44 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.css" rel="stylesheet">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz"
-    crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Quicksand|Rubik|Poppins" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="nav-bar.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz"crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand|Rubik|Poppins|Krona+One|Prosto+One|Viga" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="newnav.css">
     <link rel="stylesheet" type="text/css" href="main.css">
     <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
         crossorigin="anonymous"></script>
     <!-- <link rel="icon" href="http://example.com/favicon.png"> -->
-    <title class="js-title">Ready2Work</title>
+    <title>Ready2Work</title>
 </head>
 <body>
-
     <header role="banner">
-        <h1>Ready2Work</h1>
-        <div class="container js-nav-bar nav-bar">
-            
+    <div class="container">
+        <h1 class="logo">Ready2Work</h1>
+            <nav class="site-nav js-site-nav">
+            </nav>
+
+        <div class="menu-toggle">
+            <div class="hamburger"></div>
         </div>
-    </header>
-    <section class="js-intro intro" hidden></section>
-    <section class="js-form form"></section>
-    <section class="js-results results" aria-live="assertive"></section>
-    <section class="js-message box" hidden></section>
-
-    <div clas="js-loader loader" hidden>
-        <span class="invisible-text" role="alert" aria-busy="true">Loading</span>
     </div>
+    </header> 
+  
+    <main>
+        <section class="js-intro intro" hidden></section>
+        <section class="js-form"></section>
+        <section class="js-results" aria-live="assertive"></section>
 
-    <div class="info-window js-info-window" role="dialog" aria-modal="true"></div>
-    <footer class="js-footer"></footer>
-    
+        <section class="js-message box" hidden></section>
+
+        <div clas="js-loader loader" hidden>
+            <span class="invisible-text" role="alert" aria-busy="true">Loading</span>
+        </div>
+
+        <div class="info-window js-info-window onTop whiteBack" role="dialog" aria-modal="true"></div>
+        <footer class="js-footer"></footer>
+    </main>
     <script type="text/javascript" src="./utilities/cache.module.js"></script>
     <script type="text/javascript" src="./utilities/http.employee.module.js"></script>
     <script type="text/javascript" src="./utilities/http.user.module.js"></script>
@@ -48,7 +54,6 @@
     <script type="text/javascript" src="./render/render.create.module.js"></script>
     <script type="text/javascript" src="./render/render.form.module.js"></script>
     <script type="text/javascript" src="./render/render.search.module.js"></script>
-    <!-- <script type="text/javascript" src="./utilities/history.module.js"></script> -->
     <script type="text/javascript" src="index.js"></script>
 
 </body>

@@ -78,6 +78,18 @@ trainingRouter.post('/',
             err: validation.error.details[0].message
         });
     }
+    // check if training already exists
+
+    return Training
+        .findOne({
+            title: req.body.title
+        })
+        .then(training => {
+                if (training) {
+                    return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                        err: `A training ${req.body.title} already exists.`
+                    });
+                }
     // attempt to create a new Training
      return Training
         .create(newTraining)
@@ -88,7 +100,8 @@ trainingRouter.post('/',
         .catch(err => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
-});
+    });
+})
 
 
 // update training's by id

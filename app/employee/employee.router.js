@@ -189,7 +189,7 @@ User.hasAccess(User.ACCESS_PUBLIC),
             return Employee
                 .findOne({employeeId: req.params.employeeId})
                 .then(employee => {
-                    console.log(employee);
+                
                     console.log(`Getting new employee with id: ${req.params.employeeId}`);
                     return employee.serialize(validateEmployeeTrainings(employee, trainings));
                 })
@@ -260,7 +260,6 @@ employeeRouter.get('/kiosk/:employeeId',
                         return employee.serializeKioskOverview(validateEmployeeTrainings(employee, trainings));
                     })
                     .then(jsonEmployee => {
-
                         return res.status(HTTP_STATUS_CODES.OK).json(jsonEmployee);
                     })
                     .catch(err => {
@@ -320,6 +319,7 @@ User.hasAccess(User.ACCESS_PUBLIC),
         });
     } 
 
+    
     return Employee
     // $set operator replaces the value of a field with the specified value
         .findOneAndUpdate({employeeId: req.params.employeeId}, { $set: toUpdate }, { new: true })
@@ -330,7 +330,8 @@ User.hasAccess(User.ACCESS_PUBLIC),
         .catch(err => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
-});
+    });
+
 
 // delete employee by id
 employeeRouter.delete('/:employeeId', 

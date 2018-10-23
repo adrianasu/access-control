@@ -83,6 +83,19 @@ employerRouter.post('/',
             err: validation.error.details[0].message
         });
     }
+
+    // check if employer already exists
+
+    return Employer
+        .findOne({
+            employerName: req.body.employerName
+        })
+        .then(employer => {
+                if (employer) {
+                    return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                        err: `An employer ${req.body.employerName} already exists.`
+                    });
+                }
             // attempt to create a new employer
             return Employer
             .create(newEmployer)
@@ -94,6 +107,7 @@ employerRouter.post('/',
             .catch(err => {
                 return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
             });
+        })
 });
 
 // update employer by id 

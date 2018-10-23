@@ -76,6 +76,17 @@ departmentRouter.post('/',
             err: validation.error.details[0].message
         });
     }
+    // check if department already exists
+    return Department
+        .findOne({
+            departmentName: req.body.departmentName
+        })
+        .then(department => {
+                if (department) {
+                    return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({
+                        err: `A department ${req.body.departmentName} already exists.`
+                    });
+                }
     // attempt to create a new department
      return Department
         .create(newDepartment)
@@ -86,6 +97,7 @@ departmentRouter.post('/',
         .catch(err => {
             return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(err);
         });
+    })
 });
 
 

@@ -111,7 +111,7 @@ function getUserLevel() {
 }
 
 function clearScreen() {
-    $('.js-results, .js-intro, .js-form, .js-loader, .js-message, .js-nav-bar, .js-footer').hide();
+    $('.js-results, .js-intro, .js-form, .js-loader, .js-message, .js-site-nav, .js-footer').hide();
 
 }
 
@@ -134,10 +134,6 @@ function generateOptions(menu, output) {
     $('.js-form').html(optionsString.join("")).show();
 }
 
-function renderCreateMenu() {
-    generateOptions("create", "Form");
-    renderSearchBar();
-}
 //yes
 function renderSearchBar() {
     const options = {
@@ -151,23 +147,22 @@ function renderSearchBar() {
     let userLevel = getUserLevel(); // returns a string
    
     let navBarString = [];
-    navBarString.push(`<nav class="site-nav"><ul>`);
+    navBarString.push(`<ul>`);
     
     options[userLevel].forEach(option => {
         navBarString.push(`<li><button role="button" type="button" class="js-list">
         ${option}</button></li>`);
     })
 
-    navBarString.push(`</ul></nav><div class="menu-toggle">
-    <div class="hamburguer"></div></div>`);
+    navBarString.push(`</ul>`);
     
-    return $('.js-nav-bar').html(navBarString).show();
+    return $('.js-site-nav').html(navBarString.join("")).show();
 }
 
 
 ///yes
 function generateSearchForm() {
-    return `<form class="js-search-form"><label for="employeeId" title="Enter an employee ID to verify if that person
+    return `<form class="js-search-form search-form"><label for="employeeId" title="Enter an employee ID to verify if that person
         complies with the requirements to access the work premises.">Employee Id</label>
     <input type="text" name="employeeId" id="employeeId" autofocus>
     <button role="button" type="submit">Search</button></form>`;
@@ -179,18 +174,23 @@ function generateSearchMenu() {
     return  searchString;
 }
 
-function renderFooter() {
-    $('.js-footer').html(`<p>To enable
-    features to create, update or get more detailed information, please
-    contact <a href="" class="js-user-list"> an admin </a>or your supervisor.</p>`).show();
+function renderFooter(accessLevel) {
+    if(accessLevel) {
+        $('.js-footer').html(`<p>Please, talk to an <a href="" class="js-user-list"> admin </a> 
+        if you'd like to increase your permissions.</p>`).show();
+    }
+    else {
+    $('.js-footer').html(`<p>Please, <a href="" class="js-signup-link">sign up </a> to enable more options.</p>`).show();
+    }
 }
 
 //yes
 function renderSearchMenu() {
-     updateAuthenticatedUI();
-     let accessLevel = STATE.authUser.accessLevel;
+    updateAuthenticatedUI();
+    let accessLevel = STATE.authUser.accessLevel;
     $('.js-form').html(generateSearchMenu(accessLevel)).show();
-    renderFooter();
+    $('.js-search-form').removeClass('welcome-form');
+    renderFooter(accessLevel);
     renderSearchBar();
 }
 
@@ -209,34 +209,35 @@ function checkForMissingRequirements(employee) {
 function generateMissingRequirementsString(employee) {
     let missingRequirements = checkForMissingRequirements(employee);
     if (missingRequirements.length > 0) {
-        $('.box').addClass('red').removeClass('green');
+        // $('.box').addClass('red').removeClass('green');
         let message = [];
-        message.push(`<p>Do Not Enter</p><p>Training required:</p><ul>`);
+        message.push(`<h2 class="warn">Do Not Enter  <i class="fas fa-hand-paper"></i></h2><p>Training required:</p><ul>`);
         missingRequirements.forEach(requirement => {
             message.push(`<li>${requirement}</li>`);
         })
          message.push(`</ul>`);
          return message.join("");
     } else {
-        $('.box').addClass('green').removeClass('red');
-        return [];
+        // $('.box').addClass('green').removeClass('red');
+        message.push(`<h2 class="enter">Please Enter  <i class="fas fa-check-circle"></i></h2>`);
+        return message.join("");
     }
 }
 
 
 function generateResultsStrings(employee, userLevel) {
     let resultString = [];
-    resultString.push(`
-    <button type="button" role="button" class="js-clear-btn"><i class="far fa-times-circle"></i></button>
-    <table aria-live="assertive">
-    <tr><td>Employee ID</td><td>${employee.employeeId}</td></tr>
-    <tr><th>${employee.firstName} ${employee.lastName}</th></tr>`);
+    resultString.push(`<button role="button" type="button" class="clear js-clear"
+    aria-label="Close" aria-pressed="false"><i class="far fa-times-circle">
+    </i></button>
+    <h1>${employee.firstName} ${employee.lastName}</h1>
+    <p>Employee ID: ${employee.employeeId}</p><table aria-live="assertive">`);
     if (userLevel === "overview") {
         let vehicle = (employee.allowVehicle) ? "Yes" : "No";
-        resultString.push(`<tr><td>Employer</td><td>${employee.employer.employerName}</td></tr>
-        <tr><td>Department</td><td>${employee.department.departmentName}</td></tr>
-        <tr><td>Allow Vehicle</td><td>${vehicle}</td></tr>
-        <tr><td>License Plates</td><td>${employee.licensePlates}</td></tr>`);
+        resultString.push(`<tr><td>Employer: </td><td>${employee.employer.employerName}</td></tr>
+        <tr><td>Department: </td><td>${employee.department.departmentName}</td></tr>
+        <tr><td>Allow Vehicle: </td><td>${vehicle}</td></tr>
+        <tr><td>License Plates: </td><td>${employee.licensePlates}</td></tr>`);
     }
     resultString.push(`</table>`);
     resultString.push(generateMissingRequirementsString(employee));
@@ -247,27 +248,27 @@ function generateResultsStrings(employee, userLevel) {
 function generateResultsByIdStrings(employee) {
     let vehicle = (employee.allowVehicle) ? "Yes" : "No";
     let result = [];
-    result.push(`<button role="button" type="button" class="close js-close"
+    result.push(`<button role="button" type="button" class="clear js-clear"
     aria-label="Close" aria-pressed="false"><i class="far fa-times-circle">
     </i></button>
     <div class="box" aria-live="assertive" hidden></div>
     <table aria-live="assertive">
-    <tr colspan="2"><th>${employee.firstName} ${employee.lastName}</th></tr>
-    <tr><td>Employee ID</td><td>${employee.employeeId}</td></tr>
-    <tr><td>Employer</td><td>${employee.employer.employerName}</td></tr>
-    <tr><td>Department</td><td>${employee.department.departmentName}</td></tr>
-    <tr><td>Allow Vehicle</td><td>${vehicle}</td></tr>
-    <tr><td>License Plates</td><td>${employee.licensePlates}</td></tr>
-    <tr colspan="2"><td>Trainings</td></tr>`);
+    <tr><td>${employee.firstName}</td><td>${employee.lastName}</td></tr>
+    <tr><td>Employee ID: </td><td>${employee.employeeId}</td></tr>
+    <tr><td>Employer: </td><td>${employee.employer.employerName}</td></tr>
+    <tr><td>Department: </td><td>${employee.department.departmentName}</td></tr>
+    <tr><td>Allow Vehicle: </td><td>${vehicle}</td></tr>
+    <tr><td>License Plates: </td><td>${employee.licensePlates}</td></tr>
+    <tr colspan="2"><td>Trainings: </td></tr>`);
     for(let x=0; x < employee.trainings.length; x++) {
         let trainDate = new Date(employee.trainings[x].trainingDate).toLocaleDateString("en-US")
         result.push(`<tr><td>${employee.trainings[x].trainingInfo.title}</td>
             <td>${trainDate}</td></tr>`);
     }
     result.push(`</table>
-    <button type="button" role="button" class="js-goto-edit" 
+    <button type="button" role="button" class="js-goto-edit goto-edit" 
     data-id="${employee.employeeId}" data-name="employee" data-origin="thumbnail">Edit</button>
-    <button type="button" role="button" class="js-delete-btn" 
+    <button type="button" role="button" class="js-delete-btn delete-btn" 
     data-id="${employee.employeeId}" data-name="employee" data-origin="thumbnail"><i class="fas fa-trash-alt"></i></button>`);
     return result.join("");
 }
@@ -285,10 +286,13 @@ function renderEmployeeOverview(employee, userLevel) {
     clearScreen();
     // render search form at the top to keep searching
     $('.js-form').html(generateSearchForm()).show();
+    $('.js-search-form').removeClass('welcome-form');
     // render results
     if (employee) {
         let employeeC = convertNullToString(employee);
-        $('.js-results').html(generateResultsStrings(employeeC, userLevel)).show();  
+        $('.js-results').html(generateResultsStrings(employeeC, userLevel))
+                        .addClass('results').removeClass('list').show();  
+    
     } 
     renderSearchBar();
     return employee;
@@ -296,8 +300,8 @@ function renderEmployeeOverview(employee, userLevel) {
 //yes
 function renderEmployeeById(employee) {
     let employeeC = convertNullToString(employee); 
-    $('.js-info-window').html(generateResultsByIdStrings(employeeC));
-    toggleInfoWindow();
+    $('.js-results').html(generateResultsByIdStrings(employeeC))
+                     .addClass('results').removeClass('list').show();
     return employee;
 }
 
@@ -324,13 +328,14 @@ function generateHeader(dataName, options) {
             let columns = 2 * options.trainings.length;
             table.push(`<th colspan = "${columns}">${item}</th>`);
         } else if (item === "Departments") {
-            let columns = calculateMaxNumber(options.employers, "departments");
-            table.push(`<th colspan = "${columns}">${item}</th>`);
+            // let columns = calculateMaxNumber(options.employers, "departments");
+            // table.push(`<th colspan = "${columns}">${item}</th>`);
         } else if (item === "Access Level") {
             table.push(`<th class="tooltip">${item}<i class="fas fa-question-circle">
-            <span class="tooltiptext"><ul><li>Admin: creates, updates, reads and deletes</li>
-            <li>Public: creates employees, updates, reads complete info</li>
-            <li>Overview: reads employees' overview</li></ul></span></i></th>`);
+            <span class="tooltiptext"><p>OVERVIEW: read employees' overview.</p>
+            <p>PUBLIC: read complete info, create employees, edit.</p>
+            <p>ADMIN: read, create, edit and delete.</p>
+            </span></i></th>`);
         }
         else {
             table.push(`<th>${item}</th>`);
@@ -355,9 +360,9 @@ function generateTrainingStrings(trainings) {
 function generateRows(data, dataName) {
     let table = [];
     let maxNumOfDepInOneEmployer;
-    if (dataName === "employer") {
-        maxNumOfDepInOneEmployer = calculateMaxNumber(data, "departments");
-    }    
+    // if (dataName === "employer") {
+    //     maxNumOfDepInOneEmployer = calculateMaxNumber(data, "departments");
+    // }    
     data.forEach(item => {
         table.push('<tr>');
         Object.keys(item).forEach(key => {
@@ -376,14 +381,14 @@ function generateRows(data, dataName) {
             } else if (key === "department") {
                 table.push(`<td>${item[key].departmentName}</td>`);
             } else if (key === "departments") {
-                for (let x = 0; x < maxNumOfDepInOneEmployer; x++) {
-                    if (item[key][x]) {
-                        table.push(`<td>${item[key][x].departmentName}</td>`);
-                    }
-                    else {
-                        table.push(`<td></td>`);
-                    }
-                }
+                // for (let x = 0; x < maxNumOfDepInOneEmployer; x++) {
+                //     if (item[key][x]) {
+                //         table.push(`<td>${item[key][x].departmentName}</td>`);
+                //     }
+                //     else {
+                //         table.push(`<td></td>`);
+                //     }
+                // }
             } else if (key === "allowVehicle") {
                 let allow = (item[key]) ? "Yes" : "No";
                 table.push(`<td>${allow}</td>`);
@@ -410,9 +415,9 @@ function generateRows(data, dataName) {
             id = item.id;
         }
 
-        table.push(`<td><button type="button" role="button" class="js-goto-edit" 
+        table.push(`<td><button type="button" role="button" class="js-goto-edit goto-edit" 
         data-name="${dataName}" data-id="${id}" data-origin="list">Edit</button></td>
-        <td><button type="button" role="button" class="js-delete-btn" 
+        <td><button type="button" role="button" class="js-delete-btn delete-btn" 
         data-name="${dataName}" data-id="${id}" data-origin="list"><i class="fas fa-trash-alt"></i></button></td></tr>`);
     })
     return table.join("");
@@ -447,7 +452,7 @@ function generateEmployeeThumbnails(employees) {
             data-value="${employee.employeeId}"><table>
             <tr><td>ID: ${employee.employeeId}</td></tr>
             <tr><td>${employee.firstName} ${employee.lastName}</td></tr>
-            <tr><td>Missing training:<ul>`);
+            <tr><td>Missing training: <i class="fas fa-hand-paper warn"></i><ul>`);
             missingRequirements.forEach(requirement => {
                 thumbnails.push(`<li>${requirement}</li>`);
             })
@@ -469,30 +474,49 @@ function renderList(data, dataName) {
     if (dataName !== "employee" || dataName !== "user") {
         options = getOptions();
     }
-    if (data.length === 0) {
+    updateAuthenticatedUI();
+    const accessLevel = STATE.authUser.accessLevel;
+
+    if (dataName !== "employee") {
+        $('.js-results').addClass('blackBack');
+    } else {
+        $('.js-results').removeClass('blackBack');
+    }
+
+    if (data.length === 0 && accessLevel >= ACCESS.PUBLIC) {
         $('.js-results').html(`<h1>${dataName}s</h1><button role="button" 
-        type="button" class="js-goto-create" data-value="${dataName}">Create
-        <i class="fas fa-plus"></i></button><p>No ${dataName}s found.</p>`).show();
+        type="button" class="js-goto-create goto-create" data-value="${dataName}">New <i class="fas fa-plus"></i></button>
+        <p>No ${dataName}s found.</p>`)
+         .addClass('list').removeClass('results').show();
+         
         renderSearchMenu();
         return data;
     }
+    else if (data.length === 0 && accessLevel < ACCESS.PUBLIC){
+         $('.js-results').html(`<h1>${dataName}s</h1><p>No ${dataName}s found.</p>`)
+             .addClass('list').removeClass('results').show();
+
+         renderSearchMenu();
+         return data;
+    }
     let listString = [];
-    if (dataName === "user") {
+    if (dataName === "user" || accessLevel < ACCESS.PUBLIC) {
         listString.push(`<h1>${dataName}s</h1>`);
     } else {
     listString.push(`<h1>${dataName}s</h1><button role="button" 
-        type="button" class="js-goto-create" data-value="${dataName}">
-        Create<i class="fas fa-plus"></i></button>`);
+        type="button" class="js-goto-create goto-create" data-value="${dataName}">
+        New <i class="fas fa-plus"></i></button>`);
     }
     if(dataName === "employee") {
         listString.push(generateEmployeeThumbnails(data));
     } else {
         listString.push(generateHeader(dataName, options));
         listString.push(generateRows(data, dataName));
+
     }
   
     listString.join("");
-    $('.js-results').html(listString).show();
+    $('.js-results').html(listString).addClass('list').removeClass('results').show();
     return data;
 }
 
@@ -504,11 +528,11 @@ function doConfirm(dataName, action, data) {
     
 if (data && action === "delete") {
     windowString.push(`<div class="info"><p>Confirm delete.</p>
-        <button type="button" role="button" data-name="${data.name}"
+        <div class="buttons"><button type="button" role="button" data-name="${data.name}"
         data-id="${data.id}" data-origin="thumbnail" 
         class="js-confirm-btn"><i class="fas fa-trash-alt"></i>
         </button><button type="button" role="button" class="js-close">
-        Cancel</button></div>`);
+        Cancel</button></div></div>`);
         $('.js-info-window').html(windowString.join(""));
         return dataName;
 
