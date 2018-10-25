@@ -344,13 +344,6 @@ function toggleInfoWindow(event) {
     $('.js-info-window').toggleClass('show-info-window');
 }
     
-function watchHamburguer() {
-     $('.menu-toggle').on('click', function (event) {
-         event.preventDefault();
-        $('.js-site-nav').toggleClass('site-nav--open', 500);
-        $(this).toggleClass('open');
-     })
-}
 
 function watchButtons() {
     $('.js-site-nav').on('click', 'li button', handleSearchBar);
@@ -369,36 +362,41 @@ function watchButtons() {
     $('.js-list-results, .js-results').on('click', '.js-goto-create', handlePrepareCreate);
     $('.js-list-results').on('click', '.js-thumbnail', handleSearchEmployee);
     $('.js-list-results, .js-results').on('click', '.js-clear', handleClear);
-    //$('.js-info-window').on('click', '.js-goto-edit', handlePrepareUpdateForm);
     $('.js-info-window').on('click', '.js-delete-btn', handlePrepareDelete);
     $('.js-info-window').on('click', '.js-confirm-btn', handleDelete);
     $('.js-info-window').on('click', '.js-close', toggleInfoWindow);
     $('.js-footer').on('click', '.js-user-list', handleAdminLink);
     $('.js-footer').on('click', '.js-signup-link', handleSignUpForm);
- 
     $('.js-form').tooltip();
+}
+
+function watchHamburguer() {
+     $('.menu-toggle').on('click', function (event) {
+         event.preventDefault();
+         event.stopPropagation();
+        $('.js-site-nav').toggleClass('site-nav--open');
+        $(this).toggleClass('open');
+     })
 }
 
 function watchCalendars() {
     $('.js-form').on("focus", ('#employment-date, .training-date'),
-            function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
+            function (event) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
             $(this).datepicker();
     });
 }
 
 function reset() {
-    /// delete for production
+    /// delete 
     deleteDataFromCache();
     deleteOptionsFromCache();
     deleteAuthenticatedUserFromCache();
-    //////////////
+  
     clearScreen();
     $('.js-help').removeClass('hide-it');
     renderSearchBar("instructions");
-   
-  
 }
 
 function main() {
