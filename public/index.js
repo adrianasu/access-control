@@ -102,11 +102,11 @@ function handlePrepareCreate(event) {
     }
 }
 //yes
-function handleSearchBar(event) {
+function handleNavigationClick(event) {
     let loginAndRender = ["overview", "public", "admin"];
     let justRender = ["login", "logout", "signup"];
     event.preventDefault();
-   
+    $(this).closest('header').toggleClass('open');
     let selectedOption = $(this)
                             .closest('li button')
                             .text().trim().toLowerCase();
@@ -346,7 +346,7 @@ function toggleInfoWindow(event) {
     
 
 function watchButtons() {
-    $('.js-site-nav').on('click', 'li button', handleSearchBar);
+    $('.js-site-nav').on('click', 'li button', handleNavigationClick);
     $('.js-form').on('submit', 'form', e => e.preventDefault());
     $('.js-form').on('submit', '.js-login-form', handleLogIn);
     $('.js-form').on('click', '.js-signup-link', handleSignUpForm);
@@ -374,8 +374,8 @@ function watchHamburguer() {
      $('.menu-toggle').on('click', function (event) {
          event.preventDefault();
          event.stopPropagation();
-        $('.js-site-nav').toggleClass('site-nav--open');
-        $(this).toggleClass('open');
+        //$('.js-site-nav').toggleClass('site-nav--open');
+        $(this).closest('header').toggleClass('open');
      })
 }
 
