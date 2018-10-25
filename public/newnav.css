@@ -30,6 +30,9 @@ header::after {
     background: #464655;
     clip-path: circle(0px at top right);
     transition: clip-path ease-in-out 500ms;
+    /* font-family: 'Oswald', sans-serif; */
+    font-family: 'Cabin',
+    sans-serif;
  
 }
 
@@ -112,6 +115,8 @@ header::after {
     }
 
     .site-nav {
+        /* display: block; */
+
         height: auto;
         position: relative;
         background: transparent;
@@ -127,10 +132,10 @@ header::after {
 
     .site-nav button {
         padding: 0;
-        padding-top: 1.5em;
-        margin-left: 3em;
-      
         background-color: black;
+        width: 6em;
+        padding: 0 0 .5em 0;
+       
      }
 
     .site-nav button:hover,
@@ -142,5 +147,18 @@ header::after {
     .site-nav--icon {
         display: none;
     }
+
+}
+
+
+  
+    
+
+@media (min-width: 905px) {
+    .site-nav button {
+        width: 6em;
+         padding-top: 1.5em;
+    }
+
 
 }

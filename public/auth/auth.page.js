@@ -39,11 +39,11 @@ function handleSignUp(event) {
 
 function handleLogIn(event) {
     event.preventDefault();
-    $('.js-loader').show();
     const userData = {
         username: $('#username').val(),
         password: $('#password').val()
     };
+    
     return doLogin(userData);
 }
 

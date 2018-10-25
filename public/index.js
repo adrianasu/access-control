@@ -21,6 +21,26 @@ function defineEndpointLevel() {
 
 }
 
+function getUserAndPassword(level) {
+    let users = {
+        "overview": {
+            username: "sara123",
+            password: "sara123"
+        },
+        "public": {
+            username: "peter",
+            password: "peterpan"
+        },
+        "admin": {
+            username: "hello",
+            password: "hello123"
+        },
+    };
+
+    return users[level];
+
+}
+
 //yes
 function getAllAndRender(settings, selectedOption) {
     updateAuthenticatedUI();
@@ -40,7 +60,7 @@ function getAllAndRender(settings, selectedOption) {
 //yes
 function handleList(event) {
     event.preventDefault();
-    $('.js-results').hide();
+    $('.js-results').addClass('hide-it');
     let selectedOption = $(this).text().slice(0, -1);
     return getAllAndRender({endpoint: selectedOption}, selectedOption);
   
@@ -54,7 +74,11 @@ function handleAdminLink(event) {
 
 function handleClear(event) {
     event.preventDefault();
-    $('.js-results').hide();
+    let origin = $(this).attr('data-origin');
+    $('.js-results').addClass('hide-it');
+    if(origin === "list") {
+        $('.js-list-results').removeClass('hide-it');
+    }
 }
 
 function handleCancel(event) {
@@ -68,8 +92,9 @@ function handleCancel(event) {
 
 function handlePrepareCreate(event) {
     event.preventDefault();
-    $('.js-results').hide();
+  
     let selectedOption = $('.js-goto-create').attr('data-value');
+   
     updateAuthenticatedUI();
     if (STATE.authUser) {
         clearScreen();
@@ -78,8 +103,10 @@ function handlePrepareCreate(event) {
 }
 //yes
 function handleSearchBar(event) {
+    let loginAndRender = ["overview", "public", "admin"];
+    let justRender = ["login", "logout", "signup"];
     event.preventDefault();
-    $('.js-loader').show();
+   
     let selectedOption = $(this)
                             .closest('li button')
                             .text().trim().toLowerCase();
@@ -91,15 +118,23 @@ function handleSearchBar(event) {
     else if(selectedOption.slice(-1) === "s") {
         selectedOption = selectedOption.slice(0, -1);
         endpoint = selectedOption;
-    } 
+    } else if(selectedOption === "basic") {
+        selectedOption = "home";
+    } else if(selectedOption === "help") {
+        return reset();
+    }
+
+    if (loginAndRender.includes(selectedOption)) {
+        user = getUserAndPassword(selectedOption);
+        return doLogin(user);
+    }
+
    
     clearScreen();
     if (selectedOption === "home") {
         let userLevel = getUserLevel();  // returns a string
         return screens[selectedOption][userLevel]();  
-    } else if(selectedOption === "login" 
-            || selectedOption === "logout" 
-            || selectedOption === "signup"){
+    } else if(justRender.includes(selectedOption)){
                 return screens[selectedOption].render();
     }
     else {
@@ -116,15 +151,15 @@ function handleSearchBar(event) {
 function handleSearchEmployee(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
-    $('.js-loader').show();
-    
+    let origin = 'form';
     // get id from search input
     let employeeId = $('#employeeId').val();
     // get id from thumbnails
     if(!employeeId) {
         employeeId = $(this).attr('data-value');
+        origin = 'list';
     } else {
-        $('.js-results, .js-intro').hide();
+        $('.js-results, .js-intro').addClass('hide-it');
         $('.js-search-form').removeClass('welcome-form');
     }
 
@@ -139,7 +174,7 @@ function handleSearchEmployee(event) {
             .then(data => {
                 saveDataIntoCache(data);
                 $('#employeeId').val("");
-                return screens.employees.render[userLevel](data, userLevel);
+                return screens.employees.render[userLevel](data, userLevel, origin);
             })
     }
     else {
@@ -158,7 +193,7 @@ function handlePrepareDelete(event) {
       event.stopImmediatePropagation();
     $('.js-loader').show();
     const name = $(this).attr("data-name");
-    console.log(name);
+ 
     const id = $(this).attr("data-id");
     const origin = $(this).attr("data-origin");
    
@@ -168,13 +203,13 @@ function handlePrepareDelete(event) {
 
 function handleDelete(event) {
     event.preventDefault();
-    $('.js-loader').show();
+ 
     const endpoint = $(this).attr("data-name");
     const id = $(this).attr("data-id");
     const origin = $(this).attr("data-origin");
     updateAuthenticatedUI();
     toggleInfoWindow();
-console.log(origin);
+
     if (STATE.authUser) {
         const jwToken = STATE.authUser.jwToken;
         let settings = { id, jwToken, endpoint };
@@ -182,6 +217,7 @@ console.log(origin);
         return deleteOne(settings)
         .then(data => {
             deleteDataFromCache();
+            deleteOptionsFromCache();
             if (origin === "byId") {
                 doConfirm(endpoint, "deleted");
                 toggleInfoWindow();
@@ -198,7 +234,7 @@ console.log(origin);
 
 function handlePrepareUpdateForm(event) {
     event.preventDefault();
-    $('.js-loader').show();
+ 
     const origin = $(this).attr('data-origin');
     const id = $(this).attr('data-id');
     const dataName = $(this).attr('data-name');
@@ -229,7 +265,7 @@ function handlePrepareUpdateForm(event) {
 function handleUpdate(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
-    $('.js-loader').show();
+ 
     let endpoint = $(this).attr("data-name");
     let id = $(this).attr("data-id");
     let origin = $(this).attr("data-origin");
@@ -255,6 +291,8 @@ function handleUpdate(event) {
             // save updated user's info into cache
             data.jwToken = getAuthenticatedUserFromCache().jwToken;
             saveAuthenticatedUserIntoCache(data);
+        } else {
+            deleteOptionsFromCache();
         }
         doConfirm(endpoint, 'updated', data);
         toggleInfoWindow();
@@ -275,7 +313,7 @@ function handleUpdate(event) {
 
 function handleCreate(event) {
     event.preventDefault();
-    $('.js-loader').show();
+
     let endpoint = $(this).attr("data-name");
     let jwToken = getAuthenticatedUserFromCache().jwToken;
     let newData = screens[endpoint].getDataFrom(event);
@@ -307,28 +345,14 @@ function toggleInfoWindow(event) {
 }
     
 function watchHamburguer() {
-
      $('.menu-toggle').on('click', function (event) {
          event.preventDefault();
         $('.js-site-nav').toggleClass('site-nav--open', 500);
         $(this).toggleClass('open');
      })
-
-    // $('main').on('click', function (event) {
-    //     event.preventDefault();
-    //     event.stopImmediatePropagation();
-    //     let _opened = $('.js-site-nav').hasClass('site-nav--open');
-    //     if (_opened === true) {
-    //         $('.js-site-nav').toggleClass('site-nav--open');
-    //         $('.menu-toggle').toggleClass('open');
-    //     }
-    // });
-
-
 }
 
 function watchButtons() {
-    // $('.js-site-nav').on('click', '.js-logout', handleLogOut);
     $('.js-site-nav').on('click', 'li button', handleSearchBar);
     $('.js-form').on('submit', 'form', e => e.preventDefault());
     $('.js-form').on('submit', '.js-login-form', handleLogIn);
@@ -340,18 +364,18 @@ function watchButtons() {
     $('.js-form').on('click', '.js-cancel-btn', handleCancel);
     $('.js-form').on('click', '.js-create-btn', handleCreate);
     $('.js-form').on('click', '.js-update-btn', handleUpdate);
-    $('.js-results').on('click', '.js-goto-edit', handlePrepareUpdateForm);
-    $('.js-results').on('click', '.js-delete-btn', handlePrepareDelete);
-    $('.js-results').on('click', '.js-goto-create', handlePrepareCreate);
-    $('.js-results').on('click', '.js-thumbnail', handleSearchEmployee);
-    $('.js-results').on('click', '.js-clear', handleClear);
+    $('.js-list-results, .js-results').on('click', '.js-goto-edit', handlePrepareUpdateForm);
+    $('.js-list-results, .js-results').on('click', '.js-delete-btn', handlePrepareDelete);
+    $('.js-list-results, .js-results').on('click', '.js-goto-create', handlePrepareCreate);
+    $('.js-list-results').on('click', '.js-thumbnail', handleSearchEmployee);
+    $('.js-list-results, .js-results').on('click', '.js-clear', handleClear);
     //$('.js-info-window').on('click', '.js-goto-edit', handlePrepareUpdateForm);
     $('.js-info-window').on('click', '.js-delete-btn', handlePrepareDelete);
     $('.js-info-window').on('click', '.js-confirm-btn', handleDelete);
     $('.js-info-window').on('click', '.js-close', toggleInfoWindow);
     $('.js-footer').on('click', '.js-user-list', handleAdminLink);
     $('.js-footer').on('click', '.js-signup-link', handleSignUpForm);
-
+ 
     $('.js-form').tooltip();
 }
 
@@ -365,9 +389,16 @@ function watchCalendars() {
 }
 
 function reset() {
+    /// delete for production
+    deleteDataFromCache();
+    deleteOptionsFromCache();
     deleteAuthenticatedUserFromCache();
+    //////////////
     clearScreen();
-    renderWelcome();
+    $('.js-help').removeClass('hide-it');
+    renderSearchBar("instructions");
+   
+  
 }
 
 function main() {

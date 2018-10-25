@@ -16,7 +16,7 @@ const User = require('../user/user.model');
 // get all departments, employers and trainings 
 optionsRouter.get('/',
     jwtPassportMiddleware,
-    User.hasAccess(User.ACCESS_PUBLIC),
+    User.hasAccess(User.ACCESS_OVERVIEW),
     (req, res) => {
 
     return Department
