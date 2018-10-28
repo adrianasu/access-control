@@ -9,6 +9,7 @@ function requestAndSaveOptions() {
 
 function renderWelcome(user) {
     console.log("WELCOME ", user);
+
     clearScreen();
     let message;
     if(user) {
@@ -23,20 +24,23 @@ function renderWelcome(user) {
 
 function renderHome(user, fromWelcome) {
     if (!fromWelcome) {
+        console.log("renderHome", !fromWelcome)
         $('.js-form').addClass('form');
     }
     let ids = getEmployeeIdsFromCache();
     $('.js-search-form').addClass('welcome-form');
     renderNavBar();
-    renderFooter(user);
+    
    
     if (ids !== undefined) {
-       return  $('.js-form').html(generateSearchForm(ids)).removeClass('hide-it');
+       $('.js-form').html(generateSearchForm(ids)).removeClass('hide-it');
+       return renderFooter(user);
     }
     else {
         return getEmployeeIds()
             .then(ids => {
-                return $('.js-form').html(generateSearchForm(ids)).removeClass('hide-it').addClass('form');
+                $('.js-form').html(generateSearchForm(ids)).removeClass('hide-it');
+                return renderFooter(user);
             })
     }
 }

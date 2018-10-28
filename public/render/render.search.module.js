@@ -226,8 +226,8 @@
  }
 
 
- function getEmployeeIds(userLevel) {
-
+ function getEmployeeIds() {
+    let userLevel = getUserLevel();
  // if user is not logged in  we need to use one of our users to make http request
     if (userLevel === "basic") {
         userLevel = "public";
