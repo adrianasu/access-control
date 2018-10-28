@@ -387,6 +387,7 @@ function watchCalendars() {
 
 function reset() {
     /// delete 
+    deleteEmployeeIdsFromCache();
     deleteEmployeeFromCache();
     deleteOptionsFromCache();
     deleteAuthenticatedUserFromCache();
