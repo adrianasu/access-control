@@ -55,12 +55,11 @@ img {
 }
 
 .intro h1 {
-    /* position: absolute;
-    top: 0%; */
+    margin-top: .5em;
     font-size: 1.1em;
     left: 2%;
-
-    color: black;
+    width: 120%;
+    text-align: left;
 }
 
 .help h3 {
@@ -565,8 +564,6 @@ tr {
 table {
     margin: auto;
 }
-
-
 
 .results {
     position: absolute; 

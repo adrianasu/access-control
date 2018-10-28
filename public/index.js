@@ -24,15 +24,15 @@ function defineEndpointLevel() {
 function getUserAndPassword(level) {
     let users = {
         "overview": {
-            username: "sara123",
+            username: "overview",
             password: "sara123"
         },
         "public": {
-            username: "peter",
+            username: "public",
             password: "peterpan"
         },
         "admin": {
-            username: "hello",
+            username: "admin",
             password: "hello123"
         },
     };
