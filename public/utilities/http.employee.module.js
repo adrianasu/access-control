@@ -1,23 +1,21 @@
-
-
 function handleError(xhr) {
     let message = "Something went wrong, please try again.";
-   
-    if (xhr && xhr.responseJSON && xhr.responseJSON.err ) {
-        message = JSON.stringify(xhr.responseJSON.err);
+
+    if (xhr && xhr.responseJSON && xhr.responseJSON.err) {
+        message = JSON.stringify(xhr.responseJSON.err).replace(/\\\"/g, "");
     }
-    $('.js-loader').hide();
-    $('.box').removeClass('green red');
+
     doConfirm("error", "", message)
     toggleInfoWindow();
     return message;
 }
 
+
 function createOneWithFile(settings) {
-      const {
-          jwToken,
-          formData,
-          endpoint,
+    const {
+        jwToken,
+        formData,
+        endpoint,
       } = settings;
       return $.ajax({
           type: 'POST',
@@ -27,10 +25,10 @@ function createOneWithFile(settings) {
           data: formData,
           beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
-          }, 
-          error: err => {
+        }, 
+        error: err => {
               handleError(err);
-          }
+            }
       });
 }
 
@@ -62,16 +60,16 @@ function createOne(settings) {
         dataType: 'json',
         data: JSON.stringify(newData),
         beforeSend: function (xhr) {
-                xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
+            xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
             },
-        error: err => {
+            error: err => {
                 handleError(err);
-        }
-    });
+            }
+        });
 }
 
 function updateOne(settings) {
-    const { jwToken, endpoint, id, updatedData } = settings;
+    const { user, endpoint, id, updatedData, origin } = settings;
     return $.ajax({
         type: 'PUT',
         url: `/api/${endpoint}/${id}`,
@@ -79,10 +77,16 @@ function updateOne(settings) {
         dataType: 'json',
         data: JSON.stringify(updatedData),  
         beforeSend: function(xhr) {
-            xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
+            xhr.setRequestHeader('Authorization', `Bearer ${user.jwToken}`);
         },
         error: err => {
             handleError(err);
+            if (origin === "form"){
+                renderSearchMenu(user.accessLevel);
+            } else {
+                $('.js-list-results').removeClass('hide-it');
+                $('.js-form').addClass('hide-it');
+            }
         }
     });
 }
@@ -98,7 +102,7 @@ function deleteOne(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
         error: err => {
-              handleError(err);
+            handleError(err);
         }
     });
 }
@@ -115,7 +119,7 @@ function getAll(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
         error: err => {
-                handleError(err);   
+            handleError(err);   
         }
     });
 }
@@ -151,8 +155,9 @@ function getEmployeeDeskOverview(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
         error: err => {
-            $('.js-results').hide();
             handleError(err);
+            $('.js-form').addClass('form');
+            $('.js-form, .js-footer').removeClass('hide-it');
         }
     });
 }
@@ -167,10 +172,12 @@ function getEmployeeKioskOverview(settings) {
         dataType: 'json',
         data: undefined,
         error: err => {
-            $('.js-results').hide();
             handleError(err);
+            $('.js-form').addClass('form');   
+            $('.js-form, .js-footer').removeClass('hide-it');
         }
     });
 }
+
 
 

@@ -52,21 +52,38 @@ function deleteOptionsFromCache() {
     localStorage.removeItem('options');
 }
 
-function getDataFromCache() {
-    const data = localStorage.getItem('data');
-    if (data) {
-        return JSON.parse(data);
+function getEmployeeFromCache() {
+    const employee = localStorage.getItem('employee');
+    if (employee) {
+        return JSON.parse(employee);
     } else {
         return undefined;
     }
 }
 
-function saveDataIntoCache(res) {
-    localStorage.setItem('data', JSON.stringify(res));
+function saveEmployeeIntoCache(res) {
+    localStorage.setItem('employee', JSON.stringify(res));
 }
 
-function deleteDataFromCache() {
-    localStorage.removeItem('data');
+function deleteEmployeeFromCache() {
+    localStorage.removeItem('employee');
+}
+
+function getEmployeeIdsFromCache() {
+    const ids = localStorage.getItem('ids');
+    if (ids) {
+        return ids;
+    } else {
+        return undefined;
+    }
+}
+
+function saveEmployeeIdsIntoCache(ids) {
+    localStorage.setItem('ids', ids);
+}
+
+function deleteEmployeeIdsFromCache() {
+    localStorage.removeItem('ids');
 }
 
 

@@ -140,7 +140,7 @@ function fillTrainingOptions(data, dataName) {
 }
 
 function fillEmployeeForm(data, dataName) {
- 
+    console.log("FILL ", data);
     $('#first-name').val(data.firstName);
     $('#last-name').val(data.lastName);
     $('#vehicle').attr("checked", data.allowVehicle);
@@ -148,14 +148,13 @@ function fillEmployeeForm(data, dataName) {
     $('#department').val(data.department._id);
     $('#employment-date').val(new Date(data.employmentDate).toLocaleDateString("en-US"));
     fillTrainingOptions(data, "training");
-    fillLicensePlatesValues(data);
-    return data;
+    return fillLicensePlatesValues(data);
+  
 } 
 
 function renderUpdateForm(id, dataName, origin, data) {
     clearScreen();
-    screens[dataName].render(id, origin, data);
-    return data;
+    return screens[dataName].render(id, origin, data);
 }
 
 

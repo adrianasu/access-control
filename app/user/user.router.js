@@ -115,6 +115,7 @@ userRouter.put('/:userId', jwtPassportMiddleware,
         });
     }
 
+
     // we only support a subset of fields being updateable.
     // If the user sent over any of them 
     // we update those values on the database
@@ -154,11 +155,17 @@ userRouter.put('/:userId', jwtPassportMiddleware,
                     const message = `Unauthorized. You're only allowed to edit your name and/or email.`;
                     return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
                         err: message
-                    });
+                    });  
         }
 
-       
-    
+        // do not allow to update "admin", "overview" or "public" users
+        let username = user.username;
+        if (username === "admin" || username === "public" || username === "overview") {
+            const message = `Unauthorized to edit ${username} user`;
+            return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
+                err: message
+            });
+        }
 
     
     const validation = Joi.validate(toUpdate, User.UpdateUserJoiSchema);
@@ -191,18 +198,35 @@ userRouter.put('/:userId', jwtPassportMiddleware,
 userRouter.delete('/:userId', jwtPassportMiddleware, 
     User.hasAccess(User.ACCESS_ADMIN), 
     (req, res) => {
-    return Users
-    .findByIdAndDelete(req.params.userId)
-        .then(deletedUser => {
-            console.log(`Deleting user with id: \`${req.params.userId}\``);
-            res.status(HTTP_STATUS_CODES.OK).json({
-                deleted: `${req.params.userId}`,
-                OK: "true"
+    
+    Users
+    .findById(req.params.userId)
+        .then(user => {
+
+         // do not allow to delete "admin", "overview" or "public" users
+         let username = user.username;
+         if (username === "admin" || username === "public" || username === "overview") {
+             const message = `Unauthorized to delete ${username} user`;
+             return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({
+                 err: message
+             });
+         }
+
+         Users
+        .findByIdAndDelete(req.params.userId)
+            .then(deletedUser => {
+                console.log(`Deleting user with id: \`${req.params.userId}\``);
+                res.status(HTTP_STATUS_CODES.OK).json({
+                    deleted: `${req.params.userId}`,
+                    OK: "true"
+                });
             });
         })
         .catch(err => {
-            return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).res(err);
+        return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+            err: message
         });
-});
+    })
+})
 
 module.exports = { userRouter };

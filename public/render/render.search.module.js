@@ -84,7 +84,7 @@
          render: handleLogOut,
      },
      home: {
-         basic: renderWelcome,
+         basic: renderSearchMenu,
          overview: renderSearchMenu,
          public: renderSearchMenu,
          admin: renderSearchMenu
@@ -114,7 +114,51 @@
  }
 
  function clearScreen() {
-     $('.js-results, .js-intro, .js-form, .js-message, .js-footer, .js-help, .js-list-results').addClass('hide-it');
+     $('.js-results, .js-intro, .js-form, .js-message, .js-footer, .js-list-results, .js-help').addClass('hide-it');
+
+ }
+
+ function decideWhatToRender(selectedOption) {
+     let loginAndRender = ["overview", "public", "admin"];
+     let justRender = ["login", "logout", "signup"];
+     let endpoint;
+
+     if (selectedOption === "list employees") {
+         selectedOption = "employee";
+         endpoint = defineEndpointLevel(); 
+     } else if (selectedOption.slice(-1) === "s") {
+         selectedOption = selectedOption.slice(0, -1);
+         endpoint = selectedOption;
+     } else if (selectedOption === "help") {
+         return reset();
+     }
+
+     if (loginAndRender.includes(selectedOption)) {
+         user = getUserAndPassword(selectedOption);
+         return doLogin(user)
+            .then(user=> {
+                return renderWelcome(user);
+            })
+     }
+
+     if (selectedOption === "basic") {
+         return renderWelcome();
+     }
+     clearScreen();
+     if (selectedOption === "home") {
+         return renderHome();
+     } else if (justRender.includes(selectedOption)) {
+         return screens[selectedOption].render();
+     } else {
+         updateAuthenticatedUI();
+         if (STATE.authUser) {
+             const jwToken = STATE.authUser.jwToken;
+             return getAllAndRender({
+                 jwToken,
+                 endpoint
+             }, selectedOption);
+         }
+     }
 
  }
 
@@ -138,9 +182,9 @@
  }
 
  //yes
- function renderSearchBar(fromInstructions) {
+ function renderNavBar(fromInstructions) {
      const options = {
-         instructions: ["Basic", "Overview", "Public", "Admin"],
+         instructions: ["Basic", "Overview", "Public", "Admin", "Help"],
          basic: ["Home", "LogIn", "SignUp", "Help"],
          overview: ["Home", "List Employees", "LogOut", "Help"],
          public: ["Home", "Employees", "Trainings", "Departments", "Employers", "Users", "LogOut", "Help"],
@@ -168,38 +212,75 @@
      return $('.js-site-nav').html(navBarString.join(""));
  }
 
-
- ///yes
- function generateSearchForm() {
-     return `<form class="js-search-form search-form"><label for="employeeId" title="Enter an employee ID to verify if that person
-        complies with the requirements to access the work premises.">Employee Id</label>
-    <input type="text" name="employeeId" id="employeeId" autofocus>
-    <button role="button" type="submit">Search</button></form>`;
+ function requestEmployeeIds(jwToken) {
+    let ids = [];
+    return getAll({jwToken, endpoint: "employee/desk"})
+         .then(employees => {
+             for (let i = 0; i < 10; i++) {
+                 ids.push(employees[i].employeeId);
+             }
+             saveEmployeeIdsIntoCache(ids.join(", "));
+             return ids.join(", ");
+         })
  }
- //yes
+
+
+ function getEmployeeIds(userLevel) {
+
+ // if user is not logged in  we need to use one of our users to make http request
+    if (userLevel === "basic") {
+        userLevel = "public";
+        return logInAndSaveUser(getUserAndPassword(userLevel))
+        .then(user => {
+            let jwToken = getAuthenticatedUserFromCache().jwToken;
+            deleteAuthenticatedUserFromCache();
+            return requestEmployeeIds(jwToken);
+        })
+    } else {
+        let jwToken = getAuthenticatedUserFromCache().jwToken;
+        return requestEmployeeIds(jwToken);
+    }
+    
+ }
+
+ function generateSearchForm(ids) { 
+    let userLevel = getUserLevel();
+    return `<p><i class="fas fa-user-lock tooltip">
+                 <span class="tooltiptext">User level</span></i> ${userLevel}</p>
+                 <p>Enter your employee ID to check if you comply with the 
+                 requirements to enter these premises.</p><form 
+                 class="js-search-form search-form"><label for="employeeId">
+                 Employee Id <i class="fas fa-info-circle tooltip"><span class="tooltiptext">
+                 Here are some ids: ${ids}</span></i></label>
+                 <input type="text" name="employeeId" id="employeeId" autofocus>
+                 <button role="button" type="submit">Search</button></form>`;
+ }
+
  function generateSearchMenu() {
      let searchString = [];
      searchString.push(generateSearchForm());
      return searchString;
  }
 
- function renderFooter(accessLevel) {
-     if (accessLevel) {
-         $('.js-footer').html(`<p>Please, talk to an <a href="" class="js-user-list"> admin </a> 
-        if you'd like to increase your permissions.</p>`).removeClass('hide-it');
-     } else {
-         $('.js-footer').html(`<p>Please, <a href="" class="js-signup-link">sign up </a> to enable more options.</p>`).removeClass('hide-it');
+ function renderFooter(user) {
+     if (!user) {
+         $('.js-footer').html(`<p>Please, <a href="" class="js-signup-link">
+         sign up </a> to enable more options.</p>`).removeClass('hide-it');
+        } else if (user && user.accessLevel <= ACCESS.PUBLIC) {
+            $('.js-footer').html(`<p>For more options, go to the menu at the top or talk to an <a href="" 
+            class="js-user-list"> admin </a> to increase your permissions.</p>`).removeClass('hide-it');
      }
  }
 
  //yes
- function renderSearchMenu() {
-     updateAuthenticatedUI();
-     let accessLevel = STATE.authUser.accessLevel;
-     $('.js-form').html(generateSearchMenu(accessLevel)).removeClass('hide-it');
+ function renderSearchMenu(accessLevel) {
+     if (!accessLevel) {
+         accessLevel = ACCESS.BASIC;
+     }
      $('.js-search-form').removeClass('welcome-form');
+     $('.js-form').html(generateSearchMenu()).addClass('form').removeClass('hide-it');
      renderFooter(accessLevel);
-     renderSearchBar();
+     renderNavBar();
  }
 
 
@@ -216,9 +297,8 @@
 
  function generateMissingRequirementsString(employee) {
      let missingRequirements = checkForMissingRequirements(employee);
+     let message = [];
      if (missingRequirements.length > 0) {
-      
-         let message = [];
          message.push(`<h2 class="warn">Do Not Enter  <i class="fas fa-hand-paper"></i></h2><p>Training required:</p><ul>`);
          missingRequirements.forEach(requirement => {
              message.push(`<li>${requirement}</li>`);
@@ -226,8 +306,7 @@
          message.push(`</ul>`);
          return message.join("");
      } else {
-       
-         message.push(`<h2 class="enter">Please Enter  <i class="fas fa-check-circle"></i></h2>`);
+         message.push(`<h2 class="enter">Enter  <i class="fas fa-check-circle"></i></h2>`);
          return message.join("");
      }
  }
@@ -245,7 +324,7 @@
          resultString.push(`<tr><td>Employer: </td><td>${employee.employer.employerName}</td></tr>
         <tr><td>Department: </td><td>${employee.department.departmentName}</td></tr>
         <tr><td>Allow Vehicle: </td><td>${vehicle}</td></tr>
-        <tr><td>License Plates: </td><td>${employee.licensePlates}</td></tr>`);
+        <tr><td>License Plates: </td><td>${employee.licensePlates.join(", ")}</td></tr>`);
      }
      resultString.push(`</table>`);
      resultString.push(generateMissingRequirementsString(employee));
@@ -266,19 +345,21 @@
     <tr><td>Employer: </td><td>${employee.employer.employerName}</td></tr>
     <tr><td>Department: </td><td>${employee.department.departmentName}</td></tr>
     <tr><td>Allow Vehicle: </td><td>${vehicle}</td></tr>
-    <tr><td>License Plates: </td><td>${employee.licensePlates}</td></tr>
+    <tr><td>License Plates: </td><td>${employee.licensePlates.join(", ")}</td></tr>
     <tr colspan="2"><td>Trainings: </td></tr>`);
      for (let x = 0; x < employee.trainings.length; x++) {
          let trainDate = new Date(employee.trainings[x].trainingDate).toLocaleDateString("en-US")
          result.push(`<tr><td>${employee.trainings[x].trainingInfo.title}</td>
             <td>${trainDate}</td></tr>`);
      }
-     result.push(`</table>
-    <button type="button" role="button" class="js-goto-edit goto-edit" 
-    data-id="${employee.employeeId}" data-name="employee" data-origin="thumbnail">Edit</button>
+     result.push(`</table>`);
+     result.push(generateMissingRequirementsString(employee));
+     result.push(`<button type="button" role="button" class="js-goto-edit goto-edit"
+    data-id="${employee.employeeId}" data-name="employee" data-origin="${origin}">Edit</button>
     <button type="button" role="button" class="js-delete-btn delete-btn" 
-    data-id="${employee.employeeId}" data-name="employee" data-origin="thumbnail"><i class="fas fa-trash-alt"></i></button>`);
-     return result.join("");
+    data-id="${employee.employeeId}" data-name="employee" data-origin="${origin}"><i class="fas fa-trash-alt"></i></button>`);
+    
+    return result.join("");
  }
 
  function convertNullToString(data) {
@@ -292,17 +373,16 @@
  // for basic level
  function renderEmployeeBasicInfo(employee, userLevel, origin) {
      clearScreen();
-     // render search form at the top to keep searching
-     $('.js-form').html(generateSearchForm()).removeClass('hide-it');
-     $('.js-search-form').removeClass('welcome-form');
-     // render results
+
+     // if some fields are null fill them with "NA"
      if (employee) {
          let employeeC = convertNullToString(employee);
          $('.js-results').html(generateResultsStrings(employeeC, userLevel, origin))
              .addClass('results').removeClass('list').removeClass('hide-it');
-
+        // $('.js-form').removeClass('form');
+        // $('.js-search-form').removeClass('welcome-form');
      }
-     renderSearchBar();
+     renderNavBar();
      return employee;
  }
 
@@ -439,7 +519,7 @@ function renderEmployeeOverview(employee, userLevel, origin) {
         <td><button type="button" role="button" class="js-delete-btn delete-btn" 
         data-name="${dataName}" data-id="${id}" data-origin="list"><i class="fas fa-trash-alt"></i></button></td></tr>`);
      })
-   
+       
      return table.join("");
  }
 
@@ -469,7 +549,8 @@ function renderEmployeeOverview(employee, userLevel, origin) {
          let missingRequirements = checkForMissingRequirements(employee);
          if (missingRequirements.length > 0) {
              thumbnails.push(`<div class="grid-item red js-thumbnail" 
-            data-value="${employee.employeeId}"><table>
+            data-value="${employee.employeeId}">
+            <table>
             <tr><td>ID: ${employee.employeeId}</td></tr>
             <tr><td>${employee.firstName} ${employee.lastName}</td></tr>
             <tr><td>Missing training: <i class="fas fa-hand-paper warn"></i><ul>`);
@@ -479,8 +560,10 @@ function renderEmployeeOverview(employee, userLevel, origin) {
              thumbnails.push(`</ul></td></tr></table></div>`);
          } else {
              thumbnails.push(`<div class="grid-item js-thumbnail" 
-            data-value="${employee.employeeId}"><table><tr><td>ID: ${employee.employeeId}</td></tr>
-            <tr><td>${employee.firstName} ${employee.lastName} </td><td class="enter"><i class="fas fa-check-circle"></i></td></tr></table></div>`);
+            data-value="${employee.employeeId}">
+            <table><tr><td>ID: ${employee.employeeId}</td></tr>
+            <tr><td>${employee.firstName} ${employee.lastName} </td>
+            <td class="enter"><i class="fas fa-check-circle"></i></td></tr></table></div>`);
          }
      })
      return thumbnails.join("");
@@ -489,7 +572,7 @@ function renderEmployeeOverview(employee, userLevel, origin) {
 
  // yes
  function renderList(data, dataName) {
-     renderSearchBar();
+     renderNavBar();
      let options;
      if (dataName !== "employee" || dataName !== "user") {
          options = getOptions();
@@ -508,12 +591,12 @@ function renderEmployeeOverview(employee, userLevel, origin) {
         type="button" class="js-goto-create goto-create" data-value="${dataName}">New <i class="fas fa-plus"></i></button>
         <p>No ${dataName}s found.</p>`).removeClass('hide-it');
 
-         renderSearchMenu();
+         renderSearchMenu(accessLevel);
          return data;
      } else if (data.length === 0 && accessLevel < ACCESS.PUBLIC) {
          $('.js-list-results').html(`<h1>${dataName}s</h1><p>No ${dataName}s found.</p>`).removeClass('hide-it');
 
-         renderSearchMenu();
+         renderSearchMenu(accessLevel);
          return data;
      }
      let listString = [];
@@ -526,13 +609,14 @@ function renderEmployeeOverview(employee, userLevel, origin) {
      }
      if (dataName === "employee") {
          listString.push(generateEmployeeThumbnails(data));
-     } else {
-         listString.push(generateHeader(dataName, options));
+        } else {
+            listString.push('<table>');
+            listString.push(generateHeader(dataName, options));
          listString.push(generateRows(data, dataName));
+         listString.push('</table>');
      }
-
-     listString.join("");
-     $('.js-list-results').html(listString).removeClass('hide-it');
+     //listString = listString.join("");
+     $('.js-list-results').html(listString.join("")).removeClass('hide-it');
      return data;
  }
 

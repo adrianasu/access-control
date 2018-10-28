@@ -10,8 +10,9 @@ body {
     font-family: 'Noto Sans JP',
     sans-serif;
     overflow: auto;
-    background-color: #fff6f6;
+    background-color: #efedbb;
     padding-bottom: 2em;
+    margin: auto;
 }
 
 header {
@@ -54,20 +55,29 @@ img {
 }
 
 .intro h1 {
-    position: absolute;
-    top: 0%;
+    /* position: absolute;
+    top: 0%; */
     font-size: 1.1em;
     left: 2%;
-    width: 50%;
+
     color: black;
+}
+
+.help h3 {
+    margin-left: 1.5em;
 }
 
 p {
     width: 70%;
-    margin: 1.5em auto;
+    margin: .4em auto;
 }
 
-
+.js-form p:nth-child(1) {
+    position: absolute;
+    top: 10%;
+    left: 64%;
+    width: auto;
+}
 
 h1 {
     text-transform: capitalize;
@@ -82,26 +92,41 @@ footer,
 form {
     min-width: 150px;
     width: 80%;
-    background-color: white;
     border-radius: 2px;
     margin-left: auto;
     margin-right: auto;
 }
 
 footer {
-    text-align: center;
+    margin-top: .5em;
     padding: 0 .6em;
+
 }
 
 footer p {
     width: 100%;
+    margin-top: 2em;
+    text-align: center;
+}
+
+form {
+    background: white;
+    padding: .5em;
 }
 
 
-.search-form {
-    margin-top: 5em;
+
+.search-form, .form {
     padding: .8em 1em;
     text-align: center;
+}
+
+.search-form {
+    margin-top: 2em;
+}
+
+.form {
+    margin-top: 5.5em;
 }
 
 .search-form label {
@@ -129,14 +154,7 @@ footer p {
     margin-top: 1em;
 }
 
-.help button {
-    float: right;
-    margin: .5em 2em;
-    background: black;
-    color: white;
-    padding: 1em;
-    border-radius: 3px;
-}
+
 
 h2:nth-child(even) {
     display: inline-block;
@@ -144,13 +162,22 @@ h2:nth-child(even) {
 
 .steps,
 .permissions {
-    width: 80%;
+  
     text-align: center;
     margin: auto;
     border: 1px solid black;
     table-layout: fixed;
     background-color: white;
-    margin-bottom: 2em;
+    margin: 1.5em auto;
+ 
+}
+
+.steps {
+    width: 80%;
+}
+
+.permissions {
+    width: 90%;
 }
 
 .intro td {
@@ -171,15 +198,17 @@ h2:nth-child(even) {
     background: #c7b198;
 }
 
-.permissions th:nth-child(2) {
-    font-size: .9em;
+
+th button {
+    width: 100%;
 }
 
-.permissions th {
+.permissions button {
     background: #363434;
     padding: .7em .1em;
     color: white;
     border: none;
+    font-size: .9em;
 }
 
 .permissions tr:nth-child(even) {
@@ -209,7 +238,7 @@ form label {
 form input {
     border: none;
     padding: 0.45em 0.2em;
-    width: 100%;
+    width: 80%;
     color: black;
     border-bottom: 2px solid black;
     transition: border-bottom 0.15s linear 0.25s;
@@ -217,6 +246,10 @@ form input {
 
 form input[type="checkbox"] {
     width: 10%;
+}
+
+.training-date {
+    width: 50%;
 }
 
 input:hover,
@@ -266,11 +299,12 @@ legend {
 }
 
 .create-form {
-    margin-top: 5em;
+    margin-top: 1em; /* create employee*/
     padding: 1em;
     border: 2px solid black;
     background: white;
     color: black;
+    width: 90%;
 }
 
 .employee-form legend {
@@ -288,15 +322,6 @@ legend {
 
 #vehicle {
     width: 15%;
-}
-
-.buttons button {
-    margin-top: 2em;
-    background: #76b39d;
-    color: black;
-    border: 1px solid #003545;
-    font-size: 1.1em;
-    font-weight: bold;
 }
 
 form p {
@@ -327,7 +352,22 @@ form p {
     width: 90%;
 }
 
+.intro p:nth-child(even) {
+    float: right;
+}
+
+.buttons {
+    text-align: center;
+    margin-top: 2em;
+}
+
 .buttons button {
+    margin-bottom: .5em;
+    background: #76b39d;
+    color: black;
+    border: 1px solid #003545;
+    font-size: 1.1em;
+    font-weight: bold;
     padding: .7em;
     width: 80%;
 }
@@ -349,9 +389,10 @@ form button {
 }
 
 form button {
-    background-color: black;
-    color: white;
-    margin-left: 1.4em;
+    background-color: #76b39d;
+    border: 2px solid black;
+    color: black;
+    /* margin-left: 1.4em; */ /* lo borre por serch id form*/
     margin-top: .5em;
     padding: 1em;
     border-radius: 1px;
@@ -401,7 +442,7 @@ form button:focus {
         width: 40%;
 }
 
-.info-window .close-btn {
+.info-window .close {
     color: black;
     border: none;
 }
@@ -521,19 +562,23 @@ table {
     margin-top: 1em;
 }
 
-table tr:last-child {
-    border-bottom: none;
-}
+
 
 .results {
-    position: relative;
+    position: absolute; /*for emp id basic*/
 
 }
+
+
 
 .results td {
     width: 100%;
     border-bottom: 1px solid black;
     padding: .3em;
+}
+
+.grid-item td {
+    border: none;
 }
 
 .info-window {
@@ -582,7 +627,7 @@ table tr:last-child {
 
 
 .results {
-    padding: 2em 1.5em 3em 1.5em;
+    padding: 1em 1.5em;
     /*was 5 but results admin id from list*/
     top: 5em;
     max-width: 550px;
@@ -596,7 +641,7 @@ table tr:last-child {
 
 .onTop {
     position: absolute;
-    top: 15%;
+    top: 12%;
     right: 15%;
 }
 
@@ -610,7 +655,7 @@ select {
 }
 
 .red {
-    box-shadow: 6px 8px #E81D2E;
+    box-shadow: 3px 6px #E81D2E;
 }
 
 .warn {
@@ -659,30 +704,59 @@ select {
 .tooltip {
     position: relative;
     display: inline-block;
+    font-size: 1.2em;
+}
 
+.tooltiptext {
+    font-size: .9em;
+    font-family: 'Istok Web',
+    sans-serif;
+    font-weight: normal;
+    line-height: normal;
+    position: absolute;
 }
 
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 200px;
-    background-color: white;
+    background-color:#76b39d;
     color: black;
     text-align: center;
     padding: .5em;
     border: 1px solid black;
     border-radius: 4px;
     position: absolute;
-    left: -80%;
+    left: -500%;
+    top: -600%; /*valores para ids*/
     z-index: 1;
 }
 
-.tooltip:hover .tooltiptext {
+.tooltip:hover .tooltiptext,
+ .tooltip:focus .tooltiptext {
     visibility: visible;
 }
+
+.fa-info-circle  .tooltiptext {
+    left: -500%;
+    top: -800%;
+} 
+
+.fa-user-lock .tooltiptext {
+    left: -500%;
+    top: 180%;
+}
+
+.fa-question-circle .tooltiptext {
+    left: -250%; /*signup form*/
+    top: 180%;
+}
+    
 
 .hide-it {
     display: none;
 }
+
+
 
 .info-container p:first-child {
     font-size: 1.2em;

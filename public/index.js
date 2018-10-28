@@ -74,19 +74,31 @@ function handleAdminLink(event) {
 
 function handleClear(event) {
     event.preventDefault();
+    event.stopImmediatePropagation();
     let origin = $(this).attr('data-origin');
     $('.js-results').addClass('hide-it');
     if(origin === "list") {
         $('.js-list-results').removeClass('hide-it');
+    } else {
+        // if origin is "form"
+        renderSearchMenu();
     }
 }
 
 function handleCancel(event) {
     event.preventDefault();
+    event.stopImmediatePropagation();
     clearScreen();
-    renderSearchBar();
+    renderNavBar();
     let endpoint = $(this).attr('data-name');
-    return getAllAndRender({endpoint}, endpoint);
+    let origin = $(this).attr('data-origin');
+    //$('.js-form').addClass('hide-it');
+    if (origin === "form") {
+        $('.js-results').removeClass('hide-it');
+    } else {
+        $('.js-list-results').removeClass('hide-it');  
+    }
+    //return getAllAndRender({endpoint}, endpoint);
 }
 
 
@@ -101,50 +113,26 @@ function handlePrepareCreate(event) {
         return screens[selectedOption].render();
     }
 }
+
+function handleUserLevelDemo(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    let selectedOption = $(this)
+        .closest('th button')
+        .text().trim().toLowerCase();
+    $('.js-menu-toggle, .js-site-nav').removeClass('hide-it');
+    decideWhatToRender(selectedOption);
+}
+
 //yes
 function handleNavigationClick(event) {
-    let loginAndRender = ["overview", "public", "admin"];
-    let justRender = ["login", "logout", "signup"];
     event.preventDefault();
     $(this).closest('header').toggleClass('open');
+    
     let selectedOption = $(this)
-                            .closest('li button')
-                            .text().trim().toLowerCase();
-    let endpoint;
-    if(selectedOption === "list employees") {
-        selectedOption = "employee";
-        endpoint = defineEndpointLevel();
-    }                       
-    else if(selectedOption.slice(-1) === "s") {
-        selectedOption = selectedOption.slice(0, -1);
-        endpoint = selectedOption;
-    } else if(selectedOption === "basic") {
-        selectedOption = "home";
-    } else if(selectedOption === "help") {
-        return reset();
-    }
-
-    if (loginAndRender.includes(selectedOption)) {
-        user = getUserAndPassword(selectedOption);
-        return doLogin(user);
-    }
-
-   
-    clearScreen();
-    if (selectedOption === "home") {
-        let userLevel = getUserLevel();  // returns a string
-        return screens[selectedOption][userLevel]();  
-    } else if(justRender.includes(selectedOption)){
-                return screens[selectedOption].render();
-    }
-    else {
-        updateAuthenticatedUI();
-        if (STATE.authUser) {
-            const jwToken = STATE.authUser.jwToken;
-            return getAllAndRender({ jwToken, endpoint }, selectedOption);
-        }
-    }
-
+    .closest('li button')
+    .text().trim().toLowerCase();
+    decideWhatToRender(selectedOption);
 }
 
 //yes
@@ -159,20 +147,20 @@ function handleSearchEmployee(event) {
         employeeId = $(this).attr('data-value');
         origin = 'list';
     } else {
-        $('.js-results, .js-intro').addClass('hide-it');
-        $('.js-search-form').removeClass('welcome-form');
+        $('.js-intro, .js-form, .js-footer').addClass('hide-it');
     }
-
+    
     let userLevel = getUserLevel();
     let settings = { id: employeeId, endpoint: "employee" };
     if (STATE.authUser) {
         settings.jwToken = STATE.authUser.jwToken;
     }
-
+    
     if (employeeId) {
         return screens.employees.request[userLevel](settings)
-            .then(data => {
-                saveDataIntoCache(data);
+        .then(data => {
+                console.log(data);
+                saveEmployeeIntoCache(data);
                 $('#employeeId').val("");
                 return screens.employees.render[userLevel](data, userLevel, origin);
             })
@@ -202,6 +190,7 @@ function handlePrepareDelete(event) {
 }
 
 function handleDelete(event) {
+    let options = ["training", "department", "employer"];
     event.preventDefault();
  
     const endpoint = $(this).attr("data-name");
@@ -216,8 +205,12 @@ function handleDelete(event) {
 
         return deleteOne(settings)
         .then(data => {
-            deleteDataFromCache();
-            deleteOptionsFromCache();
+            if (endpoint === "employee") {
+                deleteEmployeeIdsFromCache();
+                deleteEmployeeFromCache();
+            } else if (options.includes(endpoint)) {
+                deleteOptionsFromCache();
+            }
             if (origin === "byId") {
                 doConfirm(endpoint, "deleted");
                 toggleInfoWindow();
@@ -234,18 +227,16 @@ function handleDelete(event) {
 
 function handlePrepareUpdateForm(event) {
     event.preventDefault();
- 
+    event.stopImmediatePropagation();
     const origin = $(this).attr('data-origin');
     const id = $(this).attr('data-id');
     const dataName = $(this).attr('data-name');
     updateAuthenticatedUI();
     const jwToken = STATE.authUser.jwToken;
- 
 
     if (dataName === "employee") {
-        let data = getDataFromCache();
-        renderUpdateForm(id, dataName, origin, data);
-        return screens[dataName].fill(data, dataName);
+        let data = getEmployeeFromCache();
+        return renderUpdateForm(id, dataName, origin, data);
     } else { 
         return getById({
             jwToken,
@@ -253,11 +244,10 @@ function handlePrepareUpdateForm(event) {
             endpoint: dataName,
         })
         .then(res => {
-                saveDataIntoCache(res);
+            if (dataName === "employee") {
+                saveEmployeeIntoCache(res);
+            }
                 return renderUpdateForm(id, dataName, origin, res); 
-        })
-        .then(data=> {
-              return screens[dataName].fill(data, dataName);
         })
     }
 }
@@ -265,14 +255,13 @@ function handlePrepareUpdateForm(event) {
 function handleUpdate(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
- 
     let endpoint = $(this).attr("data-name");
     let id = $(this).attr("data-id");
     let origin = $(this).attr("data-origin");
    
-    
     updateAuthenticatedUI();
-    let jwToken = getAuthenticatedUserFromCache().jwToken; 
+    let user = getAuthenticatedUserFromCache(); 
+
     let updatedData = screens[endpoint].getDataFrom(event);
 
     if (endpoint === "employee") {
@@ -281,12 +270,12 @@ function handleUpdate(event) {
     else {
         updatedData.id = id;
     }
-    let settings = { jwToken, endpoint, updatedData, id };
-    
+    let settings = { user, endpoint, updatedData, id, origin };
+   
     return updateOne(settings)
     .then(data=> {
         if (endpoint === "employee") {
-            saveDataIntoCache(data);
+            saveEmployeeIntoCache(data);
         } else if (endpoint === "user") {
             // save updated user's info into cache
             data.jwToken = getAuthenticatedUserFromCache().jwToken;
@@ -298,34 +287,43 @@ function handleUpdate(event) {
         toggleInfoWindow();
         if(origin === "list" || origin === "thumbnail") {
             settings = {jwToken, endpoint};
-            
             return getAllAndRender(settings, endpoint);
         }
         else {
             clearScreen();
             return renderSearchMenu();
         }
-   
     })
+    
 
 }
 
 
 function handleCreate(event) {
     event.preventDefault();
-
     let endpoint = $(this).attr("data-name");
     let jwToken = getAuthenticatedUserFromCache().jwToken;
     let newData = screens[endpoint].getDataFrom(event);
- 
     let settings = { jwToken, endpoint, newData };
+    let origin = $(this).attr("data-origin");
     
     return createOne(settings)
     .then(data=> {
-        saveDataIntoCache(data);
+        if (endpoint === "employee") {
+            saveEmployeeIntoCache(data);
+        }
         doConfirm(endpoint, 'created', data);
         toggleInfoWindow();
-        return data;
+        if (origin === "list" || origin === "thumbnail") {
+            settings = {
+                jwToken,
+                endpoint
+            };
+            return getAllAndRender(settings, endpoint);
+        } else {
+            clearScreen();
+            return renderSearchMenu();
+        }
     })
 }
 
@@ -334,7 +332,6 @@ function handleSignUpForm(event) {
     clearScreen();
     renderUserForm();
 }
-
 
 function toggleInfoWindow(event) {
     if (event) {
@@ -346,7 +343,8 @@ function toggleInfoWindow(event) {
     
 
 function watchButtons() {
-    $('.js-site-nav').on('click', 'li button', handleNavigationClick);
+    $('.js-nav-container').on('click', 'li button', handleNavigationClick);
+    $('.js-permissions').on('click', 'th button', handleUserLevelDemo);
     $('.js-form').on('submit', 'form', e => e.preventDefault());
     $('.js-form').on('submit', '.js-login-form', handleLogIn);
     $('.js-form').on('click', '.js-signup-link', handleSignUpForm);
@@ -367,14 +365,13 @@ function watchButtons() {
     $('.js-info-window').on('click', '.js-close', toggleInfoWindow);
     $('.js-footer').on('click', '.js-user-list', handleAdminLink);
     $('.js-footer').on('click', '.js-signup-link', handleSignUpForm);
-    $('.js-form').tooltip();
+    //$('.js-form').tooltip();
 }
 
 function watchHamburguer() {
      $('.menu-toggle').on('click', function (event) {
          event.preventDefault();
          event.stopPropagation();
-        //$('.js-site-nav').toggleClass('site-nav--open');
         $(this).closest('header').toggleClass('open');
      })
 }
@@ -390,13 +387,13 @@ function watchCalendars() {
 
 function reset() {
     /// delete 
-    deleteDataFromCache();
+    deleteEmployeeFromCache();
     deleteOptionsFromCache();
     deleteAuthenticatedUserFromCache();
-  
     clearScreen();
     $('.js-help').removeClass('hide-it');
-    renderSearchBar("instructions");
+    $('.js-menu-toggle, .js-site-nav').addClass('hide-it');
+    
 }
 
 function main() {

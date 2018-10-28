@@ -5,17 +5,29 @@ function logInSuccess(user) {
     console.log('Succesful Login');
     $('#username, #password').val("");
     clearScreen();
-    renderSearchMenu(user);
+    renderWelcome(user);
     return user;
 }
 
+
+// log in and save user in cache
+function logInAndSaveUser(userData) {
+    return userLogin({
+        userData
+    })
+    .then(res => {
+        const authenticatedUser = res.user;
+        authenticatedUser.jwToken = res.jwToken;
+        saveAuthenticatedUserIntoCache(authenticatedUser);
+        return authenticatedUser;
+    })
+    
+}
+// log in, save user in cache and go to home page
 function doLogin(userData) {
-    return userLogin({ userData })
-        .then(res => {
-            const authenticatedUser = res.user;
-            authenticatedUser.jwToken = res.jwToken;
-            saveAuthenticatedUserIntoCache(authenticatedUser);
-            return logInSuccess(authenticatedUser);
+    return logInAndSaveUser(userData)
+        .then(user => {
+            return logInSuccess(user);
         })
 }
 

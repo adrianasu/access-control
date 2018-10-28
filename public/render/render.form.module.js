@@ -7,17 +7,36 @@ function requestAndSaveOptions() {
         })   
 }
 
-function renderWelcome() {
-    $('.js-intro').html(`<h1>Welcome!</h1>
-    <p>Enter your employee ID to check if you comply with the 
-    requirements to enter these premises.</p>`).removeClass('hide-it');
-    $('.js-form').html(generateSearchForm()).removeClass('hide-it');
-    $('.js-search-form').addClass('welcome-form');
-    renderSearchBar();
-    renderFooter();
+function renderWelcome(user) {
+    console.log("WELCOME ", user);
+    clearScreen();
+    let message;
+    if(user) {
+        message =`<h1>Welcome ${user.name}!</h1>`;
+    } else  {
+         message =`<h1>Welcome!</h1>`;
+    }
+    $('.js-intro').html(message).removeClass('hide-it');
+    $('.js-form').removeClass('form');
+    return renderHome(user);
 }
 
-
+function renderHome(user) {
+    let ids = getEmployeeIdsFromCache();
+    $('.js-search-form').addClass('welcome-form');
+    renderNavBar();
+    renderFooter(user);
+   
+    if (ids !== undefined) {
+       return  $('.js-form').html(generateSearchForm(ids)).removeClass('hide-it');
+    }
+    else {
+        return getEmployeeIds()
+            .then(ids => {
+                return $('.js-form').html(generateSearchForm(ids)).removeClass('hide-it');
+            })
+    }
+}
 
 function generateLevelOptions(data) {
     let options = [];
@@ -81,11 +100,12 @@ function generateUserFormString(data, id, origin) {
 }
 
 function renderUserForm(id, origin, data) {
-    renderSearchBar();
+    renderNavBar();
     if (origin === "list") {
-        $('.js-form').html(generateUserFormString(data.levels, id, origin)).removeClass('hide-it');
+        $('.js-form').html(generateUserFormString(data.levels, id, origin)).removeClass('hide-it form');
+        fillUserForm(data);
     } else {
-        $('.js-form').html(generateUserFormString()).removeClass('hide-it');
+        $('.js-form').html(generateUserFormString()).removeClass('hide-it form');
     }
         return data;
 }
@@ -93,7 +113,7 @@ function renderUserForm(id, origin, data) {
 
 function renderLoginForm() {
     clearScreen();
-    renderSearchBar();
+    renderNavBar();
     let logInString = `<form class="js-login-form login-form">
     <legend>Log In</legend>
     <label for="username">username</label>
@@ -104,7 +124,7 @@ function renderLoginForm() {
     <a href="" class="js-signup-link">Create one account here.</a>
     </form>`;
 
-    $('.js-form').html(logInString).removeClass('hide-it');
+    $('.js-form').html(logInString).removeClass('hide-it form');
 
 }
 
@@ -124,7 +144,7 @@ function generateTrainingOptions(dataT) {
     let titles = generateEmployeeFormOptions(dataT, "title");
             dataT.forEach(title => {
             index += 1;
-            trainings.push(`<label for="training-date${index}">Date: <span class="tooltiptext">Training Date</span>
+            trainings.push(`<label for="training-date${index}"><i class="far fa-calendar-alt tooltip"><span class="tooltiptext">Training Date</span></i>
             <input type="text" id="training-date${index}" class="training-date" autocomplete="off" size="30"></label>`);
             trainings.push(`<select id="training${index}" data-option="${index}">`);
             trainings.push(titles);
@@ -134,11 +154,11 @@ function generateTrainingOptions(dataT) {
 }
 
 function generateEmployeeForm(options, id, origin) {
-    let btnName = 'create';
+    let action = 'create';
     if (id) {
-        btnName = 'update';
+        action = 'update';
     } else {
-        id = 'list';
+        origin = 'list';
     }
      let formString = [];
     
@@ -149,12 +169,12 @@ function generateEmployeeForm(options, id, origin) {
         formString.push(`<form id="js-employee-form" class="employee-form create-form">
         <p>* required</p>
         <fieldset name="personal-information">`);
-        if(btnName === 'create') {
+        if(action === 'create') {
             formString.push(`<label for="employee-id">Employee ID*</label>
             <input type="text" id="employee-id" required>`);
         }
         else {
-            formString.push(`<p>Employee ID:  ${id}</p>`);
+            formString.push(`<h1>Employee ID:  ${id}</h1>`);
         }
         formString.push(`<label for="first-name">First Name*</label>
         <input type="text" id="first-name" required>
@@ -178,38 +198,46 @@ function generateEmployeeForm(options, id, origin) {
         <label for="license-plate1">License Plates</label>
         <input type="text" id="license-plate1" class="license-plate">
         <input type="text" id="license-plate2" class="license-plate"><div class="buttons">
-        <button role="button" type="button" data-name="employee" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn ${btnName}-btn">Submit</button>
+        <button role="button" type="button" data-name="employee" data-id="${id}" data-origin="${origin}" class="js-${action}-btn ${action}-btn">Submit</button>
         <button role="button" type="button" data-name="employee" data-origin="${origin}" class="js-cancel-btn cancel-btn">Cancel</button>
         </div></form>`);
-        $('.js-form').html(formString.join("")).removeClass('hide-it');
+        $('.js-form').html(formString.join("")).removeClass('hide-it').addClass('form');
 
         return options;
 }
 
 
 function renderEmployeeForm(id, origin, data) {
-    renderSearchBar();
+    renderNavBar();
     let options = getOptionsFromCache();
-    if (options !== undefined) {
+    // render form to create a new employee
+    if (!id) {
+        generateEmployeeForm(options);
+    } // render form filled  with data when
+    // options data is already in cache memory
+    else if (options !== undefined) {
         generateEmployeeForm(options, id, origin);
-        return data;
+        return fillEmployeeForm(data, "employee");
+     // render form filled  with data when
+     // options data has to be requested to server
     } else {
         return requestAndSaveOptions()
             .then(options => {
-                generateEmployeeForm(options, id, origin);
-                return data;
+                return generateEmployeeForm(options, id, origin);   
+            })
+            .then(options => {
+                return fillEmployeeForm(data, "employee");
             })
             .catch(err => {
-                console.log(err);
-                $('.js-message').html(`<p>Something went wrong. Please try again</p>`);
+                return $('.js-message').html(`<p>Something went wrong. Please try again</p>`);
             })
     }
 }     
 
 function generateEmployerForm(data, id, origin) {
-     let btnName = 'create';
+     let action = 'create';
      if (id) {
-         btnName = 'update';
+         action = 'update';
      } else {
          id = 'list';
      }
@@ -226,16 +254,22 @@ function generateEmployerForm(data, id, origin) {
                             <label for="${name}">${name}</label>`);
     });
 
-    employerString.push(`<div class="buttons"><button role="button" type="submit" data-name="employer" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
-    <button role="button" type="button" data-name="employer" data-origin="${origin}" class="js-cancel-btn">Cancel</button></div></form>`);
+    employerString.push(`<div class="buttons"><button role="button" type="submit" 
+    data-name="employer" data-id="${id}" data-origin="${origin}" 
+    class="js-${action}-btn">Submit</button>
+    <button role="button" type="button" data-name="employer" data-origin="${origin}" 
+    class="js-cancel-btn">Cancel</button></div></form>`);
 
-    $('.js-form').html(employerString.join("")).removeClass('hide-it');
+    $('.js-form').html(employerString.join("")).addClass('form').removeClass('hide-it');
+    if(action === "update") {
+        fillEmployerForm(data, "employer");
+    }
     return data;
 }
 
 function renderEmployerForm(id, origin, data) {
      
-    renderSearchBar();
+    renderNavBar();
     let options = getOptionsFromCache();
     if (options !== undefined) {
         generateEmployerForm(options, id, origin);
@@ -253,9 +287,9 @@ function renderEmployerForm(id, origin, data) {
 }    
 
 function renderTrainingForm(id, origin, data) {
-     let btnName = 'create';
+     let action = 'create';
      if (id) {
-         btnName = 'update';
+         action = 'update';
      } else {
          id = 'list';
      }
@@ -264,29 +298,35 @@ function renderTrainingForm(id, origin, data) {
         <input type="text" name="training-title" id="training-title" autofocus required>
         <label for="expiration-time">Expiration Time (in days)</label>
         <input type="number" name="expiration-time" id="expiration-time" required><div class="buttons">
-        <button role="button" type="submit" data-name="training" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
+        <button role="button" type="submit" data-name="training" data-id="${id}" data-origin="${origin}" class="js-${action}-btn">Submit</button>
         <button role="button" type="button" data-name="training" data-origin="${origin}" class="js-cancel-btn">Cancel</button></div>
         </form>`;
-    $('.js-form').html(trainingString).removeClass('hide-it');
-    renderSearchBar();
+    $('.js-form').html(trainingString).addClass('form').removeClass('hide-it');
+     if (action === "update") {
+         fillTrainingForm(data);
+     }
+    renderNavBar();
     return data;
 }
 
 function renderDepartmentForm(id, origin, data) {
-    let btnName = 'create';
+    let action = 'create';
     if (id) {
-        btnName = 'update';
+        action = 'update';
     } else {
         id = 'list';
     }
     let departmentString = `<form class="js-department-form create-form">
         <label for="departmentName">Department Name</label>
         <input type="text" name="departmentName" id="departmentName" autofocus required><div class="buttons">
-        <button role="button" type="submit" data-name="department" data-id="${id}" data-origin="${origin}" class="js-${btnName}-btn">Submit</button>
+        <button role="button" type="submit" data-name="department" data-id="${id}" data-origin="${origin}" class="js-${action}-btn">Submit</button>
         <button role="button" type="button" data-name="department" data-origin="${origin}" class="js-cancel-btn">Cancel</button></div>
         </form>`;
 
-    $('.js-form').html(departmentString).removeClass('hide-it');
-    renderSearchBar();
+    $('.js-form').html(departmentString).addClass('form').removeClass('hide-it');
+    renderNavBar();
+    if (action === "update") {
+        fillDepartmentForm(data, "department");
+    }
     return data;
 }

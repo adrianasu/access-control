@@ -10,7 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.css" rel="stylesheet">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz"crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css?family=Quicksand|Noto+Sans+JP|Rubik|Poppins|Krona+One|Prosto+One|Viga|Cabin|Oswald|Francois+One"
+<link href="https://fonts.googleapis.com/css?family=Quicksand|Noto+Sans+JP|Rubik|Poppins|Krona+One|Prosto+One|Viga|Cabin|Oswald|Istok+Web|Francois+One"
     rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="newnav.css">
     <link rel="stylesheet" type="text/css" href="main.css">
@@ -23,12 +23,12 @@
 </head>
 <body>
     <header role="banner">
-    <div class="container">
+    <div class="js-nav-container nav-container">
         <h1 class="logo">Ready2Go</h1>
-        <nav class="site-nav js-site-nav">
+        <nav class="site-nav js-site-nav" >
         </nav>
 
-        <div class="menu-toggle">
+        <div class="menu-toggle js-menu-toggle">
             <div class="hamburger"></div>
         </div>
     </div>
@@ -38,17 +38,17 @@
         <section class="js-help help no-padding wide up" aria-live="assertive">
             <div class="img-container">
                 <img src="https://www.hunters-wholesalers.co.uk/images/access-control-systems.jpg" alt="A hand scanning a card.">
-            
+                
             </div>
             <div class="info-container">
             <p>Are you looking for an automated system to regulate the entrance
                 into your facility?</p>
 
             <p>This app controls the access to a determined location based
-                on factors such as authorization or other requirements.</p>
+                on configurable factors such as authorization or other requirements.</p>
+            
             <h2>How it works</h2>
-                
-              
+            
             <table class="steps">
                 <tr>
                     <td><i class="fas fa-mobile-alt"></i> <i class="fas fa-tv"></i></td>
@@ -65,7 +65,7 @@
                 </tr>
                 <tr>
                     <td><i class="far fa-hand-paper"></i> <i class="far fa-thumbs-up"></i></td> 
-                    <td>Then they'll be granted or not the entrance.
+                    <td>Then they'll be granted entrance or not.
                     </td>
                 </tr>
             </table>
@@ -75,18 +75,21 @@
                 <p>A work environment with employees and contractors (all referred as employees) was set up.
                     All employees are required to have a valid set of safety trainings in order to enter 
                     their workplace, a mine.</p>
-                <p>The app displays different information depending on the 
-                permissions granted to each user (see table below)</p>
-                <p>Click on the menu at the top,
-                 select a user level and you're Ready2Go. </p>
-         
-
-            <table class="permissions">
+                <p>This app allows you to store and display additional information. 
+                    In this case, the system was configured
+                    to handle employees, trainings, employers, departments and users information.</p>
+                
+                <h3>User's levels</h3>
+                    <p>The app displays different information depending on the 
+                    permissions granted to each user. Click on a user level name on the table 
+                    shown below to try our demo under that level. </p>
+            
+            <table class="js-permissions permissions">
                 <tr>
-                    <th>Basic</th>
-                    <th>Overview</th>
-                    <th>Public</th>
-                    <th>Admin</th>
+                    <th><button type="button" role="button">Basic</button></th>
+                    <th><button type="button" role="button">Overview</button></th>
+                    <th><button type="button" role="button">Public</button></th>
+                    <th><button type="button" role="button">Admin</button></th>
                 </tr>
                 <tr>
                     <td colspan="4">Requires account</td>
@@ -182,7 +185,7 @@
             </div>
         </section>
         <section class="js-intro intro" aria-live="assertive"></section>
-        <section class="js-form" aria-live="assertive"></section>
+        <section class="js-form form" aria-live="assertive"></section>
         <section class="js-results results" aria-live="assertive"></section>
         <section class="js-list-results list-results" aria-live="assertive"></section>
         <section class="js-message box"></section>
