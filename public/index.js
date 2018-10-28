@@ -127,6 +127,7 @@ function handleUserLevelDemo(event) {
 //yes
 function handleNavigationClick(event) {
     event.preventDefault();
+    event.stopPropagation();
     $(this).closest('header').toggleClass('open');
     
     let selectedOption = $(this)
@@ -365,7 +366,7 @@ function watchButtons() {
     $('.js-info-window').on('click', '.js-close', toggleInfoWindow);
     $('.js-footer').on('click', '.js-user-list', handleAdminLink);
     $('.js-footer').on('click', '.js-signup-link', handleSignUpForm);
-    //$('.js-form').tooltip();
+
 }
 
 function watchHamburguer() {
@@ -390,6 +391,7 @@ function reset() {
     deleteEmployeeIdsFromCache();
     deleteEmployeeFromCache();
     deleteOptionsFromCache();
+    ///
     deleteAuthenticatedUserFromCache();
     clearScreen();
     $('.js-help').removeClass('hide-it');
