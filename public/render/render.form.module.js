@@ -16,12 +16,15 @@ function renderWelcome(user) {
     } else  {
          message =`<h1>Welcome!</h1>`;
     }
-    $('.js-intro').html(message).removeClass('hide-it');
+    $('.js-intro').html(message).removeClass('hide-it').addClass('form');
     $('.js-form').removeClass('form');
-    return renderHome(user);
+    return renderHome(user, "fromWelcome");
 }
 
-function renderHome(user) {
+function renderHome(user, fromWelcome) {
+    if (!fromWelcome) {
+        $('.js-form').addClass('form');
+    }
     let ids = getEmployeeIdsFromCache();
     $('.js-search-form').addClass('welcome-form');
     renderNavBar();
@@ -33,7 +36,7 @@ function renderHome(user) {
     else {
         return getEmployeeIds()
             .then(ids => {
-                return $('.js-form').html(generateSearchForm(ids)).removeClass('hide-it');
+                return $('.js-form').html(generateSearchForm(ids)).removeClass('hide-it').addClass('form');
             })
     }
 }

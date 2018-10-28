@@ -185,8 +185,12 @@ h2:nth-child(even) {
 }
 
 .list-results td {
-    padding: .2em .5em;
+    padding: .2em;
     border-bottom: 1px solid black;
+}
+
+.list-results tr:last-child td {
+    border-bottom: none;
 }
 
 .steps td:nth-child(2) {
@@ -559,17 +563,14 @@ tr {
 }
 
 table {
-    margin-top: 1em;
+    margin: auto;
 }
 
 
 
 .results {
-    position: absolute; /*for emp id basic*/
-
+    position: absolute; 
 }
-
-
 
 .results td {
     width: 100%;

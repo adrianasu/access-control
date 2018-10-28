@@ -122,20 +122,20 @@
      let loginAndRender = ["overview", "public", "admin"];
      let justRender = ["login", "logout", "signup"];
      let endpoint;
-
+     let user = getAuthenticatedUserFromCache();
      if (selectedOption === "list employees") {
          selectedOption = "employee";
          endpoint = defineEndpointLevel(); 
-     } else if (selectedOption.slice(-1) === "s") {
-         selectedOption = selectedOption.slice(0, -1);
-         endpoint = selectedOption;
-     } else if (selectedOption === "help") {
-         return reset();
-     }
-
-     if (loginAndRender.includes(selectedOption)) {
-         user = getUserAndPassword(selectedOption);
-         return doLogin(user)
+        } else if (selectedOption.slice(-1) === "s") {
+            selectedOption = selectedOption.slice(0, -1);
+            endpoint = selectedOption;
+        } else if (selectedOption === "help") {
+            return reset();
+        }
+        
+    if (loginAndRender.includes(selectedOption)) {
+        let userAndPass = getUserAndPassword(selectedOption);
+         return doLogin(userAndPass)
             .then(user=> {
                 return renderWelcome(user);
             })
@@ -146,7 +146,8 @@
      }
      clearScreen();
      if (selectedOption === "home") {
-         return renderHome();
+         console.log(user);
+         return renderHome(user);
      } else if (justRender.includes(selectedOption)) {
          return screens[selectedOption].render();
      } else {
@@ -266,20 +267,18 @@
      if (!user) {
          $('.js-footer').html(`<p>Please, <a href="" class="js-signup-link">
          sign up </a> to enable more options.</p>`).removeClass('hide-it');
-        } else if (user && user.accessLevel <= ACCESS.PUBLIC) {
-            $('.js-footer').html(`<p>For more options, go to the menu at the top or talk to an <a href="" 
-            class="js-user-list"> admin </a> to increase your permissions.</p>`).removeClass('hide-it');
+        } else if (user.accessLevel <= ACCESS.PUBLIC) {
+            $('.js-footer').html(`<p>For more options, go to the menu at the top.</p>`).removeClass('hide-it');
      }
  }
 
  //yes
- function renderSearchMenu(accessLevel) {
-     if (!accessLevel) {
-         accessLevel = ACCESS.BASIC;
-     }
+ function renderSearchMenu() {
+     let user = getAuthenticatedUserFromCache();
+     
      $('.js-search-form').removeClass('welcome-form');
      $('.js-form').html(generateSearchMenu()).addClass('form').removeClass('hide-it');
-     renderFooter(accessLevel);
+     renderFooter(user);
      renderNavBar();
  }
 
@@ -496,11 +495,9 @@ function renderEmployeeOverview(employee, userLevel, origin) {
                  let levelString;
                  Object.keys(ACCESS).forEach(level => {
                      if (ACCESS[level] === item[key]) {
-                         levelString = level;
+                         levelString = level.toLowerCase();
                      }
-
                  })
-
                  table.push(`<td>${levelString}</td>`);
 
              } else if (key === "id" || key === "levels" || key === "email") {} else {
