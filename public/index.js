@@ -187,8 +187,8 @@ function handleLoginLink(event) {
 
 function handlePrepareDelete(event) {
     event.preventDefault();
-     event.stopPropagation();
-      event.stopImmediatePropagation();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
     $('.js-loader').show();
     const name = $(this).attr("data-name");
  
@@ -202,7 +202,7 @@ function handlePrepareDelete(event) {
 function handleDelete(event) {
     let options = ["training", "department", "employer"];
     event.preventDefault();
-     event.stopPropagation();
+    event.stopPropagation();
     const endpoint = $(this).attr("data-name");
     const id = $(this).attr("data-id");
     const origin = $(this).attr("data-origin");
@@ -237,7 +237,7 @@ function handleDelete(event) {
 
 function handlePrepareUpdateForm(event) {
     event.preventDefault();
-     event.stopPropagation();
+    event.stopPropagation();
     event.stopImmediatePropagation();
     const origin = $(this).attr('data-origin');
     const id = $(this).attr('data-id');
@@ -265,7 +265,7 @@ function handlePrepareUpdateForm(event) {
 
 function handleUpdate(event) {
     event.preventDefault();
-     event.stopPropagation();
+    event.stopPropagation();
     event.stopImmediatePropagation();
     let endpoint = $(this).attr("data-name");
     let id = $(this).attr("data-id");
@@ -342,6 +342,7 @@ function handleCreate(event) {
 
 function handleSignUpForm(event) {
     event.preventDefault();
+    event.stopPropagation();
     clearScreen();
     renderUserForm();
 }
@@ -383,7 +384,7 @@ function watchButtons() {
 }
 
 function watchHamburguer() {
-     $('.menu-toggle').on('click', function (event) {
+     $('.js-menu-toggle').on('click', function (event) {
          event.preventDefault();
          event.stopPropagation();
          event.stopImmediatePropagation();
@@ -395,6 +396,7 @@ function watchCalendars() {
     $('.js-form').on("focus", ('#employment-date, .training-date'),
             function (event) {
             event.preventDefault();
+            event.stopPropagation();
             event.stopImmediatePropagation();
             $(this).datepicker();
     });

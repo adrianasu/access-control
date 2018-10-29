@@ -61,9 +61,7 @@ function handleLogIn(event) {
     return doLogin(userData);
 }
 
-function handleLogOut(event) {
-
-     event.stopPropagation();
+function handleLogOut() {
         reset();
 }
 
