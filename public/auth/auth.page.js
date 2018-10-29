@@ -33,6 +33,7 @@ function doLogin(userData) {
 
 function handleSignUp(event) {
     event.preventDefault();
+     event.stopPropagation();
     $('.js-loader').show();
    
     const userData = {
@@ -51,6 +52,7 @@ function handleSignUp(event) {
 
 function handleLogIn(event) {
     event.preventDefault();
+    event.stopPropagation();
     const userData = {
         username: $('#username').val(),
         password: $('#password').val()
@@ -59,7 +61,9 @@ function handleLogIn(event) {
     return doLogin(userData);
 }
 
-function handleLogOut() {
+function handleLogOut(event) {
+
+     event.stopPropagation();
         reset();
 }
 

@@ -60,6 +60,7 @@ function getAllAndRender(settings, selectedOption) {
 //yes
 function handleList(event) {
     event.preventDefault();
+     event.stopPropagation();
     $('.js-results').addClass('hide-it');
     let selectedOption = $(this).text().slice(0, -1);
     return getAllAndRender({endpoint: selectedOption}, selectedOption);
@@ -68,12 +69,14 @@ function handleList(event) {
 
 function handleAdminLink(event) {
     event.preventDefault();
+     event.stopPropagation();
     return getAllAndRender({endpoint: "user"}, "user");
     
 }
 
 function handleClear(event) {
     event.preventDefault();
+    event.stopPropagation();
     event.stopImmediatePropagation();
     let origin = $(this).attr('data-origin');
     $('.js-results').addClass('hide-it');
@@ -87,6 +90,7 @@ function handleClear(event) {
 
 function handleCancel(event) {
     event.preventDefault();
+    event.stopPropagation();
     event.stopImmediatePropagation();
     clearScreen();
     renderNavBar();
@@ -104,7 +108,7 @@ function handleCancel(event) {
 
 function handlePrepareCreate(event) {
     event.preventDefault();
-  
+    event.stopPropagation();
     let selectedOption = $('.js-goto-create').attr('data-value');
    
     updateAuthenticatedUI();
@@ -117,6 +121,7 @@ function handlePrepareCreate(event) {
 function handleUserLevelDemo(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
+    event.stopPropagation();
     let selectedOption = $(this)
         .closest('th button')
         .text().trim().toLowerCase();
@@ -128,6 +133,7 @@ function handleUserLevelDemo(event) {
 function handleNavigationClick(event) {
     event.preventDefault();
     event.stopPropagation();
+    event.stopImmediatePropagation();
     $(this).closest('header').toggleClass('open');
     
     let selectedOption = $(this)
@@ -139,6 +145,7 @@ function handleNavigationClick(event) {
 //yes
 function handleSearchEmployee(event) {
     event.preventDefault();
+     event.stopPropagation();
     event.stopImmediatePropagation();
     let origin = 'form';
     // get id from search input
@@ -174,11 +181,13 @@ function handleSearchEmployee(event) {
 
 function handleLoginLink(event) {
     event.preventDefault();
+     event.stopPropagation();
     renderLoginForm();
 }
 
 function handlePrepareDelete(event) {
     event.preventDefault();
+     event.stopPropagation();
       event.stopImmediatePropagation();
     $('.js-loader').show();
     const name = $(this).attr("data-name");
@@ -193,7 +202,7 @@ function handlePrepareDelete(event) {
 function handleDelete(event) {
     let options = ["training", "department", "employer"];
     event.preventDefault();
- 
+     event.stopPropagation();
     const endpoint = $(this).attr("data-name");
     const id = $(this).attr("data-id");
     const origin = $(this).attr("data-origin");
@@ -228,6 +237,7 @@ function handleDelete(event) {
 
 function handlePrepareUpdateForm(event) {
     event.preventDefault();
+     event.stopPropagation();
     event.stopImmediatePropagation();
     const origin = $(this).attr('data-origin');
     const id = $(this).attr('data-id');
@@ -255,6 +265,7 @@ function handlePrepareUpdateForm(event) {
 
 function handleUpdate(event) {
     event.preventDefault();
+     event.stopPropagation();
     event.stopImmediatePropagation();
     let endpoint = $(this).attr("data-name");
     let id = $(this).attr("data-id");
@@ -302,6 +313,7 @@ function handleUpdate(event) {
 
 function handleCreate(event) {
     event.preventDefault();
+    event.stopPropagation();
     let endpoint = $(this).attr("data-name");
     let jwToken = getAuthenticatedUserFromCache().jwToken;
     let newData = screens[endpoint].getDataFrom(event);
@@ -337,6 +349,7 @@ function handleSignUpForm(event) {
 function toggleInfoWindow(event) {
     if (event) {
         event.preventDefault();
+        event.stopPropagation();
         event.stopImmediatePropagation();
     }
     $('.js-info-window').toggleClass('show-info-window');
@@ -373,6 +386,7 @@ function watchHamburguer() {
      $('.menu-toggle').on('click', function (event) {
          event.preventDefault();
          event.stopPropagation();
+         event.stopImmediatePropagation();
         $(this).closest('header').toggleClass('open');
      })
 }
