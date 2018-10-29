@@ -251,7 +251,7 @@
                  <p>Enter your employee ID to check if you comply with the 
                  requirements to enter these premises.</p><form 
                  class="js-search-form search-form"><label for="employeeId">
-                 Employee Id <i class="fas fa-info-circle tooltip"><span class="tooltiptext">
+                 Employee Id <i class="fas fa-info-circle bounce tooltip"><span class="tooltiptext">
                  Here are some ids: ${ids}</span></i></label>
                  <input type="text" name="employeeId" id="employeeId" autofocus>
                  <button role="button" type="submit">Search</button></form>`;

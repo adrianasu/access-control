@@ -1,14 +1,16 @@
 /* https: //www.leewayautomation.com.au/wp-content/uploads/2018/07/access-control-img.jpg */
+
 /* https: //www.barcodescannermodule.com/photo/barcodescannermodule/editor/20170310112614_85818.png */
+
 /* "https://www.traka.com/presets/small/Other/trakacom/Images/Article4.jpg" */
+
 * {
     box-sizing: border-box;
 }
 
 body {
     /* font-family: 'Rubik', sans-serif; */
-    font-family: 'Noto Sans JP',
-    sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
     overflow: auto;
     background-color: #efedbb;
     padding-bottom: 2em;
@@ -22,24 +24,19 @@ header {
     /* font-family: 'Viga', sans-serif; */
     font-family: 'Krona One', sans-serif;
     background-color: black;
-
 }
 
 main {
     max-width: 700px;
     margin: auto;
-
 }
-
-
 
 .img-container {
     position: relative;
     width: 100%;
     text-align: center;
     color: white;
-    font-family: 'Francois One',
-        sans-serif;
+    font-family: 'Francois One', sans-serif;
 }
 
 img {
@@ -51,7 +48,6 @@ img {
     position: absolute;
     bottom: 15%;
     right: 12%;
-
 }
 
 .intro h1 {
@@ -85,10 +81,7 @@ h1 {
     font-family: 'Poppins', sans-serif;
 }
 
-
-.intro,
-footer,
-form {
+.intro, footer, form {
     min-width: 150px;
     width: 80%;
     border-radius: 2px;
@@ -99,7 +92,6 @@ form {
 footer {
     margin-top: .5em;
     padding: 0 .6em;
-
 }
 
 footer p {
@@ -112,8 +104,6 @@ form {
     background: white;
     padding: .5em;
 }
-
-
 
 .search-form, .form {
     padding: .8em 1em;
@@ -137,8 +127,7 @@ form {
     margin-top: 1em;
 }
 
-.help,
-.intro {
+.help, .intro {
     padding: .5em 1em;
     margin-top: 5em;
     position: relative;
@@ -146,29 +135,23 @@ form {
 
 .help h2 {
     margin-left: 1em;
-
 }
 
 .help p {
     margin-top: 1em;
 }
 
-
-
 h2:nth-child(even) {
     display: inline-block;
 }
 
-.steps,
-.permissions {
-  
+.steps, .permissions {
     text-align: center;
     margin: auto;
     border: 1px solid black;
     table-layout: fixed;
     background-color: white;
     margin: 1.5em auto;
- 
 }
 
 .steps {
@@ -201,7 +184,6 @@ h2:nth-child(even) {
     background: #c7b198;
 }
 
-
 th button {
     width: 100%;
 }
@@ -231,12 +213,11 @@ th button {
 }
 
 form label {
-    color:black;
+    color: black;
     font-size: 1.1em;
     display: block;
     font-weight: bold;
 }
-
 
 form input {
     border: none;
@@ -255,15 +236,12 @@ form input[type="checkbox"] {
     width: 50%;
 }
 
-input:hover,
-input:focus {
+input:hover, input:focus {
     border-bottom: 4px solid black;
     outline: none;
 }
 
-#name,
-#email,
-#employerName {
+#name, #email, #employerName {
     width: 90%;
 }
 
@@ -282,9 +260,7 @@ legend {
     font-size: 2em;
 }
 
-.signup-form,
-.login-form {
-
+.signup-form, .login-form {
     font-size: 1em;
     padding: 1em;
 }
@@ -302,7 +278,8 @@ legend {
 }
 
 .create-form {
-    margin-top: 1em; /* create employee*/
+    margin-top: 1em;
+    /* create employee*/
     padding: 1em;
     border: 2px solid black;
     background: white;
@@ -321,8 +298,6 @@ legend {
     margin-top: 1em;
 }
 
-
-
 #vehicle {
     width: 15%;
 }
@@ -338,16 +313,13 @@ form p {
     padding: 7%;
 }
 
-.signup-form button,
-.login-form button {
+.signup-form button, .login-form button {
     margin-left: auto;
     display: block;
     margin-top: 1em;
-
 }
 
-.signup-form a,
-.login-form a {
+.signup-form a, .login-form a {
     font-size: 1.1em;
 }
 
@@ -379,7 +351,6 @@ fieldset {
     border: 0;
 }
 
-
 button {
     border: none;
     cursor: pointer;
@@ -395,27 +366,24 @@ form button {
     background-color: #76b39d;
     border: 2px solid black;
     color: black;
-    /* margin-left: 1.4em; */ /* lo borre por serch id form*/
+    /* margin-left: 1.4em; */
+    /* lo borre por serch id form*/
     margin-top: .5em;
     padding: 1em;
     border-radius: 1px;
 }
 
-form button:hover,
-form button:focus {
+form button:hover, form button:focus {
     border: 3px solid white;
     border-radius: 10px;
     outline: none;
-
 }
-
 
 .below {
     margin: 4em auto;
 }
 
-.results .delete-btn,
-.results .goto-edit {
+.results .delete-btn, .results .goto-edit {
     margin-top: 1.5em;
     padding: .4em .6em;
     background: #76b39d;
@@ -426,23 +394,20 @@ form button:focus {
 .results .delete-btn {
     float: right;
     margin-right: 15%;
-
 }
 
-.results .goto-edit,
-.info-window .close-btn {
+.results .goto-edit, .info-window .close-btn {
     float: left;
     margin-left: 15%;
     overflow: auto;
 }
 
-
 .info-window button {
-        background: #00454a;
-        color: white;
-        border: 1px solid #003545;
-        font-size: 1.1em;
-        width: 40%;
+    background: #00454a;
+    color: white;
+    border: 1px solid #003545;
+    font-size: 1.1em;
+    width: 40%;
 }
 
 .info-window .close {
@@ -460,11 +425,7 @@ form button:focus {
     margin-left: .3em;
 }
 
-
-
-
-.list,
-.list-results {
+.list, .list-results {
     /* margin: 5em .5em; */
     margin: 5em auto;
 }
@@ -473,8 +434,7 @@ form button:focus {
     width: 90%;
 }
 
-.list-results .goto-edit,
-.list-results .delete-btn {
+.list-results .goto-edit, .list-results .delete-btn {
     background-color: #76b39d;
     border-radius: 1px;
     padding: .3em;
@@ -482,7 +442,6 @@ form button:focus {
 }
 
 .list-results h1 {
-  
     color: black;
     display: inline-block;
     font-size: 1.5em;
@@ -528,19 +487,15 @@ form button:focus {
     border: 2px solid black;
     background-color: white;
     color: black;
-    transition: border-radius .2ms ease-in-out,
-        background-color .2ms ease-in-out,
-        color .2ms ease-in-out;
+    transition: border-radius .2ms ease-in-out, background-color .2ms ease-in-out, color .2ms ease-in-out;
 }
 
-.grid-item:focus,
-.grid-item:hover {
+.grid-item:focus, .grid-item:hover {
     transform: scaleY(1);
     border-radius: 10px;
     background-color: black;
     color: #FFF8D8;
 }
-
 
 .grid-item ul {
     margin: 0;
@@ -566,7 +521,7 @@ table {
 }
 
 .results {
-    position: absolute; 
+    position: absolute;
 }
 
 .results td {
@@ -593,8 +548,7 @@ table {
     border: none;
 }
 
-.info-window,
-.results {
+.info-window, .results {
     margin-bottom: 2em;
     z-index: 1;
     left: 5%;
@@ -613,16 +567,12 @@ table {
     transition: visibility 0.3s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
 }
 
-
-
-.show-info-window,
-.results {
+.show-info-window, .results {
     opacity: 1;
     visibility: visible;
     transform: scale(1.0);
     transition: visibility 0.3s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
 }
-
 
 .results {
     padding: 1em 1.5em;
@@ -635,8 +585,6 @@ table {
     /* display: inline-block; */
 }
 
-
-
 .onTop {
     position: absolute;
     top: 12%;
@@ -647,8 +595,7 @@ select {
     width: 100%;
 }
 
-.info-window h1,
-.info-window p {
+.info-window h1, .info-window p {
     text-align: left;
 }
 
@@ -657,11 +604,11 @@ select {
 }
 
 .warn {
-        background-color: white;
-        color: #E81D2E;
-        text-align: center;
-        font-size: 3em;
-        margin: 0;
+    background-color: white;
+    color: #E81D2E;
+    text-align: center;
+    font-size: 3em;
+    margin: 0;
 }
 
 .enter {
@@ -672,14 +619,12 @@ select {
     margin: 0;
 }
 
-.close,
-.clear {
+.close, .clear {
     float: right;
     font-size: 1.2em;
     text-decoration: none;
     cursor: pointer;
     border: none;
-
 }
 
 .info-window .close {
@@ -691,13 +636,32 @@ select {
     background: white;
 }
 
-
-.close:hover,
-.close:focus {
+.close:hover, .close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
+
+.bounce {
+    animation-name: bounce;
+    animation-duration: 2.5s;
+    animation-fill-mode: both;
+    animation-iteration-count: 3;
+}
+
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}
+
 
 .tooltip {
     position: relative;
@@ -707,8 +671,7 @@ select {
 
 .tooltiptext {
     font-size: .9em;
-    font-family: 'Istok Web',
-    sans-serif;
+    font-family: 'Istok Web', sans-serif;
     font-weight: normal;
     line-height: normal;
     position: absolute;
@@ -717,7 +680,7 @@ select {
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 200px;
-    background-color:#76b39d;
+    background-color: #76b39d;
     color: black;
     text-align: center;
     padding: .5em;
@@ -725,19 +688,19 @@ select {
     border-radius: 4px;
     position: absolute;
     left: -500%;
-    top: -600%; /*valores para ids*/
+    top: -600%;
     z-index: 1;
 }
 
-.tooltip:hover .tooltiptext,
- .tooltip:focus .tooltiptext {
+.tooltip:hover .tooltiptext, .tooltip:focus .tooltiptext {
     visibility: visible;
+    opacity: 1;
 }
 
-.fa-info-circle  .tooltiptext {
+.fa-info-circle .tooltiptext {
     left: -500%;
     top: -800%;
-} 
+}
 
 .fa-user-lock .tooltiptext {
     left: -500%;
@@ -745,16 +708,14 @@ select {
 }
 
 .fa-question-circle .tooltiptext {
-    left: -250%; /*signup form*/
+    left: -250%;
+    /*signup form*/
     top: 180%;
 }
-    
 
 .hide-it {
     display: none;
 }
-
-
 
 .info-container p:first-child {
     font-size: 1.2em;
@@ -762,19 +723,15 @@ select {
 }
 
 @media (min-width: 550px) {
-
     .results {
         padding: 0;
         top: 11em;
         left: 15%;
     }
-
-    .employee-form,
-    .info-container {
+    .employee-form, .info-container {
         margin: auto;
         width: 70%;
     }
-
     img {
         position: relative;
     }
@@ -783,29 +740,20 @@ select {
         left: 6%;
         top: 0%;
         width: 40%;
-        font-family: 'Francois One',
-            sans-serif;
+        font-family: 'Francois One', sans-serif;
         font-size: 1.9em;
     }
-    
-
 }
 
 @media (min-width: 800px) {
-
     .results {
         padding: 0;
         top: 11em;
         left: 15%;
     }
-
     .info-container p:first-child {
-       
         left: 10%;
         top: 1%;
-       
         font-size: 2.2em;
-
     }
-
 }
