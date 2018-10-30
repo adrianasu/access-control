@@ -267,7 +267,7 @@ function handlePrepareUpdateForm(event) {
 function handleUpdate(event) {
     event.preventDefault();
     event.stopPropagation();
-    event.stopImmediatePropagation();
+   
     let endpoint = $(this).attr("data-name");
     let id = $(this).attr("data-id");
     let origin = $(this).attr("data-origin");

@@ -152,7 +152,7 @@ header::after {
 
     }
 
-    .intro footer {
+    footer {
         grid-column: 2/3;
 
     }
@@ -169,7 +169,7 @@ header::after {
             margin-top: 3.7em;
             height: 100%;
             position: fixed;
-            background: #4f323b;
+            background: #00adb5;
           
     }
 
@@ -202,6 +202,10 @@ header::after {
     .site-nav li {
         display: inline-block;
         border: none;
+    }
+    .side-menu button {
+        min-width: 10em;
+        font-size: 1.5em;
     }
 
 
