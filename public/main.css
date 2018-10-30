@@ -12,8 +12,8 @@ body {
     /* font-family: 'Rubik', sans-serif; */
     font-family: 'Noto Sans JP', sans-serif;
     overflow: auto;
-    background-color: #efedbb;
-    padding-bottom: 2em;
+    background-color: #f5fac7;
+    /* padding-bottom: 2em; */
     margin: auto;
 }
 
@@ -51,7 +51,7 @@ img {
 }
 
 .intro h1 {
-    margin-top: .5em;
+    margin-top: 1.5em;
     font-size: 1.1em;
     left: 2%;
     width: 120%;
@@ -67,7 +67,11 @@ p {
     margin: .4em auto;
 }
 
-.js-form p:nth-child(1) {
+.form p:nth-child(1) {
+    text-align: right;
+}
+
+.go-up p:nth-child(1) {
     position: absolute;
     top: 10%;
     left: 64%;
@@ -79,6 +83,10 @@ h1 {
     margin: 0;
     font-size: 1.5em;
     font-family: 'Poppins', sans-serif;
+}
+
+.employee-form h1 {
+    font-size: 1.1em;
 }
 
 .intro, footer, form {
@@ -115,7 +123,7 @@ form {
 }
 
 .form {
-    margin-top: 5.5em;
+    margin-top: 4em;
 }
 
 .search-form label {
@@ -141,9 +149,9 @@ form {
     margin-top: 1em;
 }
 
-h2:nth-child(even) {
+/* h2:nth-child(even) {
     display: inline-block;
-}
+} */
 
 .steps, .permissions {
     text-align: center;
@@ -168,7 +176,7 @@ h2:nth-child(even) {
 
 .list-results td {
     padding: .2em;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #DCDCDC;
 }
 
 .list-results tr:last-child td {
@@ -308,6 +316,14 @@ form p {
     width: auto;
 }
 
+.create-form p:nth-child(1) {
+    margin: 0;
+    position: absolute;
+    top: 11%;
+    left: 64%;
+    width: auto;
+}
+
 .update-form {
     margin-top: 5em;
     padding: 7%;
@@ -384,7 +400,8 @@ form button:hover, form button:focus {
 }
 
 .results .delete-btn, .results .goto-edit {
-    margin-top: 1.5em;
+    margin: 10% 5%;
+    width: 30%;
     padding: .4em .6em;
     background: #76b39d;
     border-radius: 2px;
@@ -469,23 +486,21 @@ form button:hover, form button:focus {
 }
 
 .grid-container {
-    width: 80%;
-    margin-left: 10%;
+    width: 100%;
     display: grid;
     grid-gap: 1.5em;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    justify-content: center;
-    padding: .5em;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-auto-rows: 1fr;
     /* font-family: 'Rubik', sans-serif; */
 }
 
 .grid-item {
-    width: 250px;
     padding: .2em;
     text-align: center;
     border-radius: 1px;
     border: 2px solid black;
     background-color: white;
+    font-size: 1em;
     color: black;
     transition: border-radius .2ms ease-in-out, background-color .2ms ease-in-out, color .2ms ease-in-out;
 }
@@ -517,7 +532,8 @@ tr {
 }
 
 table {
-    margin: auto;
+    margin: 1em auto 1.5em;
+    background: white;
 }
 
 .results {
@@ -525,8 +541,8 @@ table {
 }
 
 .results td {
-    width: 100%;
-    border-bottom: 1px solid black;
+    width: fit-content;
+    border-bottom: 1px solid #DCDCDC;
     padding: .3em;
 }
 
@@ -595,9 +611,6 @@ select {
     width: 100%;
 }
 
-.info-window h1, .info-window p {
-    text-align: left;
-}
 
 .red {
     box-shadow: 3px 6px #E81D2E;
@@ -647,6 +660,12 @@ select {
     animation-duration: 2.5s;
     animation-fill-mode: both;
     animation-iteration-count: 3;
+    color: #fd5f00;
+}
+
+.exclamation {
+    animation-iteration-count: infinite;
+    font-size: 1.2em;
 }
 
 
@@ -655,7 +674,7 @@ select {
         transform: translateY(0);
     }
     40% {
-        transform: translateY(-30px);
+        transform: translateY(-25px);
     }
     60% {
         transform: translateY(-15px);
@@ -722,12 +741,144 @@ select {
     font-weight: bold;
 }
 
-@media (min-width: 550px) {
+@media (orientation: landscape) {
+
+
+    .form {
+        margin-top: 2.5em;
+    }
+
+    form input {
+        width: 50%;
+        margin-right: 1em;
+    }
+    .form p:nth-child(1) {
+        margin: .5em auto;
+    }
+    .search-form {
+        margin-top: 1.5em;
+    }
+    footer {
+        margin-top: .5em;
+    }
+    .grid-container {
+        width: 100%;
+        margin-left: 0;
+
+    }
+  
+
+    .results h1 {
+        margin: .2em 1.9em;
+        text-align: center;
+    }
+
+    .intro h1 {
+        margin-top: 2em;
+    }
+
+    .results .goto-edit,
+    .results .delete-btn {
+        width: 30%;
+    }
+
+    .intro p, .help p {
+        width: 100%;
+    }
+
+    .go-up p:nth-child(1) {
+        top: 18%;
+        left: 80%;
+   
+    }
+    footer p {
+        margin-top: 0;
+    }
+
+    .login-form {
+        margin-top: 5em;
+        font-size: .9em;
+    }
+
+    .list-results,
     .results {
+        position: static;
+        grid-column: 2/3;
+        margin: 5em auto 1em;
+        padding: 0;
+    }
+
+   
+
+    .signup-form button, 
+    .login-form button {
+        display: inline-block;
+        margin-top: 0;
+        margin-left: .4em;
+
+    }
+
+    .signup-form legend {
+        float: right;
+    }
+
+    .signup-form label {
+        font-size: 1em;
+    }
+
+    #name,
+    #email,
+    #employerName {
+        width: 60%;
+        font-size: .9em;
+    }
+    .list, .list-results {
+        margin: 4em auto;
+    }
+    .grid-item {
+        font-size: .9em;
+    }
+    table {
+        margin: 5% 10% 2% 10%;
+        width: 80%;
+        
+    }
+    .enter {
+        margin: 5%;
+    }
+    .info-window {
+        left: 30%;
+        width: 60%;
+        top: 5em;
+        font-size: 1.4em;
+
+    }
+    .info-window p {
+        text-align: center;
+    }
+    .create-form p:nth-child(1) {
+        top: 32%;
+        left: 73%;
+    }
+    .buttons button {
+        width: 30%;
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+
+    .close,
+    .clear {
+        margin-top: .5em;
+        font-size: 1.2em;
+    }
+}
+
+@media (min-width: 550px) {
+    /* .results {
         padding: 0;
         top: 11em;
         left: 15%;
-    }
+    } */
     .employee-form, .info-container {
         margin: auto;
         width: 70%;
@@ -741,11 +892,15 @@ select {
         top: 0%;
         width: 40%;
         font-family: 'Francois One', sans-serif;
-        font-size: 1.9em;
+        font-size: 1.45em;
     }
 }
 
 @media (min-width: 800px) {
+    .info-container p:first-child {
+       
+        font-size: 1.9em;
+    }
     .results {
         padding: 0;
         top: 11em;

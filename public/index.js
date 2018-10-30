@@ -84,7 +84,8 @@ function handleClear(event) {
         $('.js-list-results').removeClass('hide-it');
     } else {
         // if origin is "form"
-        renderSearchMenu();
+        let user = getAuthenticatedUserFromCache();
+        renderHome(user);
     }
 }
 
@@ -125,7 +126,7 @@ function handleUserLevelDemo(event) {
     let selectedOption = $(this)
         .closest('th button')
         .text().trim().toLowerCase();
-    $('.js-menu-toggle, .js-site-nav').removeClass('hide-it');
+    $('.js-menu-toggle, .js-site-nav, .js-short-nav, .js-side-menu').removeClass('hide-it');
     decideWhatToRender(selectedOption);
 }
 
@@ -147,7 +148,7 @@ function handleSearchEmployee(event) {
     event.preventDefault();
      event.stopPropagation();
     event.stopImmediatePropagation();
-    let origin = 'form';
+    let origin = 'searchForm';
     // get id from search input
     let employeeId = $('#employeeId').val();
     // get id from thumbnails
@@ -159,7 +160,7 @@ function handleSearchEmployee(event) {
     }
     
     let userLevel = getUserLevel();
-    let settings = { id: employeeId, endpoint: "employee" };
+    let settings = { id: employeeId, endpoint: "employee", origin };
     if (STATE.authUser) {
         settings.jwToken = STATE.authUser.jwToken;
     }
@@ -358,7 +359,7 @@ function toggleInfoWindow(event) {
     
 
 function watchButtons() {
-    $('.js-nav-container').on('click', 'li button', handleNavigationClick);
+    $('.js-nav-container, .js-side-menu').on('click', 'li button', handleNavigationClick);
     $('.js-permissions').on('click', 'th button', handleUserLevelDemo);
     $('.js-form').on('submit', 'form', e => e.preventDefault());
     $('.js-form').on('submit', '.js-login-form', handleLogIn);
@@ -411,7 +412,7 @@ function reset() {
     deleteAuthenticatedUserFromCache();
     clearScreen();
     $('.js-help').removeClass('hide-it');
-    $('.js-menu-toggle, .js-site-nav').addClass('hide-it');
+    $('.js-menu-toggle, .js-site-nav, .js-short-nav, .js-side-menu').addClass('hide-it');
     
 }
 

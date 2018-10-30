@@ -127,7 +127,7 @@ function getAll(settings) {
 // id is the mongoose id except for employees (employeeId)
 // and users (username)
 function getById(settings) {
-    const { jwToken, endpoint, id } = settings;
+    const { jwToken, endpoint, id, origin } = settings;
     return $.ajax({
         type: 'GET',
         url: `/api/${endpoint}/${id}`,
@@ -139,6 +139,10 @@ function getById(settings) {
         },
         error: err => {
             handleError(err);
+            if (endpoint === "employee" && origin === "searchForm") {
+                $('.js-form').removeClass('go-up').addClass('form');
+                $('.js-form, .js-footer').removeClass('hide-it');
+            }
         }
     });
 }

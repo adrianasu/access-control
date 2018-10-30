@@ -8,24 +8,22 @@ function requestAndSaveOptions() {
 }
 
 function renderWelcome(user) {
-    console.log("WELCOME ", user);
-
     clearScreen();
     let message;
     if(user) {
         message =`<h1>Welcome ${user.name}!</h1>`;
     } else  {
          message =`<h1>Welcome!</h1>`;
+         user = undefined;
     }
     $('.js-intro').html(message).removeClass('hide-it').addClass('form');
-    $('.js-form').removeClass('form');
+    $('.js-form').removeClass('form').addClass('go-up');
     return renderHome(user, "fromWelcome");
 }
 
 function renderHome(user, fromWelcome) {
     if (!fromWelcome) {
-        console.log("renderHome", !fromWelcome)
-        $('.js-form').addClass('form');
+        $('.js-form').addClass('form').removeClass('go-up');
     }
     let ids = getEmployeeIdsFromCache();
     $('.js-search-form').addClass('welcome-form');

@@ -84,10 +84,10 @@
          render: handleLogOut,
      },
      home: {
-         basic: renderSearchMenu,
-         overview: renderSearchMenu,
-         public: renderSearchMenu,
-         admin: renderSearchMenu
+         basic: renderHome,
+         overview: renderHome,
+         public: renderHome,
+         admin: renderHome
      }
  }
 
@@ -145,8 +145,7 @@
          return renderWelcome();
      }
      clearScreen();
-     if (selectedOption === "home") {
-         console.log(user);
+     if (selectedOption === "home") {  
          return renderHome(user);
      } else if (justRender.includes(selectedOption)) {
          return screens[selectedOption].render();
@@ -182,7 +181,43 @@
      $('.js-form').html(optionsString.join("")).removeClass('hide-it');
  }
 
- //yes
+function generateList(arr, btnClass) {
+    let listString = [];
+    listString.push(`<ul>`);
+    arr.forEach(option => {
+        listString.push(`<li><button role="button" type="button" class="${btnClass}">
+            ${option}</button></li>`);
+    })
+    listString.push(`</ul>`);
+
+    return listString.join("");
+}
+
+function generateSideMenuAndShortNav(userLevel) {
+    let sideMenuOptions, shortNav;
+    if (userLevel === "basic") {
+        sideMenuOptions = ["Home", "LogIn", "SignUp", "Help"];
+        shortNav = null;
+    } else if (userLevel === "overview") {
+        sideMenuOptions = ["Home", "List Employees", "LogOut", "Help"];
+        shortNav = null;
+    } else {
+        sideMenuOptions = ["Home", "Employees", "Trainings", "Departments", "Employers", "Users"];
+        shortNav = ["LogOut", "Help"];
+    }
+    
+     $('.js-side-menu').html(generateList(sideMenuOptions, "js-side"));
+
+     if (shortNav) {
+    $('.js-short-nav').html(generateList(shortNav, "js-list")).addClass('short-nav').removeClass('hide-it');
+    $('.js-menu-toggle').removeClass('hide-it');
+     } else {
+         $('.js-short-nav').addClass('hide-it').removeClass('short-nav');
+         $('.js-menu-toggle').addClass('hide-it');
+     }
+}
+
+
  function renderNavBar(fromInstructions) {
      const options = {
          instructions: ["Basic", "Overview", "Public", "Admin", "Help"],
@@ -191,26 +226,19 @@
          public: ["Home", "Employees", "Trainings", "Departments", "Employers", "Users", "LogOut", "Help"],
          admin: ["Home", "Employees", "Trainings", "Departments", "Employers", "Users", "LogOut", "Help"]
      }
+
      let userLevel;
-     let navBarString = [];
      if (fromInstructions) {
-         userLevel = "instructions";
-       
+         userLevel = "instructions"; 
      } else {
          // check if user is logged in and his accessLevel to give him/her access to more info
          userLevel = getUserLevel(); // returns a string
-     
      }
-     navBarString.push(`<ul>`);
-
-     options[userLevel].forEach(option => {
-         navBarString.push(`<li><button role="button" type="button" class="js-list">
-        ${option}</button></li>`);
-     })
-
-     navBarString.push(`</ul>`);
-
-     return $('.js-site-nav').html(navBarString.join(""));
+     // generate side menu and nav for landscape view
+    generateSideMenuAndShortNav(userLevel); 
+            
+    // generate nav bar for portrait view
+     return $('.js-site-nav').html(generateList(options[userLevel], "js-list"));
  }
 
  function requestEmployeeIds(jwToken) {
@@ -257,29 +285,14 @@
                  <button role="button" type="submit">Search</button></form>`;
  }
 
- function generateSearchMenu() {
-     let searchString = [];
-     searchString.push(generateSearchForm());
-     return searchString;
- }
 
  function renderFooter(user) {
      if (!user) {
          $('.js-footer').html(`<p>Please, <a href="" class="js-signup-link">
-         sign up </a> to enable more options.</p>`).removeClass('hide-it');
+         sign up </a> to enable more options.</p>`).removeClass('only-portrait').removeClass('hide-it');
         } else if (user.accessLevel <= ACCESS.PUBLIC) {
-            $('.js-footer').html(`<p>For more options, go to the menu at the top.</p>`).removeClass('hide-it');
+            $('.js-footer').html(`<p>For more options, go to the menu at the top.</p>`).addClass('only-portrait').removeClass('hide-it');
      }
- }
-
- //yes
- function renderSearchMenu() {
-     let user = getAuthenticatedUserFromCache();
-     
-     $('.js-search-form').removeClass('welcome-form');
-     $('.js-form').html(generateSearchMenu()).addClass('form').removeClass('hide-it');
-     renderFooter(user);
-     renderNavBar();
  }
 
 
@@ -316,8 +329,8 @@
      resultString.push(`<button role="button" type="button" class="clear js-clear"
     aria-label="Close" aria-pressed="false" data-origin="${origin}" autofocus><i class="far fa-times-circle">
     </i></button>
-    <h1>${employee.firstName} ${employee.lastName}</h1>
-    <p>Employee ID: ${employee.employeeId}</p><table aria-live="assertive">`);
+    <table aria-live="assertive"><tr><td>Name: </td><td>${employee.firstName} ${employee.lastName}</td></tr>
+    <tr><td>Employee ID: </td><td>${employee.employeeId}</td></tr>`);
      if (userLevel === "overview") {
          let vehicle = (employee.allowVehicle) ? "Yes" : "No";
          resultString.push(`<tr><td>Employer: </td><td>${employee.employer.employerName}</td></tr>
@@ -339,7 +352,7 @@
     </i></button>
     <div class="box" aria-live="assertive" hidden></div>
     <table aria-live="assertive">
-    <tr><td>${employee.firstName}</td><td>${employee.lastName}</td></tr>
+    <tr><td>Name:</td><td>${employee.firstName}${employee.lastName}</td></tr>
     <tr><td>Employee ID: </td><td>${employee.employeeId}</td></tr>
     <tr><td>Employer: </td><td>${employee.employer.employerName}</td></tr>
     <tr><td>Department: </td><td>${employee.department.departmentName}</td></tr>
