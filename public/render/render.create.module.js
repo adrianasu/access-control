@@ -108,6 +108,7 @@ function fillUserForm(data) {
 }
 
 function fillEmployerForm(data, dataName) {
+    console.log("FILL ", data[`${dataName}Name`], data);
     if(data.departments.length > 0) {
         data.departments.forEach(department => {
             let name = department.departmentName;
@@ -140,7 +141,6 @@ function fillTrainingOptions(data, dataName) {
 }
 
 function fillEmployeeForm(data, dataName) {
-    console.log("FILL ", data);
     $('#first-name').val(data.firstName);
     $('#last-name').val(data.lastName);
     $('#vehicle').attr("checked", data.allowVehicle);

@@ -162,14 +162,14 @@ header::after {
     }
 
     .side-menu {
-            font-family: 'Cabin',
-            sans-serif;
-            grid-column: 1/2;
-            grid-row: 1/4;
-            margin-top: 3.7em;
-            height: 100%;
-            position: fixed;
-            background: #00adb5;
+        font-family: 'Cabin',
+        sans-serif;
+        grid-column: 1/2;
+        grid-row: 1/4;
+        margin-top: 3.7em;
+        height: 100%;
+        position: fixed;
+        background: #4aa6b5;
           
     }
 

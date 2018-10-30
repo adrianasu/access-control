@@ -239,7 +239,7 @@ function renderEmployeeForm(id, origin, data) {
     }
 }     
 
-function generateEmployerForm(data, id, origin) {
+function generateEmployerForm(data, options, id, origin) {
      let action = 'create';
      if (id) {
          action = 'update';
@@ -252,7 +252,7 @@ function generateEmployerForm(data, id, origin) {
             <input type="text" name="employerName" id="employerName" autofocus required>
             <label for="departmentName">Departments</label>`);
 
-    data.departments.forEach(department => {
+    options.departments.forEach(department => {
         let name = department.departmentName;
         let departmentId = department._id;    
         employerString.push(`<input type="checkbox" name="departmentName" id="${name}" value="${departmentId}"
@@ -277,11 +277,11 @@ function renderEmployerForm(id, origin, data) {
     renderNavBar();
     let options = getOptionsFromCache();
     if (options !== undefined) {
-        generateEmployerForm(options, id, origin);
+        generateEmployerForm(data, options, id, origin);
     } else {
         return requestAndSaveOptions()
             .then(options => {
-                return generateEmployerForm(options, id, origin);
+                return generateEmployerForm(data, options, id, origin);
             })    
             .catch(err => {
                 console.log(err);

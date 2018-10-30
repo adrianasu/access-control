@@ -12,7 +12,8 @@ body {
     /* font-family: 'Rubik', sans-serif; */
     font-family: 'Noto Sans JP', sans-serif;
     overflow: auto;
-    background-color: #f2f7ff;
+    /* background-color: #f2f7ff; */
+    background-color: #fef4e8;
     /* padding-bottom: 2em; */
     margin: auto;
 }
@@ -54,7 +55,7 @@ img {
     margin-top: 1.5em;
     font-size: 1.1em;
     left: 2%;
-    width: 120%;
+    width: 100%;
     text-align: left;
 }
 
@@ -354,9 +355,9 @@ form p {
 
 .buttons button {
     margin-bottom: .5em;
-    background: #76b39d;
-    color: black;
-    border: 1px solid #003545;
+    background: black;
+    color: white;
+    border: 1px solid black;
     font-size: 1.1em;
     font-weight: bold;
     padding: .7em;
@@ -366,6 +367,7 @@ form p {
 fieldset {
     border: 0;
 }
+
 
 button {
     border: none;
@@ -379,11 +381,9 @@ form button {
 }
 
 form button {
-    background-color: #76b39d;
+    background-color: black;
     border: 2px solid black;
-    color: black;
-    /* margin-left: 1.4em; */
-    /* lo borre por serch id form*/
+    color: white;
     margin-top: .5em;
     padding: 1em;
     border-radius: 1px;
@@ -403,8 +403,9 @@ form button:hover, form button:focus {
     margin: 10% 5%;
     width: 30%;
     padding: .4em .6em;
-    background: #76b39d;
+    background: black;
     border-radius: 2px;
+    color: white;
     border: 1px solid black;
 }
 
@@ -420,9 +421,9 @@ form button:hover, form button:focus {
 }
 
 .info-window button {
-    background: #00454a;
+    background: black;
     color: white;
-    border: 1px solid #003545;
+    border: 1px solid black;
     font-size: 1.1em;
     width: 40%;
 }
@@ -443,7 +444,6 @@ form button:hover, form button:focus {
 }
 
 .list, .list-results {
-    /* margin: 5em .5em; */
     margin: 5em auto;
 }
 
@@ -452,10 +452,11 @@ form button:hover, form button:focus {
 }
 
 .list-results .goto-edit, .list-results .delete-btn {
-    background-color: #76b39d;
+    background-color: black;
     border-radius: 1px;
     padding: .3em;
     border: 1px solid black;
+    color: white;
 }
 
 .list-results h1 {
@@ -479,7 +480,8 @@ form button:hover, form button:focus {
 .goto-create {
     float: right;
     margin: .5em;
-    background-color: white;
+    background-color: black;
+    color:white;
     padding: .5em;
     border-radius: 2px;
     border: 1px solid black;
@@ -491,14 +493,14 @@ form button:hover, form button:focus {
     grid-gap: 1.5em;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     grid-auto-rows: 1fr;
-    /* font-family: 'Rubik', sans-serif; */
+
 }
 
 .grid-item {
     padding: .2em;
     text-align: center;
     border-radius: 1px;
-    border: 2px solid black;
+    border: 1px solid black;
     background-color: white;
     font-size: 1em;
     color: black;
@@ -507,8 +509,8 @@ form button:hover, form button:focus {
 
 .grid-item:focus, .grid-item:hover {
     transform: scaleY(1);
-    border-radius: 10px;
-    background-color: black;
+    border-radius: 3px;
+    background: black;
     color: #FFF8D8;
 }
 
@@ -552,7 +554,7 @@ table {
 
 .info-window {
     position: fixed;
-    background: #76b39d;
+    background: #4aa6b5;
 }
 
 .list-results {
@@ -578,7 +580,7 @@ table {
     opacity: 0;
     border-radius: 3px;
     visibility: hidden;
-    border: 3px solid black;
+    border: 1px solid black;
     transform: scale(1.1);
     transition: visibility 0.3s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
 }
@@ -640,7 +642,7 @@ select {
 }
 
 .info-window .close {
-    background: #76b39d;
+    background: #c7b198;
 }
 
 .clear {
@@ -696,11 +698,11 @@ select {
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 200px;
-    background-color: #76b39d;
+    background-color: #dbf1f2;
     color: black;
     text-align: center;
     padding: .5em;
-    border: 1px solid black;
+    border-radius: 2px;
     border-radius: 4px;
     position: absolute;
     left: -500%;
@@ -735,7 +737,6 @@ select {
 
 .info-container p:first-child {
     font-size: 1.2em;
-    font-weight: bold;
 }
 
 @media (orientation: landscape) {
@@ -838,6 +839,14 @@ select {
     .close, .clear {
         margin-top: .5em;
         font-size: 1.2em;
+    }
+    .tooltiptext {
+        font-size: .8em;
+        width: 250px;
+    }
+    .fa-info-circle .tooltiptext {
+        left: -500%;
+        top: -600%;
     }
 }
 
