@@ -108,7 +108,6 @@ function fillUserForm(data) {
 }
 
 function fillEmployerForm(data, dataName) {
-    console.log("FILL ", data[`${dataName}Name`], data);
     if(data.departments.length > 0) {
         data.departments.forEach(department => {
             let name = department.departmentName;

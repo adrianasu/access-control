@@ -195,6 +195,7 @@ function generateList(arr, btnClass) {
 
 function generateSideMenuAndShortNav(userLevel) {
     let sideMenuOptions, shortNav;
+    // define options to show on side menu and short nav in landscape view
     if (userLevel === "basic") {
         sideMenuOptions = ["Home", "LogIn", "SignUp", "Help"];
         shortNav = null;
@@ -208,12 +209,14 @@ function generateSideMenuAndShortNav(userLevel) {
     
      $('.js-side-menu').html(generateList(sideMenuOptions, "js-side"));
 
+     // for admin and public users the signout and help options will be 
+     // shown on the nav bar in landscape view
      if (shortNav) {
-    $('.js-short-nav').html(generateList(shortNav, "js-list")).addClass('short-nav').removeClass('hide-it');
-    $('.js-menu-toggle').removeClass('hide-it');
-     } else {
+        $('.js-short-nav').html(generateList(shortNav, "js-list")).addClass('short-nav').removeClass('hide-it');
+        $('.js-menu-toggle').removeClass('not-in-landscape');
+     } else { // for all the other users the side menu is enough
          $('.js-short-nav').addClass('hide-it').removeClass('short-nav');
-         $('.js-menu-toggle').addClass('hide-it');
+         $('.js-menu-toggle').addClass('not-in-landscape');
      }
 }
 
@@ -572,8 +575,8 @@ function renderEmployeeOverview(employee, userLevel, origin) {
              thumbnails.push(`<div class="grid-item js-thumbnail" 
             data-value="${employee.employeeId}">
             <table><tr><td>ID: ${employee.employeeId}</td></tr>
-            <tr><td>${employee.firstName} ${employee.lastName} </td>
-            <td class="enter"><i class="fas fa-check-circle"></i></td></tr></table></div>`);
+            <tr><td>${employee.firstName} ${employee.lastName} </td></tr>
+            <tr><td class="enter"><i class="fas fa-check-circle"></i></td></tr></table></div>`);
          }
      })
      return thumbnails.join("");

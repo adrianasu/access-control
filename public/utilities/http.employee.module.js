@@ -138,11 +138,11 @@ function getById(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
         error: err => {
-            handleError(err);
             if (endpoint === "employee" && origin === "searchForm") {
                 $('.js-form').removeClass('go-up').addClass('form');
                 $('.js-form, .js-footer').removeClass('hide-it');
             }
+            handleError(err);
         }
     });
 }
@@ -159,9 +159,9 @@ function getEmployeeDeskOverview(settings) {
             xhr.setRequestHeader('Authorization', `Bearer ${jwToken}`);
         },
         error: err => {
-            handleError(err);
-            $('.js-form').addClass('form');
+            $('.js-form').addClass('form').removeClass('go-up');
             $('.js-form, .js-footer').removeClass('hide-it');
+            handleError(err);
         }
     });
 }
@@ -176,9 +176,9 @@ function getEmployeeKioskOverview(settings) {
         dataType: 'json',
         data: undefined,
         error: err => {
-            handleError(err);
-            $('.js-form').addClass('form');   
+            $('.js-form').addClass('form').removeClass('go-up');
             $('.js-form, .js-footer').removeClass('hide-it');
+            handleError(err);
         }
     });
 }

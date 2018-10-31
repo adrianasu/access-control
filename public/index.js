@@ -168,7 +168,6 @@ function handleSearchEmployee(event) {
     if (employeeId) {
         return screens.employees.request[userLevel](settings)
         .then(data => {
-                console.log(data);
                 saveEmployeeIntoCache(data);
                 $('#employeeId').val("");
                 return screens.employees.render[userLevel](data, userLevel, origin);
@@ -182,7 +181,7 @@ function handleSearchEmployee(event) {
 
 function handleLoginLink(event) {
     event.preventDefault();
-     event.stopPropagation();
+    event.stopPropagation();
     renderLoginForm();
 }
 

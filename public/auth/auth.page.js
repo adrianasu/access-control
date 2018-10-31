@@ -2,7 +2,6 @@
 const ACCESS_OVERVIEW = 10;
 
 function logInSuccess(user) {
-    console.log('Succesful Login');
     $('#username, #password').val("");
     clearScreen();
     renderWelcome(user);

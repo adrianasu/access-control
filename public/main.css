@@ -16,6 +16,7 @@ body {
     background-color: #fef4e8;
     /* padding-bottom: 2em; */
     margin: auto;
+    font-size: 1.1em;
 }
 
 header {
@@ -64,8 +65,8 @@ img {
 }
 
 p {
-    width: 70%;
-    margin: .4em auto;
+    width: 90%;
+    margin: 1em auto;
 }
 
 .form p:nth-child(1) {
@@ -148,11 +149,8 @@ form {
 
 .help p {
     margin-top: 1em;
+    width: 70%;
 }
-
-/* h2:nth-child(even) {
-    display: inline-block;
-} */
 
 .steps, .permissions {
     text-align: center;
@@ -453,7 +451,7 @@ form button:hover, form button:focus {
 
 .list-results .goto-edit, .list-results .delete-btn {
     background-color: black;
-    border-radius: 1px;
+    border-radius: 2px;
     padding: .3em;
     border: 1px solid black;
     color: white;
@@ -504,15 +502,21 @@ form button:hover, form button:focus {
     background-color: white;
     font-size: 1em;
     color: black;
-    transition: border-radius .2ms ease-in-out, background-color .2ms ease-in-out, color .2ms ease-in-out;
+    transition: border-radius .2ms ease-in-out, border .2ms ease-in-out, color .2ms ease-in-out;
 }
 
 .grid-item:focus, .grid-item:hover {
     transform: scaleY(1);
     border-radius: 3px;
-    background: black;
+    border: 5px solid black;
     color: #FFF8D8;
 }
+
+.side-menu button:focus,
+.side-menu button:hover {
+    color: #014955;
+}
+
 
 .grid-item ul {
     margin: 0;
@@ -534,7 +538,7 @@ tr {
 }
 
 table {
-    margin: 1em auto 1.5em;
+    margin: 1em .1em 1.5em;
     background: white;
 }
 
@@ -594,13 +598,11 @@ table {
 
 .results {
     padding: 1em 1.5em;
-    /*was 5 but results admin id from list*/
     top: 5em;
     max-width: 550px;
     min-width: 250px;
     background-color: white;
     color: black;
-    /* display: inline-block; */
 }
 
 .onTop {
@@ -639,10 +641,11 @@ select {
     text-decoration: none;
     cursor: pointer;
     border: none;
+    width: 0;
 }
 
 .info-window .close {
-    background: #c7b198;
+    background: #4aa6b5;
 }
 
 .clear {
@@ -702,8 +705,8 @@ select {
     color: black;
     text-align: center;
     padding: .5em;
+    border: 1px solid black;
     border-radius: 2px;
-    border-radius: 4px;
     position: absolute;
     left: -500%;
     top: -600%;
@@ -753,6 +756,10 @@ select {
     .search-form {
         margin-top: 1.5em;
     }
+
+    .js-form p {
+      margin: 0 auto;  
+    }
     footer {
         margin-top: .5em;
     }
@@ -773,9 +780,12 @@ select {
     .intro p, .help p {
         width: 100%;
     }
+
+
     .go-up p:nth-child(1) {
         top: 18%;
         left: 80%;
+        margin-top:0.5em;
     }
     footer p {
         margin-top: 0;
@@ -873,9 +883,9 @@ select {
     }
 }
 
-@media (min-width: 800px) {
+@media (min-width: 700px) {
     body {
-        font-size: 1.4em;
+        font-size: 1.3em;
     }
     .info-container {
         width: 60%;
@@ -901,4 +911,33 @@ select {
         left: -500%;
         top: -600%;
     }
+    .side-menu button {
+        font-size: .89em;
+    }
+}
+
+    @media (min-width: 900px) {
+       body{
+           font-size: 1.5em;
+       }
+       .js-form, .intro, .results {
+           width: 70%;
+           margin-left: auto;
+           margin-right: auto;
+       }
+       .side-menu button {
+           font-size: 1em;
+       }
+       .list-results table {
+           margin: auto;
+       }
+       .buttons button {
+           width: 40%;
+       }
+       .info-container p:first-child {
+           left: 8%;
+           top: -1%;
+           font-size: 1.8em;
+       }
+      
 }
