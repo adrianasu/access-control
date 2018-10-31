@@ -28,9 +28,10 @@ header::after {
     top: 100%;
     right: 0%;
     background: #464655;
-    clip-path: circle(0px at top right);
-    transition: clip-path ease-in-out 500ms;
-    /* font-family: 'Oswald', sans-serif; */
+    height: 0px;
+    overflow: hidden;
+    /* clip-path: circle(0px at top right); */
+    /* transition: clip-path ease-in-out 500ms; */
     font-family: 'Cabin',
     sans-serif;
  
@@ -38,7 +39,8 @@ header::after {
 
 .open .site-nav,
 .open .short-nav {
-    clip-path: circle(250% at top right);
+    height: auto;
+    /* clip-path: circle(250% at top right); */
 }
 
 .site-nav ul,
