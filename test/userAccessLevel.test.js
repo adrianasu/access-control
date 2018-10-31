@@ -159,6 +159,6 @@ describe('Users API resource edge cases tests', function () {
     });
 
    
-});
+ });
  
  

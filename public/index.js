@@ -55,7 +55,6 @@ function getAllAndRender(settings, selectedOption) {
     }
 }
 
-
 function handleList(event) {
     event.preventDefault();
      event.stopPropagation();

@@ -8,7 +8,7 @@ const { Employee, Department, Training, Employer } = require('../app/employee/em
 
 function generateEmployerNames() {
     let employers = [];
-    for (let x = 0; x < 3; x++) {
+    for (let x = 0; x < 5; x++) {
         employers.push(faker.company.companyName());
     }
     return employers;
@@ -16,7 +16,7 @@ function generateEmployerNames() {
 
 function generateEmployers(departmentIds, employerName) {
     let employer = [];
-    for (let i= 0; i < 3; i++) {
+    for (let i= 0; i < 5; i++) {
         employer.push({
             departments: [randomFromArray(departmentIds)],
             employerName: employerName[i]
@@ -27,7 +27,7 @@ function generateEmployers(departmentIds, employerName) {
 
 function generateDepartments() {
     let departments = [];
-    for (let x = 0; x < 3; x++) {
+    for (let x = 0; x < 5; x++) {
         departments.push({departmentName: faker.name.jobArea()});
     }
     return departments;    
@@ -35,7 +35,7 @@ function generateDepartments() {
 
 function generateTrainingList() {
     let trainings = [];
-    for (let x = 0; x < 3; x++) {
+    for (let x = 0; x < 4; x++) {
         trainings.push({title: faker.lorem.sentence(),
             expirationTime: new Date(1000*60*60*24*365)});
     }
@@ -50,7 +50,7 @@ function randomFromArray(arr){
 function generateEmployeeData(employerIds, departmentIds, trainingIds, userIds) {
       
     return {
-        employeeId: faker.lorem.words(1),
+        employeeId: faker.random.number(6),
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         employer: randomFromArray(employerIds),

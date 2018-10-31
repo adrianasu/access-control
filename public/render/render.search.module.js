@@ -34,9 +34,8 @@
          endpoint: "training",
          headers: {
              "Title": "title",
-            //  "Expiration Time": "expirationTime"
          },
-         onSuccess: renderList, ///maybe window
+         onSuccess: renderList, 
          render: renderTrainingForm,
          fill: fillTrainingForm,
          getDataFrom: getDataFromTrainingForm,
@@ -45,7 +44,6 @@
          endpoint: "employer",
          headers: {
              "Employer Name": "employerName",
-            //  "Departments": "departments"
          },
          onSuccess: renderList,
          render: renderEmployerForm,
@@ -346,7 +344,7 @@ function generateSideMenuAndShortNav(userLevel) {
 
      return resultString.join("");
  }
- //yes
+
  function generateResultsByIdStrings(employee, origin) {
      let vehicle = (employee.allowVehicle) ? "Yes" : "No";
      let result = [];
@@ -394,8 +392,7 @@ function generateSideMenuAndShortNav(userLevel) {
          let employeeC = convertNullToString(employee);
          $('.js-results').html(generateResultsStrings(employeeC, userLevel, origin))
              .addClass('results').removeClass('list').removeClass('hide-it');
-        // $('.js-form').removeClass('form');
-        // $('.js-search-form').removeClass('welcome-form');
+
      }
      renderNavBar();
      return employee;
@@ -583,7 +580,6 @@ function renderEmployeeOverview(employee, userLevel, origin) {
  }
 
 
- // yes
  function renderList(data, dataName) {
      renderNavBar();
      let options;
@@ -628,7 +624,7 @@ function renderEmployeeOverview(employee, userLevel, origin) {
          listString.push(generateRows(data, dataName));
          listString.push('</table>');
      }
-     //listString = listString.join("");
+  
      $('.js-list-results').html(listString.join("")).removeClass('hide-it');
      return data;
  }

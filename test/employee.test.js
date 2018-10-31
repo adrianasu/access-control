@@ -56,9 +56,6 @@ function checkResponse(res, statusCode, resType) {
 function checkObjectContent(res, keyList, employee) {
     keyList.forEach(function (key) {
         expect(res).to.include.keys(key);
-        // expect(res.body).to.deep.include({
-        //     [key]: employee[key],
-        // })
     });
 }
 
