@@ -121,8 +121,8 @@ header::after {
 .not-in-landscape {
     display: block;
 }
-
-@media only screen and (orientation: landscape) {
+@media (orientation: landscape),
+ (min-width: 500px) {
     .site-nav, .not-in-landscape {
         display: none
     }
@@ -180,7 +180,8 @@ header::after {
 
 }
 
-@media only screen and (min-width: 700px) {
+@media (orientation: landscape), 
+screen and (min-width: 880px) {
 
     .site-nav {
         height: auto;

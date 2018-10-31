@@ -862,7 +862,8 @@ select {
     }
 }
 
-@media only screen and (min-width: 550px) {
+@media (min-width: 550px),
+screen and(orientation: landscape) {
     .employee-form, .info-container {
         width: 70%;
     }
@@ -885,7 +886,7 @@ select {
     }
 }
 
-@media only screen and (min-width: 700px) {
+@media only screen and (min-width: 800px) {
     body {
         font-size: 1.3em;
     }
@@ -918,7 +919,7 @@ select {
     }
 }
 
-    @media only screen and (min-width: 800px) {
+    @media only screen and (min-width: 900px) {
        body{
            font-size: 1.5em;
        }
