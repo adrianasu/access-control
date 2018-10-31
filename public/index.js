@@ -228,16 +228,18 @@ function handleDelete(event) {
             } else if (options.includes(endpoint)) {
                 deleteOptionsFromCache();
             }
-            if (origin === "byId") {
+            if (origin === "byId" || origin === "searchForm") {
+                clearScreen();
+                renderHome(getAuthenticatedUserFromCache());
                 doConfirm(endpoint, "deleted");
                 toggleInfoWindow();
-                clearScreen();
-                renderNavBar();
-                //return renderSearchMenu();
             } else if (origin === "list" || origin === "thumbnail") {
-                doConfirm(endpoint, "deleted");   
-                toggleInfoWindow();
-                return getAllAndRender({jwToken, endpoint}, endpoint);
+                return getAllAndRender({jwToken, endpoint}, endpoint)
+                .then(all => {
+                    doConfirm(endpoint, "deleted");   
+                    toggleInfoWindow();
+                    return all;
+                })
             }
         })
     }
@@ -313,8 +315,7 @@ function handleUpdate(event) {
         }
         else {
             clearScreen();
-            renderNavBar();
-            // renderSearchMenu();
+            renderHome(getAuthenticatedUserFromCache());
             doConfirm(endpoint, 'updated', data);
             toggleInfoWindow();
             return data;
@@ -349,8 +350,7 @@ function handleCreate(event) {
             return getAllAndRender(settings, endpoint);
         } else {
             clearScreen();
-            //return renderSearchMenu();
-            return renderNavBar();
+            return renderHome(getAuthenticatedUserFromCache());
         }
     })
 }

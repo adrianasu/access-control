@@ -641,7 +641,7 @@ function renderEmployeeOverview(employee, userLevel, origin) {
      if (data && action === "delete") {
          windowString.push(`<div class="info"><p>Confirm delete.</p>
         <button type="button" role="button" data-name="${data.name}"
-        data-id="${data.id}" data-origin="thumbnail" 
+        data-id="${data.id}" data-origin="${data.origin}" 
         class="js-confirm-btn"><i class="fas fa-trash-alt"></i>
         </button><button type="button" role="button" class="js-close">
         Cancel</button></div>`);
