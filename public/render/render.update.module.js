@@ -37,20 +37,15 @@ function getDataFromUserForm () {
 
 function getTrainingsFromEmployeeForm(){
     let trainings = [];
-    let index = 1;
-    let thisTraining = $(`#training${index}`).val();
-
-    while (thisTraining !== "") {
-        let trainingDate = $(`#training-date${index}`).val();
+    let numberOfTrainings = getOptions().trainings.length;
+  
+    for (let i = 1; i <= numberOfTrainings; i++) {
+        let trainingDate = $(`#training-date${i}`).val();
         if (trainingDate) {
             trainings.push({
-                trainingInfo: { _id: $(`#training${index}`).val() },
+                trainingInfo: { _id: $(`#training${i}`).val() },
                 trainingDate
             });
-        }
-        index++;
-        if ($(`#training${index}`).val() === "") {
-            break;
         }
     }
     return trainings;

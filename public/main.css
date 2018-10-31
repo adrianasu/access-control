@@ -837,6 +837,7 @@ select {
     }
     .info-window p {
         text-align: center;
+        text-transform: capitalize;
     }
     .create-form p:nth-child(1) {
         top: 32%;

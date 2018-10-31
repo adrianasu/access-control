@@ -246,7 +246,7 @@ function generateSideMenuAndShortNav(userLevel) {
     let ids = [];
     return getAll({jwToken, endpoint: "employee/desk"})
          .then(employees => {
-             for (let i = 0; i < 10; i++) {
+             for (let i = 0; i < 5; i++) {
                  ids.push(employees[i].employeeId);
              }
              saveEmployeeIdsIntoCache(ids.join(", "));
@@ -601,13 +601,14 @@ function renderEmployeeOverview(employee, userLevel, origin) {
          $('.js-list-results').html(`<h1>${dataName}s</h1><button role="button" 
         type="button" class="js-goto-create goto-create" data-value="${dataName}">New <i class="fas fa-plus"></i></button>
         <p>No ${dataName}s found.</p>`).removeClass('hide-it');
-
-         renderSearchMenu(accessLevel);
+        renderNavBar();
+         //renderSearchMenu(accessLevel);
          return data;
      } else if (data.length === 0 && accessLevel < ACCESS.PUBLIC) {
          $('.js-list-results').html(`<h1>${dataName}s</h1><p>No ${dataName}s found.</p>`).removeClass('hide-it');
-
-         renderSearchMenu(accessLevel);
+        //renderSearchMenu(accessLevel);
+         renderNavBar();
+      
          return data;
      }
      let listString = [];
@@ -664,7 +665,7 @@ function renderEmployeeOverview(employee, userLevel, origin) {
      windowString.push(`<button role="button" type="button" class="close js-close"
             aria-label="Close" aria-pressed="false"><i class="far fa-times-circle"></i></button>`);
      if (dataName === "error") {
-         windowString.push(`<p>${data}.</p>`);
+         windowString.push(`<p>${data}</p>`);
      } else {
          windowString.push(`<p>${dataName} ${stringOne} was ${action}.</p>`);
      }

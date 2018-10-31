@@ -232,7 +232,8 @@ function handleDelete(event) {
                 doConfirm(endpoint, "deleted");
                 toggleInfoWindow();
                 clearScreen();
-                return renderSearchMenu();
+                renderNavBar();
+                //return renderSearchMenu();
             } else if (origin === "list" || origin === "thumbnail") {
                 doConfirm(endpoint, "deleted");   
                 toggleInfoWindow();
@@ -273,14 +274,12 @@ function handlePrepareUpdateForm(event) {
 function handleUpdate(event) {
     event.preventDefault();
     event.stopPropagation();
-   
     let endpoint = $(this).attr("data-name");
     let id = $(this).attr("data-id");
     let origin = $(this).attr("data-origin");
    
     updateAuthenticatedUI();
     let user = getAuthenticatedUserFromCache(); 
-
     let updatedData = screens[endpoint].getDataFrom(event);
 
     if (endpoint === "employee") {
@@ -302,15 +301,23 @@ function handleUpdate(event) {
         } else {
             deleteOptionsFromCache();
         }
-        doConfirm(endpoint, 'updated', data);
-        toggleInfoWindow();
         if(origin === "list" || origin === "thumbnail") {
+            let jwToken = getAuthenticatedUserFromCache().jwToken;
             settings = {jwToken, endpoint};
-            return getAllAndRender(settings, endpoint);
+            return getAllAndRender(settings, endpoint)
+            .then(all => {
+                doConfirm(endpoint, 'updated', data);
+                toggleInfoWindow();
+                return data;
+            })
         }
         else {
             clearScreen();
-            return renderSearchMenu();
+            renderNavBar();
+            // renderSearchMenu();
+            doConfirm(endpoint, 'updated', data);
+            toggleInfoWindow();
+            return data;
         }
     })
     
@@ -342,7 +349,8 @@ function handleCreate(event) {
             return getAllAndRender(settings, endpoint);
         } else {
             clearScreen();
-            return renderSearchMenu();
+            //return renderSearchMenu();
+            return renderNavBar();
         }
     })
 }
