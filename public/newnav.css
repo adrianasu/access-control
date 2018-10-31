@@ -139,15 +139,11 @@ header::after {
         grid-template-columns: 1fr 4fr;
     }
 
-    .intro {
-        grid-column: 2/3;
-    }
-
-    .js-form {
-        grid-column: 2/3;
-    }
-
-    footer {
+    .intro,
+    .js-form,
+    footer,
+    .results,
+    .list-results {
         grid-column: 2/3;
     }
 
