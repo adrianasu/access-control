@@ -28,7 +28,6 @@ function renderHome(user, fromWelcome) {
     let ids = getEmployeeIdsFromCache();
     $('.js-search-form').addClass('welcome-form');
     renderNavBar();
-    
    
     if (ids !== undefined) {
        $('.js-form').html(generateSearchForm(ids)).removeClass('hide-it');

@@ -25,15 +25,15 @@ function getUserAndPassword(level) {
     let users = {
         "overview": {
             username: "overview",
-            password: "sara123"
+            password: "overview123"
         },
         "public": {
             username: "public",
-            password: "peterpan"
+            password: "publicpublic"
         },
         "admin": {
             username: "admin",
-            password: "hello123"
+            password: "adminadmin"
         },
     };
 
