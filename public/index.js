@@ -391,7 +391,7 @@ function watchButtons() {
 }
 
 function watchHamburguer() {
-     $('.js-menu-toggle').on('click', function (event) {
+     $('.js-nav-container').on('click', '.js-menu-toggle', function (event) {
          event.preventDefault();
          event.stopPropagation();
          event.stopImmediatePropagation();
