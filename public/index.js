@@ -41,7 +41,6 @@ function getUserAndPassword(level) {
 
 }
 
-//yes
 function getAllAndRender(settings, selectedOption) {
     updateAuthenticatedUI();
     if (STATE.authUser) {
@@ -57,7 +56,6 @@ function getAllAndRender(settings, selectedOption) {
 }
 
 
-//yes
 function handleList(event) {
     event.preventDefault();
      event.stopPropagation();
@@ -97,13 +95,13 @@ function handleCancel(event) {
     renderNavBar();
     let endpoint = $(this).attr('data-name');
     let origin = $(this).attr('data-origin');
-    //$('.js-form').addClass('hide-it');
+  
     if (origin === "form") {
         $('.js-results').removeClass('hide-it');
     } else {
         $('.js-list-results').removeClass('hide-it');  
     }
-    //return getAllAndRender({endpoint}, endpoint);
+ 
 }
 
 
@@ -130,7 +128,17 @@ function handleUserLevelDemo(event) {
     decideWhatToRender(selectedOption);
 }
 
-//yes
+function handleMenu(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    let selectedOption = $(this)
+        .closest('li button')
+        .text().trim().toLowerCase();
+    decideWhatToRender(selectedOption);
+}
+
+
 function handleNavigationClick(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -143,7 +151,7 @@ function handleNavigationClick(event) {
     decideWhatToRender(selectedOption);
 }
 
-//yes
+
 function handleSearchEmployee(event) {
     event.preventDefault();
      event.stopPropagation();
@@ -356,11 +364,10 @@ function toggleInfoWindow(event) {
     $('.js-info-window').toggleClass('show-info-window');
 }
     
-
 function watchButtons() {
-    $('.js-nav-container, .js-side-menu').on('click', 'li button', handleNavigationClick);
+    $('.js-nav-container').on('click', 'li button', handleNavigationClick);
+    $('.js-side-menu').on('click', 'li button', handleMenu);
     $('.js-permissions').on('click', 'th button', handleUserLevelDemo);
-    $('.js-form').on('submit', 'form', e => e.preventDefault());
     $('.js-form').on('submit', '.js-login-form', handleLogIn);
     $('.js-form').on('click', '.js-signup-link', handleSignUpForm);
     $('.js-form').on('submit', '.js-signup-form', handleSignUp);
@@ -403,11 +410,9 @@ function watchCalendars() {
 }
 
 function reset() {
-    /// delete 
     deleteEmployeeIdsFromCache();
     deleteEmployeeFromCache();
     deleteOptionsFromCache();
-    ///
     deleteAuthenticatedUserFromCache();
     clearScreen();
     $('.js-help').removeClass('hide-it');

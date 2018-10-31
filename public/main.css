@@ -509,7 +509,7 @@ form button:hover, form button:focus {
     transform: scaleY(1);
     border-radius: 3px;
     border: 5px solid black;
-    color: #FFF8D8;
+    color: white;
 }
 
 .side-menu button:focus,
@@ -814,6 +814,7 @@ select {
     #name, #email, #employerName {
         width: 60%;
         font-size: .9em;
+        display: block;
     }
     .list, .list-results {
         margin: 4em auto;
@@ -849,6 +850,7 @@ select {
     .close, .clear {
         margin-top: .5em;
         font-size: 1.2em;
+        margin-right: 8%;
     }
     .tooltiptext {
         font-size: .8em;
@@ -920,6 +922,9 @@ select {
        body{
            font-size: 1.5em;
        }
+       .close, .clear {
+           margin-right: 10%;
+       }
        .js-form, .intro, .results {
            width: 70%;
            margin-left: auto;
@@ -929,7 +934,7 @@ select {
            font-size: 1em;
        }
        .list-results table {
-           margin: auto;
+           margin: 0 auto 1em;
        }
        .buttons button {
            width: 40%;
@@ -938,6 +943,10 @@ select {
            left: 8%;
            top: -1%;
            font-size: 1.8em;
+       }
+       .create-form p:nth-child(1) {
+           top: 15%;
+           left: 65%;
        }
       
 }

@@ -123,7 +123,7 @@
      let justRender = ["login", "logout", "signup"];
      let endpoint;
      let user = getAuthenticatedUserFromCache();
-     if (selectedOption === "list employees") {
+     if (selectedOption === "employees") {
          selectedOption = "employee";
          endpoint = defineEndpointLevel(); 
         } else if (selectedOption.slice(-1) === "s") {
@@ -200,7 +200,7 @@ function generateSideMenuAndShortNav(userLevel) {
         sideMenuOptions = ["Home", "LogIn", "SignUp", "Help"];
         shortNav = null;
     } else if (userLevel === "overview") {
-        sideMenuOptions = ["Home", "List Employees", "LogOut", "Help"];
+        sideMenuOptions = ["Home", "Employees", "LogOut", "Help"];
         shortNav = null;
     } else {
         sideMenuOptions = ["Home", "Employees", "Trainings", "Departments", "Employers", "Users"];
@@ -225,7 +225,7 @@ function generateSideMenuAndShortNav(userLevel) {
      const options = {
          instructions: ["Basic", "Overview", "Public", "Admin", "Help"],
          basic: ["Home", "LogIn", "SignUp", "Help"],
-         overview: ["Home", "List Employees", "LogOut", "Help"],
+         overview: ["Home", "Employees", "LogOut", "Help"],
          public: ["Home", "Employees", "Trainings", "Departments", "Employers", "Users", "LogOut", "Help"],
          admin: ["Home", "Employees", "Trainings", "Departments", "Employers", "Users", "LogOut", "Help"]
      }
