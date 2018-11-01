@@ -1,29 +1,19 @@
-/* https: //www.leewayautomation.com.au/wp-content/uploads/2018/07/access-control-img.jpg */
-
-/* https: //www.barcodescannermodule.com/photo/barcodescannermodule/editor/20170310112614_85818.png */
-
-/* "https://www.traka.com/presets/small/Other/trakacom/Images/Article4.jpg" */
 
 * {
     box-sizing: border-box;
 }
 
 body {
-    /* font-family: 'Rubik', sans-serif; */
     font-family: 'Noto Sans JP', sans-serif;
     overflow: auto;
-    /* background-color: #f2f7ff; */
     background-color: #fef4e8;
-    /* padding-bottom: 2em; */
     margin: auto;
     font-size: 1.1em;
+    min-width: 250px;
 }
 
 header {
     min-width: 320px;
-    /* font-family: 'Quicksand', sans-serif; */
-    /* font-family: 'Prosto One', cursive; */
-    /* font-family: 'Viga', sans-serif; */
     font-family: 'Krona One', sans-serif;
     background-color: black;
 }
@@ -743,9 +733,9 @@ select {
 
 .fa-question-circle .tooltiptext {
     left: -250%;
-    /*signup form*/
     top: 180%;
 }
+
 
 .hide-it {
     display: none;
@@ -898,6 +888,7 @@ screen and(orientation: landscape) {
         font-family: 'Francois One', sans-serif;
         font-size: 1.45em;
     }
+    
 }
 
 @media only screen and (min-width: 800px) {
@@ -922,15 +913,21 @@ screen and(orientation: landscape) {
         font-size: 2.2em;
     }
     .tooltip .tooltiptext {
-        width: 500px;
+        width: 300px;
     }
     .fa-info-circle .tooltiptext {
         left: -500%;
-        top: -600%;
+        top: -400%;
     }
     .side-menu button {
         font-size: .89em;
+        padding-top: .4em;
     }
+    .list-results .fa-question-circle .tooltiptext {
+        left: 0;
+        top: 120%;
+    }
+
 }
 
     @media only screen and (min-width: 900px) {
@@ -947,6 +944,7 @@ screen and(orientation: landscape) {
        }
        .side-menu button {
            font-size: 1em;
+           padding-top: 1em;
        }
        .list-results table {
            margin: 0 auto 1em;
