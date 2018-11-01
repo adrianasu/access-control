@@ -203,6 +203,16 @@ th button {
     font-size: .9em;
 }
 
+.permissions button:hover,
+.permissions button:focus {
+    transition: background .2ms ease-in-out,
+                border .2ms ease-in-out;
+    border: 1px solid white;
+    background: #fd5f00;
+}
+
+
+
 .permissions tr:nth-child(even) {
     background: #c7b198;
 }
@@ -379,7 +389,7 @@ form button {
 }
 
 form button {
-    background-color: black;
+    background: black;
     border: 2px solid black;
     color: white;
     margin-top: .5em;
@@ -387,10 +397,13 @@ form button {
     border-radius: 1px;
 }
 
+.list-results button:hover, .list-results button:focus,
+.results button:hover, .results button:focus,
 form button:hover, form button:focus {
-    border: 3px solid white;
-    border-radius: 10px;
+    border: 1px solid white;
+    background: #4aa6b5;
     outline: none;
+    transition: border .25ms ease-in-out, background .25ms ease-in-out;
 }
 
 .below {
