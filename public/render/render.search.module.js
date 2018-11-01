@@ -56,7 +56,6 @@
              "Department Name": "departmentName"
          },
          onSuccess: renderList,
-
          render: renderDepartmentForm,
          fill: fillDepartmentForm,
          getDataFrom: getDataFromDepartmentForm,
@@ -433,8 +432,6 @@ function renderEmployeeOverview(employee, userLevel, origin) {
  }
 
  function generateHeader(dataName, options) {
-     let userLevel = getUserLevel();
-
      let table = [];
      table.push(`<tr>`);
      Object.keys(screens[dataName].headers).forEach(item => {
@@ -443,8 +440,6 @@ function renderEmployeeOverview(employee, userLevel, origin) {
              let columns = 2 * options.trainings.length;
              table.push(`<th colspan = "${columns}">${item}</th>`);
          } else if (item === "Departments") {
-             // let columns = calculateMaxNumber(options.employers, "departments");
-             // table.push(`<th colspan = "${columns}">${item}</th>`);
          } else if (item === "Access Level") {
              table.push(`<th class="tooltip">${item}<i class="fas fa-question-circle">
             <span class="tooltiptext"><p>OVERVIEW: read employees' overview.</p>
@@ -473,10 +468,7 @@ function renderEmployeeOverview(employee, userLevel, origin) {
 
  function generateRows(data, dataName) {
      let table = [];
-     let maxNumOfDepInOneEmployer;
-     // if (dataName === "employer") {
-     //     maxNumOfDepInOneEmployer = calculateMaxNumber(data, "departments");
-     // }    
+     
      data.forEach(item => {
          table.push('<tr>');
          Object.keys(item).forEach(key => {
@@ -490,19 +482,11 @@ function renderEmployeeOverview(employee, userLevel, origin) {
                  let eDate = new Date(item[key]).toLocaleDateString("en-US");
                  table.push(`<td>${eDate}</td>`);
              } else if (key === "expirationTime") {
-                //  let eDate = new Date(item[key]).getTime() / (1000 * 60 * 60 * 24);
-                //  table.push(`<td>${eDate}</td>`);
+               
              } else if (key === "department") {
                  table.push(`<td>${item[key].departmentName}</td>`);
              } else if (key === "departments") {
-                 // for (let x = 0; x < maxNumOfDepInOneEmployer; x++) {
-                 //     if (item[key][x]) {
-                 //         table.push(`<td>${item[key][x].departmentName}</td>`);
-                 //     }
-                 //     else {
-                 //         table.push(`<td></td>`);
-                 //     }
-                 // }
+                
              } else if (key === "allowVehicle") {
                  let allow = (item[key]) ? "Yes" : "No";
                  table.push(`<td>${allow}</td>`);

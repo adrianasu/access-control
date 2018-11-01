@@ -266,16 +266,12 @@ const TrainingJoiSchema = Joi.object().keys({
                 return valid;
             }
 
-
-            
-        //const Photo = mongoose.model("Photo", photoSchema);
         const Employee = mongoose.model("Employee", employeesSchema);
         const Department = mongoose.model("Department", departmentsSchema);
         const Employer = mongoose.model("Employer", employersSchema);
         const Training = mongoose.model("Training", trainingsSchema);
         
         module.exports = {
-            // Photo,
             Employee,
             Training,
             Department,
