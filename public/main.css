@@ -888,6 +888,9 @@ screen and(orientation: landscape) {
         font-family: 'Francois One', sans-serif;
         font-size: 1.45em;
     }
+    .go-up p:nth-child(1) {
+            top: 10%;
+    }
     
 }
 
@@ -927,6 +930,10 @@ screen and(orientation: landscape) {
         left: 0;
         top: 120%;
     }
+    .go-up p:nth-child(1) {
+        top: 12%;
+        left: 70%;
+    }
 
 }
 
@@ -961,5 +968,9 @@ screen and(orientation: landscape) {
            top: 15%;
            left: 65%;
        }
+       .go-up p:nth-child(1) {
+            top: 15%;
+            left: 70%;
+        }
       
 }
