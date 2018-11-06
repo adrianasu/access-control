@@ -1,9 +1,8 @@
+const { DATABASE_URL, PORT, HTTP_STATUS_CODES } = require("./config");
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const passport = require('passport');
-
-const { DATABASE_URL, PORT, HTTP_STATUS_CODES } = require("./config");
+const passport = require('passport'); 
 
 const { employeeRouter } = require('./employee/employee.router');
 const { userRouter } = require('./user/user.router');
@@ -46,10 +45,9 @@ app.use('*', (err, req, res, next) => {
     return res.status(err.code || 400).json({err: err.message});
 });
 
+//  to start the server  when this function is called
 function runServer(databaseUrl, port = PORT) {
-    mongoUrl = databaseUrl;
-    return new Promise((resolve, reject) => {
-                             
+    return new Promise((resolve, reject) => {              
       mongoose.connect(
             databaseUrl,
             err => {
@@ -68,7 +66,7 @@ function runServer(databaseUrl, port = PORT) {
            
             });
 
-}
+}  
 
 function closeServer() {
     return mongoose.disconnect().then(() => {
@@ -84,6 +82,8 @@ function closeServer() {
     });
 }
 
+// statement to make this file a module  and run the 
+// server  if the script is run directly (node server.js)
 if (require.main === module) {
     runServer(DATABASE_URL).catch(err => console.error(err));
 }
