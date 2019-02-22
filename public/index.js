@@ -92,10 +92,10 @@ function handleCancel(event) {
     event.stopImmediatePropagation();
     clearScreen();
     renderNavBar();
-    let endpoint = $(this).attr('data-name');
+
     let origin = $(this).attr('data-origin');
-  
-    if (origin === "form") {
+    
+    if (origin === "form" || origin === "searchForm") {
         $('.js-results').removeClass('hide-it');
     } else {
         $('.js-list-results').removeClass('hide-it');  
@@ -249,6 +249,8 @@ function handlePrepareUpdateForm(event) {
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
+    // Check if the update form was called
+    // from the list or from the search form.
     const origin = $(this).attr('data-origin');
     const id = $(this).attr('data-id');
     const dataName = $(this).attr('data-name');

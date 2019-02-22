@@ -354,7 +354,7 @@ function generateSideMenuAndShortNav(userLevel) {
     </i></button>
     <div class="box" aria-live="assertive" hidden></div>
     <table aria-live="assertive">
-    <tr><td>Name:</td><td>${employee.firstName}${employee.lastName}</td></tr>
+    <tr><td>Name:</td><td>${employee.firstName} ${employee.lastName}</td></tr>
     <tr><td>Employee ID: </td><td>${employee.employeeId}</td></tr>
     <tr><td>Employer: </td><td>${employee.employer.employerName}</td></tr>
     <tr><td>Department: </td><td>${employee.department.departmentName}</td></tr>
@@ -549,7 +549,7 @@ function renderEmployeeOverview(employee, userLevel, origin) {
             <table>
             <tr><td>ID: ${employee.employeeId}</td></tr>
             <tr><td>${employee.firstName} ${employee.lastName}</td></tr>
-            <tr><td>Missing training: <i class="fas fa-hand-paper warn"></i><ul>`);
+            <tr><td><i class="fas fa-hand-paper warn"></i>Missing training:<ul>`);
              missingRequirements.forEach(requirement => {
                  thumbnails.push(`<li>${requirement}</li>`);
              })

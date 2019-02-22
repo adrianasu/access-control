@@ -6,7 +6,7 @@
 body {
     font-family: 'Noto Sans JP', sans-serif;
     overflow: auto;
-    background-color: #fef4e8;
+    background-color: #fafafa;
     margin: auto;
     font-size: 1.1em;
     min-width: 250px;
@@ -66,7 +66,7 @@ p {
 .go-up p:nth-child(1) {
     position: absolute;
     top: 10%;
-    left: 64%;
+    right: 15px;
     width: auto;
 }
 
@@ -318,6 +318,7 @@ form p {
 .create-form p:nth-child(1) {
     margin: 0;
     position: absolute;
+    /* for edit mobile */
     top: 11%;
     left: 64%;
     width: auto;
@@ -391,7 +392,7 @@ form button {
 .results button:hover, .results button:focus,
 form button:hover, form button:focus {
     border: 1px solid white;
-    background: #4aa6b5;
+    /* background: #4aa6b5; */
     outline: none;
     transition: border .25ms ease-in-out, background .25ms ease-in-out;
 }
@@ -499,7 +500,6 @@ form button:hover, form button:focus {
 
 .grid-item {
     padding: .2em;
-    text-align: center;
     border-radius: 1px;
     border: 1px solid black;
     background-color: white;
@@ -541,7 +541,7 @@ tr {
 }
 
 table {
-    margin: 1em .1em 1.5em;
+    margin: 1em auto 1.5em;
     background: white;
 }
 
@@ -600,7 +600,7 @@ table {
 }
 
 .results {
-    padding: 1em 1.5em;
+    padding: 1em .5em;
     top: 5em;
     max-width: 550px;
     min-width: 250px;
@@ -625,9 +625,10 @@ select {
 .warn {
     background-color: white;
     color: #E81D2E;
-    text-align: center;
     font-size: 3em;
-    margin: 0;
+    width: 98%;
+    margin: auto;
+    text-align: center;
 }
 
 .enter {
@@ -640,6 +641,7 @@ select {
 
 .close, .clear {
     float: right;
+    margin-right: 1em;
     font-size: 1.2em;
     text-decoration: none;
     cursor: pointer;
@@ -745,129 +747,7 @@ select {
     font-size: 1.2em;
 }
 
-@media (orientation: landscape) {
-    .form {
-        margin-top: 2.5em;
-    }
-    form input {
-        width: 50%;
-        margin-right: 1em;
-    }
-    .form p:nth-child(1) {
-        margin: .5em auto;
-    }
-    .search-form {
-        margin-top: 1.5em;
-    }
-
-    .js-form p {
-      margin: 0 auto;  
-    }
-    footer {
-        margin-top: .5em;
-    }
-    .grid-container {
-        width: 100%;
-        margin-left: 0;
-    }
-    .results h1 {
-        margin: .2em 1.9em;
-        text-align: center;
-    }
-    .intro h1 {
-        margin-top: 2em;
-    }
-    .results .goto-edit, .results .delete-btn {
-        width: 30%;
-    }
-    .intro p, .help p {
-        width: 100%;
-    }
-
-
-    .go-up p:nth-child(1) {
-        top: 18%;
-        left: 80%;
-        margin-top:0.5em;
-    }
-    footer p {
-        margin-top: 0;
-    }
-    .login-form {
-        margin-top: 5em;
-        font-size: .9em;
-    }
-    .list-results, .results {
-        position: static;
-        grid-column: 2/3;
-        margin: 5em auto 1em;
-        padding: 0;
-    }
-    .signup-form button, .login-form button {
-        display: inline-block;
-        margin-top: 0;
-        margin-left: .4em;
-    }
-    .signup-form legend {
-        float: right;
-    }
-    .signup-form label {
-        font-size: 1em;
-    }
-    #name, #email, #employerName {
-        width: 60%;
-        font-size: .9em;
-        display: block;
-    }
-    .list, .list-results {
-        margin: 4em auto;
-    }
-    .grid-item {
-        font-size: .9em;
-    }
-    table {
-        margin: 5% 10% 2% 10%;
-        width: 80%;
-    }
-    .enter {
-        margin: 5%;
-    }
-    .info-window {
-        left: 30%;
-        width: 60%;
-        top: 5em;
-        font-size: 1.4em;
-    }
-    .info-window p {
-        text-align: center;
-        text-transform: capitalize;
-    }
-    .create-form p:nth-child(1) {
-        top: 32%;
-        left: 73%;
-    }
-    .buttons button {
-        width: 30%;
-        margin-left: 5%;
-        margin-right: 5%;
-    }
-    .close, .clear {
-        margin-top: .5em;
-        font-size: 1.2em;
-        margin-right: 8%;
-    }
-    .tooltiptext {
-        font-size: .8em;
-        width: 250px;
-    }
-    .fa-info-circle .tooltiptext {
-        left: -500%;
-        top: -600%;
-    }
-}
-
-@media (min-width: 550px),
-screen and(orientation: landscape) {
+@media (orientation: landscape){
     .employee-form, .info-container {
         width: 70%;
     }
@@ -882,17 +762,177 @@ screen and(orientation: landscape) {
     }
     .info-container p:first-child {
         position: absolute;
+        background-color: rgba(255, 255, 255, .35);
+        border-radius: 2px;
+        padding: .2em .8em;
         left: 6%;
         top: 0%;
-        width: 40%;
+        width: 45%;
         font-family: 'Francois One', sans-serif;
         font-size: 1.45em;
     }
     .go-up p:nth-child(1) {
-            top: 10%;
+        top: 19%;
+        left: 80%;
     }
     
+    .form {
+        margin-top: 2.6em;
+    }
+
+    form input {
+        width: 50%;
+        margin-right: 1em;
+    }
+
+    .form p:nth-child(1) {
+        margin: .5em auto;
+    }
+
+    .search-form {
+        margin-top: 1.5em;
+    }
+
+    .js-form p {
+        margin: 0 auto;
+    }
+
+    footer {
+        margin-top: .5em;
+    }
+
+    .grid-container {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .results h1 {
+        margin: .2em 1.9em;
+        text-align: center;
+    }
+
+    .intro h1 {
+        margin-top: 2em;
+    }
+
+    .results .goto-edit,
+    .results .delete-btn {
+        width: 30%;
+    }
+
+    .intro p,
+    .help p {
+        width: 100%;
+    }
+
+
+    .go-up p:nth-child(1) {
+        left: 80%;
+        top: 90px;
+    }
+
+    footer p {
+        margin-top: 0;
+    }
+
+    .login-form {
+        margin-top: 5em;
+        font-size: .9em;
+    }
+
+    .list-results,
+    .results {
+        position: static;
+        grid-column: 2/3;
+        margin: 5em auto 1em;
+        padding: 0;
+    }
+
+    .signup-form button,
+    .login-form button {
+        display: inline-block;
+        margin-top: 0;
+        margin-left: .4em;
+    }
+
+    .signup-form legend {
+        float: right;
+    }
+
+    .signup-form label {
+        font-size: 1em;
+    }
+
+    #name,
+    #email,
+    #employerName {
+        width: 60%;
+        font-size: .9em;
+        display: block;
+    }
+
+    .list,
+    .list-results {
+        margin: 4em auto;
+    }
+
+    .grid-item {
+        font-size: .9em;
+    }
+
+    table {
+        margin: 5% 10% 2% 10%;
+        width: 80%;
+    }
+
+    .enter {
+        margin: 5%;
+    }
+
+    .info-window {
+        left: 30%;
+        width: 60%;
+        top: 5em;
+        font-size: 1.4em;
+    }
+
+    .info-window p {
+        text-align: center;
+        text-transform: capitalize;
+    }
+
+    .create-form p:nth-child(1) {
+        top: 20%;
+        left: 87%;
+        font-size: .8em;
+    }
+
+    .buttons button {
+        width: 30%;
+        margin-left: 5%;
+        margin-right: 5%;
+        padding: .7em 0;
+        font-size: .9em;
+    }
+
+    .close,
+    .clear {
+        margin-top: .5em;
+        font-size: 1.2em;
+        margin-right: 8%;
+    }
+
+    .tooltiptext {
+        font-size: .8em;
+        width: 250px;
+    }
+
+    .fa-info-circle .tooltiptext {
+        left: -500%;
+        top: -600%;
+    }
 }
+
 
 @media only screen and (min-width: 800px) {
     body {
@@ -910,11 +950,7 @@ screen and(orientation: landscape) {
         top: 11em;
         left: 15%;
     }
-    .info-container p:first-child {
-        left: 10%;
-        top: 1%;
-        font-size: 2.2em;
-    }
+ 
     .tooltip .tooltiptext {
         width: 300px;
     }
@@ -930,47 +966,47 @@ screen and(orientation: landscape) {
         left: 0;
         top: 120%;
     }
-    .go-up p:nth-child(1) {
-        top: 12%;
-        left: 70%;
+
+    .create-form p:nth-child(1){
+        top: 13%;
+        left: 89%;
     }
 
 }
 
-    @media only screen and (min-width: 900px) {
-       body{
-           font-size: 1.5em;
-       }
-       .close, .clear {
-           margin-right: 10%;
-       }
-       .js-form, .intro, .results {
-           width: 70%;
-           margin-left: auto;
-           margin-right: auto;
-       }
-       .side-menu button {
-           font-size: 1em;
-           padding-top: 1em;
-       }
-       .list-results table {
-           margin: 0 auto 1em;
-       }
-       .buttons button {
-           width: 40%;
-       }
-       .info-container p:first-child {
-           left: 8%;
-           top: -1%;
-           font-size: 1.8em;
-       }
-       .create-form p:nth-child(1) {
-           top: 15%;
-           left: 65%;
-       }
-       .go-up p:nth-child(1) {
-            top: 15%;
-            left: 70%;
-        }
-      
+@media only screen and (min-width: 900px) {
+
+    .close, .clear {
+        margin-right: 10%;
+    }
+    .js-form, .intro, .results {
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .side-menu button {
+        font-size: 1em;
+    }
+    .list-results table {
+        margin: 0 auto 1em;
+    }
+    .buttons button {
+        width: 40%;
+    }
+    .info-container p:first-child {
+        left: 8%;
+        top: -1%;
+        font-size: 1.8em;
+    }
+    .create-form p:nth-child(1) {
+        top: 15%;
+        left: 65%;
+    }
+  
+    .go-up p:nth-child(1) {
+        top: 13%;
+        left: 80%;
+    }
+    
 }
+

@@ -158,12 +158,12 @@ function generateTrainingOptions(dataT) {
 }
 
 function generateEmployeeForm(options, id, origin) {
-    let action = 'create';
-    if (id) {
-        action = 'update';
-    } else {
+    let action = 'update';
+    if (!id) {
+        action = 'create';
         origin = 'list';
-    }
+    } 
+
      let formString = [];
     
     let employerOptions = generateEmployeeFormOptions(options.employers, "employerName");

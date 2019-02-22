@@ -54,7 +54,7 @@ header::after {
     background-color: #262525;
     color: #f9f9f9;
     display: block;
-    padding: 1.3em;
+    padding: 1.1em 1.3em;
     text-decoration: none;
 
 }
@@ -164,17 +164,16 @@ header::after {
     }
 
     .side-menu button {
-        font-size: .98em;
+        font-size: .9em;
         background: transparent;
         color: white;
-        padding: 1em .4em;
+        padding: .6em .4em;
         border: none;
     }
 
 }
 
-@media (orientation: landscape), 
-screen and (min-width: 880px) {
+@media (min-width: 880px) {
 
     .site-nav {
         height: auto;
@@ -187,6 +186,10 @@ screen and (min-width: 880px) {
     .site-nav li {
         display: inline-block;
         border: none;
+    }
+
+    .side-menu button {
+        padding: 1.2em .4em;
     }
 
     .site-nav button {
