@@ -28,7 +28,7 @@
     "mocha": "^5.2.0"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --exit --timeout 15000",
     "start": "node start.js",
     "dev": "node start.js"
   },
