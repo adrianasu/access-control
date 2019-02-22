@@ -2,5 +2,10 @@ language: node_js
 node_js: node
 services: "-mongodb"
 deploy:
+  provider: heroku
   api_key:
     secure: kJ6Xe1Zggl0SU26xB+hF0ceaIs68IEULr5g0jIawY1SvrnthJ4XV4ESlM8f3vuG5XRVBQWzCcEH3iWj7OKr0QirIXCFloOx9GRyszg99E0tEXOpltZZg4Y0XnwpWSSBsuxzeZrTx7tmKmAsShh2b7CmX15RR3YksXMFTAe5BjzydwbfqiuMFFn5lxJ0IPZqOBAf2WzQk9RLA6/FOdVcxjD+iNZ1J7Xi51Kt0fnrI4uN7/mXIWj6ijjbBizDD/WYRgIP4sL21n+rICpzmSprN2q7/ID8fqu1D52AofmgFZ+1xVYkFBUmfgZ33pcMGB9GJehn15StN94SiVEUeQIeeBIWgVpHqVf0ivQIOxTfSxMDV+rjcg5A/2C2GdWyE0La7PmQyvn98JSV9eZk0HpWU8PLwg6ck4Gb4EZZiDwKK7uNP5Mu0MQ9HgtrVLtI3ebq6XAoPvb542nH7f5qqlyLr6hoVdb+iEFoylVaYPWGC/LlxFzu/faNwyQOa5pDFJ94+QtSrFyxuPRnWBroEvGxT/KvyDN8yXWnsfMu5PnruJw9U8GiMcBXh5fl8ut/5GoodDoFY0STNV8ZTXiA9NOrer4fLadZ+LCDwQDtf5+eubds7UE3Ak9dRTNBSpo0VuKE9YgSTlnGzZcT+uDfPtdL4ARQrI4LlChSJmjxQFIaDkmQ=
+  app: ready2go
+  on:
+  repo: adrianasu/access-control
+
