@@ -122,24 +122,7 @@ describe('Employees API Resource edge cases tests', function () {
             })
     })
 
-    it(`Should get employee's overview`, function () {
-        let foundEmployee;
-        return findOneEmployee()
-            .then(function (_foundEmployee) {
-                foundEmployee = _foundEmployee;
-                return chai.request(app)
-                    .get(`/api/employee/overview/${foundEmployee.id}`)
-                    .set("Authorization", `Bearer ${jwToken}`)
-            })
-            .then(function (res) {
-                checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-                checkObjectContent(res.body, employeeOverviewProperties, foundEmployee);
-            })
-            .catch(function (err) {
-                console.log('Internal Error');
-            })
-    });
-
+    
     it('Should not allow to create an employee', function () {
        
         return generateOneEmployee()
@@ -148,7 +131,6 @@ describe('Employees API Resource edge cases tests', function () {
             .post('/api/employee')
             .set("Authorization", `Bearer ${jwToken}`)
             .send(newEmployee)
-          
         })
         .then(function (res) {
             checkResponse(res, HTTP_STATUS_CODES.UNAUTHORIZED, 'object');

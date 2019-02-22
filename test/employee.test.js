@@ -134,26 +134,6 @@ describe('Employees API Resource tests', function () {
                 console.log(err);
             })
     })
-
-    it(`Should get employee's overview`, function () {
-        let foundEmployee;
-        return findOneEmployee()
-            .then(function (_foundEmployee) {
-                foundEmployee = _foundEmployee;
-                return chai.request(app)
-                    .get(`/api/employee/overview/${foundEmployee.employeeId}`)
-                    .set("Authorization", `Bearer ${jwToken}`)
-            })
-            .then(function (res) {
-                checkResponse(res, HTTP_STATUS_CODES.OK, 'object');
-                checkObjectContent(res.body, employeeOverviewProperties, foundEmployee);
-            })
-            .catch(function (err) {
-                console.log('Internal Error');
-            })
-    });
-
-
     
     it('Should create an employee', function () {
        
