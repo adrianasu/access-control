@@ -14,24 +14,24 @@ Contains the demo details. You'll be directed here everytime you click on
 By clicking on the buttons at the top of the user level's table you'll be   
 auto logged-in under that level.  
 
-<img src="/screenshots/splash.jpg" width="350">
+<img src="/screenshots/splash.png" width="350">
 
 ### Basic User Level:
 To check out the information at this level, no account is needed.  
 Click on the orange icon to get some ids to try the app.  
 
-<img src="/screenshots/basic.jpg" width="350">
+<img src="/screenshots/basic.png" width="350">
 
-<img src="/screenshots/basic-results.jpg" width="350">
+<img src="/screenshots/basic-results.png" width="350">
 
 ### Overview User Level:
 When you create an account, this is the user level you get.  
 This user can get the employees' information searching them by id or   
 looking for them on a list.  
 
-<img src="/screenshots/overview.jpg" width="350">
+<img src="/screenshots/overview.png" width="350">
 
-<img src="/screenshots/overview-results.jpg" width="350">
+<img src="/screenshots/overview-results.png" width="350">
 
 
 ### Public User Level:
@@ -40,14 +40,14 @@ or admin level.
 This user is allowed to read all the information (employees, trainings,   
 departments, employers and users) and to create or to update an employee.  
 
-<img src="/screenshots/public.jpg" width="350">
+<img src="/screenshots/public.png" width="350">
 
 ### Admin User Level:
 Only another admin user can grant someone this level. This user has all  
 permissions to read, create, update and delete all the information  
 included except for updating other users' information.  
 
-<img src="/screenshots/public-edit.jpg" width="350">
+<img src="/screenshots/public-edit.png" width="350">
 
 ## Environment Setup
 Node.js, Express, MongoDB, Mongoose, Chai, Mocha, JavaScript, JQuery and CSS.
