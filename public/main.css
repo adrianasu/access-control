@@ -507,7 +507,6 @@ form button {
     transform: scaleY(1);
     border-radius: 3px;
     border: 5px solid black;
-    color: white;
 }
 
 .side-menu button:focus, .side-menu button:hover {
