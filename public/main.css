@@ -387,10 +387,10 @@ form button {
 }
 
 .list-results button:hover, .list-results button:focus, .results button:hover, .results button:focus, form button:hover, form button:focus {
-    border: 1px solid white;
-    /* background: #4aa6b5; */
+    border: 1px solid lightgray;
+    background-color: lightgray;
     outline: none;
-    transition: border .25ms ease-in-out, background .25ms ease-in-out;
+    transition: border .25ms ease-in-out, background-color .25ms ease-in-out;
 }
 
 .below {
