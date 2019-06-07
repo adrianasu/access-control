@@ -441,6 +441,11 @@ form button {
     margin-left: .3em;
 }
 
+.info-window button:hover, .info-window button:focus{
+    background-color: lightgray;
+    border: none;
+}
+
 .list, .list-results {
     margin: 5em auto;
 }
@@ -649,10 +654,12 @@ select {
     background: white;
 }
 
-.close:hover, .close:focus {
-    color: black;
+.results .clear:hover, .results .clear:focus {
+    color: lightgray;
     text-decoration: none;
     cursor: pointer;
+    background-color: white;
+    border: none;
 }
 
 .bounce {
